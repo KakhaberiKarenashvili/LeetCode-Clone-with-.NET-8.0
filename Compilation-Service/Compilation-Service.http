@@ -1,0 +1,6 @@
+@Compilation_Service_HostAddress = http://localhost:5144
+
+GET {{Compilation_Service_HostAddress}}/hello/
+Accept: application/json
+
+###
