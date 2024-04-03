@@ -10,12 +10,10 @@ namespace informaticsge.Services;
 public class ProblemsService
 {
     private readonly AppDBcontext _appDBcontext;
-    private readonly Mapper.Mapper _mapper;
 
-    public ProblemsService(AppDBcontext appDBcontext, Mapper.Mapper mapper)
+    public ProblemsService(AppDBcontext appDBcontext)
     {
         _appDBcontext = appDBcontext;
-        _mapper = mapper;
     }
 
     public async Task<List<Problem>> GetAllProblems(int page)

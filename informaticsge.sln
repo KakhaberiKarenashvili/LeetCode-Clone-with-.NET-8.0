@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "informaticsge", "informaticsge\informaticsge.csproj", "{4994C4BF-2BB1-4441-A98F-43A1916321B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compilation-Service", "Compilation-Service\Compilation-Service.csproj", "{109D2DE7-8B80-43EC-9C5B-407A45C381BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{4994C4BF-2BB1-4441-A98F-43A1916321B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4994C4BF-2BB1-4441-A98F-43A1916321B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4994C4BF-2BB1-4441-A98F-43A1916321B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{109D2DE7-8B80-43EC-9C5B-407A45C381BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{109D2DE7-8B80-43EC-9C5B-407A45C381BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{109D2DE7-8B80-43EC-9C5B-407A45C381BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{109D2DE7-8B80-43EC-9C5B-407A45C381BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

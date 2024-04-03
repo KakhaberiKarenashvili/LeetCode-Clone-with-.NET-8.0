@@ -34,6 +34,7 @@ builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProblemsService>();
+builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
 builder.Services.AddIdentityCore<User>()
