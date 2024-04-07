@@ -13,18 +13,10 @@ namespace informaticsge.Controllers;
 
 public class Compiler : ControllerBase
 {
-
-    [HttpGet("/hello")]
-    public string hello()
-    {
-        Console.WriteLine("hello from docker");
-        return "hello from docker";
-    }
-
+    
     [HttpPost("/compile")]
     public async Task<List<CompilationResult>> CompileAndRunCppCodeAsync(CompilationRequestDTO compilationRequestDto)
     {
-        Console.WriteLine(compilationRequestDto.Code);
         List<CompilationResult> results = new List<CompilationResult>();
 
         var cppFileName = "temp.cpp";
@@ -43,8 +35,8 @@ public class Compiler : ControllerBase
             // Execute the C++ code file using the command prompt
             var processInfo = new ProcessStartInfo
             {
-                FileName = "g++",
-                Arguments =$"{cppFileName} -o {exeFileName} ",
+                FileName = "cmd.exe",
+                Arguments = $"/c g++ {cppFileName} -o {exeFileName} && {exeFileName}", 
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -67,10 +59,10 @@ public class Compiler : ControllerBase
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask =
-                    MonitorMemoryUsage(process, compilationRequestDto.MemoryLimitMS, memoryCancellationTokenSource.Token);
+                Task monitorMemoryTask = MonitorMemoryUsage(process, compilationRequestDto.MemoryLimitMS, memoryCancellationTokenSource.Token);
                 Task timeoutTask = Task.Delay(compilationRequestDto.TimeLimitMS, timeoutCancellationTokenSource.Token);
 
+                
                 // Wait for either the process to exit, memory limit exceeded, or timeout
                 Task completedTask = await Task.WhenAny(process.WaitForExitAsync(), monitorMemoryTask, timeoutTask);
 
@@ -97,32 +89,49 @@ public class Compiler : ControllerBase
                         TestCaseNum = testCaseNum,
                         Success = false,
                         Error = "Time limit exceeded."
-                    });
-
+                    }); 
                     // Cancel the memory monitoring task
                     memoryCancellationTokenSource.Cancel();
                 }
-                else
+                 
+                //in case there is not problem with memory or timeout
+                else 
                 {
                     // Check if the output matches the expected output for this test case
                     var output = await process.StandardOutput.ReadToEndAsync();
-                    string errorOutput = await process.StandardError.ReadToEndAsync();
+                    var errorOutput = await process.StandardError.ReadToEndAsync();
                     
                     await process.WaitForExitAsync();
                     
-                    
+                    ////////////////////////////////// debbuging
                     Console.WriteLine("Actual Output: " + output); 
                     
                     Console.WriteLine(errorOutput);
                     
-                    if (output.Trim() == testCase.ExpectedOutput.Trim())
+                    //////////////////////////////////
+
+                    if (errorOutput == "")
                     {
-                        results.Add(new CompilationResult
+
+                        if (output.Trim() == testCase.ExpectedOutput.Trim())
                         {
-                            TestCaseNum = testCaseNum,
-                            Success = true,
-                            Output = output
-                        });
+                            results.Add(new CompilationResult
+                            {
+                                TestCaseNum = testCaseNum,
+                                Success = true,
+                                Output = output
+                            });
+                        }
+                        else
+                        {
+                            results.Add(new CompilationResult
+                            {
+                                TestCaseNum = testCaseNum,
+                                Success = false,
+                                Output = output,
+                                Error = "Output does not match expected output."
+                            });
+                        }
                     }
                     else
                     {
@@ -130,28 +139,28 @@ public class Compiler : ControllerBase
                         {
                             TestCaseNum = testCaseNum,
                             Success = false,
-                            Output = output,
+                            Output = errorOutput,
                             Error = "Output does not match expected output."
                         });
                     }
+                    
                 }
             }
 
             testCaseNum++;
         }
-        Console.WriteLine((results.Count));
+        
         return results;
     }
-
+    
+//santas little helper monitors memory use by cpp code 
     private async Task MonitorMemoryUsage(Process process, int memoryLimitMB, CancellationToken cancellationToken)
     {
         while (!process.HasExited && !cancellationToken.IsCancellationRequested)
         {
-            // Check memory usage of the process
-            if (process.WorkingSet64 > memoryLimitMB * 1024 * 1024)
+            if (process.WorkingSet64 > memoryLimitMB * 1024 * 1024)     // Check memory usage of the process
             {
-                // If memory limit is exceeded, terminate the process
-                process.Kill();
+                process.Kill();      // If memory limit is exceeded, terminate the process
                 return;
             }
 
