@@ -1,8 +1,18 @@
-Poject under development... 
-main aim is to create leetcode clone with .net 8.0
-tecnologies used: 
-Micro-Services,
-IdentityUser,
-JWT, 
-Postgres,
-Docker for safe user code compilation & execution,
+LeetCode Clone with .NET 8.0
+
+This project aims to create a scalable, and secure coding challenge platform similar to LeetCode. Utilizing modern technologies to provide a seamless user experience and ensure the safety and integrity of user code submissions.
+Features
+
+    IdentityUser: Manages user authentication and profiles securely.
+    JWT Authentication: Provides secure token-based authentication.
+    PostgreSQL: Reliable and efficient database management.
+    Docker: Safe and isolated environments for code compilation and execution.
+
+Technologies Used
+
+    .NET 8.0: Core framework for developing the application.
+    IdentityUser: ASP.NET Core Identity for user management.
+    JWT: Secure JSON Web Tokens for authentication.
+    PostgreSQL: Robust relational database system.
+    Docker: Containerization for secure and isolated code execution environments.
+
