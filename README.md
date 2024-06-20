@@ -18,8 +18,8 @@ Technologies Used
     PostgreSQL: Robust relational database system.
     Docker: Containerization for secure and isolated code execution environments.
 
-for testing purposes: 
-navigate into compilation-service directory 
--> bocker build -t compilation-service .
--> docker run -p 5144:5144 compilation-service
-u should run informaticsge with your IDE 
+how to run:
+- navigate into compilation-service directory 
+- docker build -t compilation-service . 
+- docker run -p 5144:5144 compilation-service 
+- should run informaticsge with your IDE 
