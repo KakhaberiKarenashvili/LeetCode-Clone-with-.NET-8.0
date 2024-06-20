@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FRPslIPYmVtwfY0b4jRN9nfBzzEenOaxgfq4A1jLc7Bwveum9/u6MOyfNE+j8yXeb3GQmgq7ebla/WK5fUByBA==",
+  "dgSpecHash": "TZ+59vJ5tT0VMUqWSDafCIVz01iiG0fnvxeUObVOhNWZLfmU/sKaApKsncOUW71PJAgb0YjXC5ZCEkYxENmvMw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\Compilation-Service.csproj",
+  "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kaxaq\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.2\\microsoft.aspnetcore.openapi.8.0.2.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

@@ -4,8 +4,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 # Set the working directory
 WORKDIR /app
 
-
-
 # Copy the .NET project files and restore dependencies
 COPY Compilation-Service.csproj ./
 RUN dotnet restore
@@ -23,11 +21,13 @@ WORKDIR /app
 # Copy the built application from the build stage
 COPY --from=build-env /app/out .
 
+ENV ASPNETCORE_HTTP_PORTS=5144
+
 RUN apt-get update
 
-RUN apt-get install -y gcc 
+RUN apt-get install -y g++
 
-RUN gcc --version
+RUN g++ --version
 # Expose port for the service
 EXPOSE 80
 EXPOSE 443

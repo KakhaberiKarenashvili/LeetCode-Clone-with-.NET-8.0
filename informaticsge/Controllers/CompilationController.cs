@@ -37,9 +37,9 @@ public class CompilationController : ControllerBase
         var compilationRequest = new CompilationRequestDTO
         {
             Code = userCode,
-            MemoryLimitMS = problem.MemoryLimit,
-            TimeLimitMS = problem.RuntimeLimit,
-            testcases = testCaseDTOs
+            MemoryLimitMb = problem.MemoryLimit,
+            TimeLimitMs = problem.RuntimeLimit,
+            Testcases = testCaseDTOs
         };
         
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\Compilation-Service.csproj": {}
+    "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\Compilation-Service.csproj": {
+    "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\Compilation-Service.csproj",
+        "projectUniqueName": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj",
         "projectName": "Compilation-Service",
-        "projectPath": "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\Compilation-Service.csproj",
+        "projectPath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj",
         "packagesPath": "C:\\Users\\kaxaq\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\Compilation-Service\\obj\\",
+        "outputPath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

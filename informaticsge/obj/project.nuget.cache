@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sCb3YRs0ZcY2sL1PlMYm0y1gKgL4WnN1ExuNher9t9fhLQA87rOjECzUJ7W9becNDiomCjPAuveWnepRLQ4zQw==",
+  "dgSpecHash": "qWCwuQ5lE0O2cEYp/yvIIULSnncGAl906khnjHw2HcGz4CcADfhnYD/B5Kj3Ow6rgdkgn5LpSnr4iph6j8imzg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\informaticsge\\informaticsge\\informaticsge.csproj",
+  "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\informaticsge\\informaticsge.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kaxaq\\.nuget\\packages\\docker.dotnet\\3.125.15\\docker.dotnet.3.125.15.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
