@@ -1,16 +1,14 @@
 ﻿namespace informaticsge.Dto;
 
-public class GetProblemDTO
+public class GetProblemDto
 {
     public int Id { set; get; }
     
     public string Name { set; get; }
     
-    public string problem { set; get; }
+    public string ProblemText { set; get; }
     
     public string Tag { set; get; }
-    
-    public string Difficulty { set; get; }
     
     public string Timelimit { set; get; }
     

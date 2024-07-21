@@ -18,22 +18,23 @@ public class JWTService
     public string CreateJwt(User user)
     {
 
-        var UserClaims = new List<Claim>  
+        var userClaims = new List<Claim>  
         {
             new Claim("Id", user.Id),
-            new Claim("Email", user.Email)
+            new Claim("Email", user.Email),
+            new Claim("UserName", user.UserName)
         };
         
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         
-        var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
+        var sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
             _config["Jwt:Issuer"],
-            UserClaims,
+            userClaims,
             expires: DateTime.Now.AddMinutes(120),
             signingCredentials: credentials);
         
-        var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
+        var token = new JwtSecurityTokenHandler().WriteToken(sectoken);
         
         return token;
     }

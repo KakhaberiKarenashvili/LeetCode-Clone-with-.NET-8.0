@@ -11,27 +11,30 @@ namespace informaticsge.Controllers;
 public class Compiler : ControllerBase
 {
     [HttpPost("/compile")]
-    public async Task<List<ExecutionResult>?> CompileAndRunCppCodeAsync(CompilationRequestDTO compilationRequestDto)
+    public async Task<List<SubmissionResponceDTO>?> CompileAndRunCppCodeAsync(SubmissionRequestDTO submissionRequestDto)
     {
-        List<ExecutionResult> results = new List<ExecutionResult>();
+        List<SubmissionResponceDTO> results = new List<SubmissionResponceDTO>();
         
-        var fileid = Guid.NewGuid();
-        var cppFileName = $"temp_{fileid}.cpp";
-        var exeFileName = $"temp_{fileid}";
+        var fileId = Guid.NewGuid();
+        var cppFileName = $"temp_{fileId}.cpp";
+        var exeFileName = $"temp_{fileId}";
         
-        var compile = await CompileCppCode(compilationRequestDto.Code, cppFileName, exeFileName);
+        var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
 
         if (compile.Success)
         {
-            var execute = await ExecuteCppCode(exeFileName, compilationRequestDto);
+            var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
             return execute;
         }
         else
         {
-            results.Add(new ExecutionResult
+            results.Add(new SubmissionResponceDTO
             {
                 Success = false,
-                Error = compile.Error
+                Input = submissionRequestDto.testcases.First().Input,
+                ExpectedOutput = submissionRequestDto.testcases.First().ExpectedOutput,
+                Output = compile.Error,
+                Error = "Compilation Error"
             });
             
             return results;
@@ -39,12 +42,12 @@ public class Compiler : ControllerBase
         
     }
     
-    private async Task<List<ExecutionResult>> ExecuteCppCode(string? exefilepath, CompilationRequestDTO compilationRequestDto)
+    private async Task<List<SubmissionResponceDTO>> ExecuteCppCode(string? exefilepath, SubmissionRequestDTO submissionRequestDto)
     {
-        List<ExecutionResult> results = new List<ExecutionResult>();
+        List<SubmissionResponceDTO> results = new List<SubmissionResponceDTO>();
         
-         var testCaseNum = 0;
-        foreach (var testCase in compilationRequestDto.testcases)
+        
+        foreach (var testCase in submissionRequestDto.testcases)
         {
             // Create a cancellation token source for monitoring memory usage and timeout
             CancellationTokenSource memoryCancellationTokenSource = new CancellationTokenSource();
@@ -61,8 +64,8 @@ public class Compiler : ControllerBase
                 CreateNoWindow = true,
                 Environment =
                 {
-                    ["MEMORY_LIMIT_MB"] = compilationRequestDto.MemoryLimitMb.ToString(),
-                    ["TIME_LIMIT_MS"] = compilationRequestDto.TimeLimitMS.ToString()
+                    ["MEMORY_LIMIT_MB"] = submissionRequestDto.MemoryLimitMb.ToString(),
+                    ["TIME_LIMIT_MS"] = submissionRequestDto.TimeLimitMs.ToString()
                 }
             };
            
@@ -76,8 +79,8 @@ public class Compiler : ControllerBase
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = MonitorMemoryUsage(process, compilationRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
-                Task timeoutTask = Task.Delay(compilationRequestDto.TimeLimitMS, timeoutCancellationTokenSource.Token);
+                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
+                Task timeoutTask = Task.Delay(submissionRequestDto.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
                 
                 // Wait for either the process to exit, memory limit exceeded, or timeout
@@ -87,9 +90,8 @@ public class Compiler : ControllerBase
                 {
                     // If the memory limit is exceeded, terminate the process
                     process.Kill();
-                    results.Add(new ExecutionResult
+                    results.Add(new SubmissionResponceDTO
                     {
-                        TestCaseNum = testCaseNum,
                         Success = false,
                         Error = "Memory limit exceeded."
                     });
@@ -101,9 +103,8 @@ public class Compiler : ControllerBase
                 {
                     // If the timeout is reached, terminate the process
                     process.Kill();
-                    results.Add(new ExecutionResult
+                    results.Add(new SubmissionResponceDTO
                     {
-                        TestCaseNum = testCaseNum,
                         Success = false,
                         Error = "Time limit exceeded."
                     }); 
@@ -119,22 +120,22 @@ public class Compiler : ControllerBase
                     
                     if (string.IsNullOrEmpty(error))
                     {
-                        if (output.Trim() == testCase.ExpectedOutput.Trim())
+                        if (output.Trim() == testCase.ExpectedOutput?.Trim())
                         {
-                            results.Add(new ExecutionResult
+                            results.Add(new SubmissionResponceDTO
                             {
-                                TestCaseNum = testCaseNum,
                                 Success = true,
+                                Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output
                             });
                         }
                         else
                         {
-                            results.Add(new ExecutionResult
+                            results.Add(new SubmissionResponceDTO
                             {
-                                TestCaseNum = testCaseNum,
                                 Success = false,
+                                Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
                                 Error = "Output does not match expected output."
@@ -143,10 +144,10 @@ public class Compiler : ControllerBase
                     }
                     else
                     {
-                        results.Add(new ExecutionResult
+                        results.Add(new SubmissionResponceDTO
                         {
-                            TestCaseNum = testCaseNum,
                             Success = false,
+                            Input = testCase.Input,
                             ExpectedOutput = testCase.ExpectedOutput,
                             Output = error,
                             Error = "Output does not match expected output."
@@ -155,12 +156,11 @@ public class Compiler : ControllerBase
                     
                 }
             }
-            testCaseNum++;
         }
         return results;
     }
     
-    private async Task<CompilationResult> CompileCppCode(string code, string cppFileName, string? exeFileName)
+    private async Task<CompilationResultDTO> CompileCppCode(string code, string cppFileName, string? exeFileName)
     {
         
         await System.IO.File.WriteAllTextAsync(cppFileName, code);
@@ -180,26 +180,24 @@ public class Compiler : ControllerBase
             process.StartInfo = processInfo;
             process.Start();
 
-            process.WaitForExitAsync();
+             await process.WaitForExitAsync();
             
             var error = process.StandardError.ReadToEndAsync().Result;
 
             if (string.IsNullOrEmpty(error))
             {
-                return new CompilationResult()
+                return new CompilationResultDTO()
                 {
                     Success = true,
                     Error = error,
-                    Executable = exeFileName
                 };
             }
             else
             {
-                return new CompilationResult()
+                return new CompilationResultDTO()
                 {
                     Success = false,
                     Error = error,
-                    Executable = exeFileName
                 };
             }
         }

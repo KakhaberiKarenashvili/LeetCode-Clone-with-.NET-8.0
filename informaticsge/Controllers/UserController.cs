@@ -12,8 +12,8 @@ namespace informaticsge.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private UserManager<User> _userManager;
-    private UserService _userService;
+    private readonly UserManager<User> _userManager;
+    private readonly UserService _userService;
     
     public UserController(UserManager<User> userManager, UserService userService)
     {
@@ -23,10 +23,10 @@ public class UserController : ControllerBase
 
     [HttpGet("/hello")]
     [Authorize]
-    public async Task<User> hello()
+    public async Task<User> Hello()
     {
         
-        var userid = User.Claims.First(User => User.Type == "Email");
+        var userid = User.Claims.First(user => user.Type == "Email");
         var test = userid.Value;
         var user = await _userManager.FindByEmailAsync(test);
         Console.WriteLine(test);
@@ -35,9 +35,9 @@ public class UserController : ControllerBase
     
     [HttpGet("/myaccount")]
     [Authorize]
-    public async Task<MyAccountDTO> MyAccount()
+    public async Task<MyAccountDto> MyAccount()
     {
-        var userid = User.Claims.First(User => User.Type == "Id").Value;
+        var userid = User.Claims.First(user => user.Type == "Id").Value;
         var user = await _userService.MyAccount(userid);
         return  user;
     }
@@ -48,8 +48,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var userid = User.Claims.First(User => User.Type == "Id").Value;
-            var solutions = await _userService.MySolutions(userid);
+            var userid = User.Claims.First(user => user.Type == "Id").Value;
+            var solutions = await _userService.MySubmissions(userid);
 
             return Ok(solutions);
         }

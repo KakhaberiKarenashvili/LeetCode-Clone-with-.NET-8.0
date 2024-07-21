@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("/regiser")]
-    public async Task<IActionResult> Register([FromBody]RegistrationDTO newuser)
+    public async Task<IActionResult> Register([FromBody]RegistrationDto newuser)
     {
         try
         {
@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("/login")]
-    public async Task<IActionResult> Login([FromBody]UserLoginDTO userLogin)
+    public async Task<IActionResult> Login([FromBody]UserLoginDto userLogin)
     {
         Console.WriteLine(userLogin);
         try

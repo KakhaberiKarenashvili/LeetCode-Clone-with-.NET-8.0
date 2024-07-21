@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using informaticsge.entity;
@@ -11,12 +10,10 @@ using informaticsge.entity;
 
 namespace informaticsge.Migrations
 {
-    [DbContext(typeof(AppDBcontext))]
-    [Migration("20240307224136_solutions1")]
-    partial class solutions1
+    [DbContext(typeof(AppDBContext))]
+    partial class AppDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,7 +154,7 @@ namespace informaticsge.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("informaticsge.Models.Solution", b =>
+            modelBuilder.Entity("informaticsge.Models.Submissions", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,7 +162,7 @@ namespace informaticsge.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Auth_Username")
+                    b.Property<string>("AuthUsername")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -173,16 +170,30 @@ namespace informaticsge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Problem_id")
+                    b.Property<string>("Error")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Problem_name")
+                    b.Property<string>("ExpectedOutput")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Output")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProblemName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -193,7 +204,68 @@ namespace informaticsge.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Solutions");
+                    b.ToTable("Submissions");
+                });
+
+            modelBuilder.Entity("informaticsge.models.Problem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MemoryLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProblemText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RuntimeLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Problems");
+                });
+
+            modelBuilder.Entity("informaticsge.models.TestCase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ExpectedOutput")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("TestCases");
                 });
 
             modelBuilder.Entity("informaticsge.models.User", b =>
@@ -311,7 +383,7 @@ namespace informaticsge.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("informaticsge.Models.Solution", b =>
+            modelBuilder.Entity("informaticsge.Models.Submissions", b =>
                 {
                     b.HasOne("informaticsge.models.User", "User")
                         .WithMany("Solutions")
@@ -320,6 +392,22 @@ namespace informaticsge.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("informaticsge.models.TestCase", b =>
+                {
+                    b.HasOne("informaticsge.models.Problem", "Problem")
+                        .WithMany("TestCases")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Problem");
+                });
+
+            modelBuilder.Entity("informaticsge.models.Problem", b =>
+                {
+                    b.Navigation("TestCases");
                 });
 
             modelBuilder.Entity("informaticsge.models.User", b =>

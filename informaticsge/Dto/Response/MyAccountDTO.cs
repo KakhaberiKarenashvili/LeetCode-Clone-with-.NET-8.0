@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto;
 
-public class MyAccountDTO
+public class MyAccountDto
 {
     public string Username { set; get; }
     

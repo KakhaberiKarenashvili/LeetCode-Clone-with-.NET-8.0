@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.models;
 
-public class TestCaseDTO
+public class TestCaseDto
 {
     
     public string? Input { get; set; }

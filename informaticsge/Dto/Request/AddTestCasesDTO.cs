@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto;
 
-public class AddTestCasesDTO
+public class AddTestCasesDto
 {
      public string Input { get; set; }
      

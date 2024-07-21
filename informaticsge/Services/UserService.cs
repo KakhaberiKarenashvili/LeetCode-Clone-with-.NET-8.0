@@ -10,32 +10,33 @@ namespace informaticsge.Services;
 
 public class UserService
 {
-    private readonly AppDBcontext _appDBcontext;
+    private readonly AppDBContext _appDbContext;
     private readonly UserManager<User> _userManager;
 
-    public UserService(AppDBcontext appDBcontext, UserManager<User> userManager)
+    public UserService(AppDBContext appDbContext, UserManager<User> userManager)
     {
-        _appDBcontext = appDBcontext;
+        _appDbContext = appDbContext;
         _userManager = userManager;
     }
 
-    public async Task<MyAccountDTO> MyAccount(string Id)
+    public async Task<MyAccountDto> MyAccount(string id)
     {
-        var user = await _userManager.FindByIdAsync(Id);
+        var user = await _userManager.FindByIdAsync(id);
 
-        var myaccount = new MyAccountDTO()
+        var account = new MyAccountDto()
         {
             Email = user?.Email ?? string.Empty,
             Username = user?.UserName ?? string.Empty
         };
-        return myaccount;
+        return account;
     }
 
 
-    public async Task<List<Solution>> MySolutions(string UserId)
+    public async Task<List<Submissions>> MySubmissions(string userId)
     {
-        var solutions = await _appDBcontext.Solutions.Where(sol => sol.UserId == UserId).ToListAsync();
+        var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
 
-        return solutions;
+        return submissions;
     }
+    
 }

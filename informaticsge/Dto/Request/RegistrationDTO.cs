@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto;
 
-public class RegistrationDTO
+public class RegistrationDto
 {
     public string Email { get; set; }
 

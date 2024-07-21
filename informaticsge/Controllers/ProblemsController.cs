@@ -7,11 +7,11 @@ namespace informaticsge.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ProblemsControler : ControllerBase
+public class ProblemsController : ControllerBase
 {
     private readonly ProblemsService _problemsService;
 
-    public ProblemsControler(ProblemsService problemsService)
+    public ProblemsController(ProblemsService problemsService)
     {
         _problemsService = problemsService;
     }
@@ -28,10 +28,22 @@ public class ProblemsControler : ControllerBase
         return await _problemsService.GetProblem(id);
     }
 
-    [HttpPost("/addproblem")]
-    public async Task<string> AddProblem(AddProblemDTO problem)
+    [HttpPost("/add-problem")]
+    public async Task<string> AddProblem(AddProblemDto problem)
     {
         return await _problemsService.AddProblem(problem);
     }
 
+    [HttpGet("/problems/{id}/submissions")]
+    public async Task<List<SubmissionsDTO>> GetSubmissions(int id)
+    {
+        return await _problemsService.GetSubmissions(id);
+    }
+    
+    
+
+    
+    
+    
+    
 }

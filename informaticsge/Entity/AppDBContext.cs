@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace informaticsge.entity;
 
-public class AppDBcontext : IdentityDbContext<User>
+public class AppDBContext : IdentityDbContext<User>
 
 {
-    public AppDBcontext(DbContextOptions<AppDBcontext> options) : base(options)
+    public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
     {
         
     }
     
-    public DbSet<Solution> Solutions { set; get; }
+    public DbSet<Submissions> Submissions { set; get; }
     public DbSet<Problem> Problems { set; get; }
     public DbSet<TestCase> TestCases { set; get; }
    
@@ -23,9 +23,9 @@ public class AppDBcontext : IdentityDbContext<User>
    {
        base.OnModelCreating(modelBuilder);
 
-       modelBuilder.Entity<Solution>()
+       modelBuilder.Entity<Submissions>()
            .HasOne(s => s.User)
-           .WithMany(u => u.Solutions)
+           .WithMany(u => u.Submissions)
            .HasForeignKey(s => s.UserId);
 
        modelBuilder.Entity<TestCase>()

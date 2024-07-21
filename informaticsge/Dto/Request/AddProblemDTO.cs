@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto;
 
-public class AddProblemDTO
+public class AddProblemDto
 {
         public string Name { get; set; }
         
@@ -14,5 +14,5 @@ public class AddProblemDTO
         
         public int MemoryLimit { get; set; }
         
-        public ICollection<AddTestCasesDTO> TestCases { get; set; }
+        public ICollection<AddTestCasesDto> TestCases { get; set; }
 }

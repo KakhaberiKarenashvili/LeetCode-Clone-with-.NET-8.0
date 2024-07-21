@@ -9,7 +9,7 @@ public class Problem
     
     public string Name { set; get; } 
     
-    public string problem { set; get; }
+    public string ProblemText { set; get; }
     
     public string Tag { set; get; }
     

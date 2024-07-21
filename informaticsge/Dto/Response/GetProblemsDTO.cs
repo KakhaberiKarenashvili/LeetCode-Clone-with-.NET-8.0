@@ -2,7 +2,7 @@
 
 namespace informaticsge.Dto;
 
-public class GetProblemsDTO
+public class GetProblemsDto
 {
     public int Id { set; get;  }
     

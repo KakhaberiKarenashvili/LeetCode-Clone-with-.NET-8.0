@@ -26,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Dbcontext
-builder.Services.AddDbContext<AppDBcontext>(options =>
+builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection")));
 
 //to be able to inject JWTService into our controler
@@ -38,7 +38,7 @@ builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
 builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<AppDBcontext>()
+    .AddEntityFrameworkStores<AppDBContext>()
     .AddSignInManager<SignInManager<User>>()
     .AddUserManager<UserManager<User>>()
     .AddDefaultTokenProviders();

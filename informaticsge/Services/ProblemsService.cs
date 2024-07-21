@@ -9,11 +9,11 @@ namespace informaticsge.Services;
 
 public class ProblemsService
 {
-    private readonly AppDBcontext _appDBcontext;
+    private readonly AppDBContext _appDbContext;
 
-    public ProblemsService(AppDBcontext appDBcontext)
+    public ProblemsService(AppDBContext appDbContext)
     {
-        _appDBcontext = appDBcontext;
+        _appDbContext = appDbContext;
     }
 
     public async Task<List<Problem>> GetAllProblems(int page)
@@ -22,7 +22,7 @@ public class ProblemsService
 
         var skip = (page - 1) * 50; //basically saying that 1 page can have 50 problems on each page method will skip 50x problems
        
-        var data = await _appDBcontext.Problems
+        var data = await _appDbContext.Problems
             .Skip(skip)
             .Take(50)
             .ToListAsync();
@@ -33,28 +33,29 @@ public class ProblemsService
     
     public async Task<Problem> GetProblem(int id)
     {
-        var problem = await _appDBcontext.Problems
+        var problem = await _appDbContext.Problems
             .Include(p => p.TestCases)
             .FirstOrDefaultAsync(p => p.Id == id) ?? new Problem();
         
         return problem;
     }
 
-    public async Task<List<SolutionsDTO>> GetSolutions(int id)
+    public async Task<List<SubmissionsDTO>> GetSubmissions(int id)
     {
         
-        var solutions = await _appDBcontext.Solutions.Where(Solution => Solution.Problem_id == id).ToListAsync();
+        var solutions = await _appDbContext.Submissions.Where(solution => solution.ProblemId == id).ToListAsync();
 
-        return new List<SolutionsDTO>();
+        return new List<SubmissionsDTO>();
     }
-    public async Task<string> AddProblem(AddProblemDTO problemDto)
+    
+    public async Task<string> AddProblem(AddProblemDto problemDto)
     {
 
         var problem = new Problem
         {
         
             Name = problemDto.Name,
-            problem = problemDto.Problem,
+            ProblemText = problemDto.Problem,
             Tag = problemDto.Tag,
             Difficulty = problemDto.Difficulty,
             RuntimeLimit = problemDto.RuntimeLimit,
@@ -67,8 +68,8 @@ public class ProblemsService
         };
       
 
-        await _appDBcontext.Problems.AddAsync(problem);
-        await _appDBcontext.SaveChangesAsync();
+        await _appDbContext.Problems.AddAsync(problem);
+        await _appDbContext.SaveChangesAsync();
         
 
         return "problem added sucessfully";

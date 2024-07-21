@@ -12,20 +12,20 @@ namespace informaticsge.Services;
 
 public class AccountService
 {
-    private AppDBcontext _appDBcontext;
+    private AppDBContext _appDbContext;
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly JWTService _jwtService;
 
-    public AccountService(AppDBcontext appDBcontext, UserManager<User> userManager, SignInManager<User> signInManager, JWTService jwtService)
+    public AccountService(AppDBContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, JWTService jwtService)
     {
-        _appDBcontext = appDBcontext;
+        _appDbContext = appDbContext;
         _signInManager = signInManager;
         _jwtService = jwtService;
         _userManager = userManager;
     }
     
-    public async Task<string> Register(RegistrationDTO newuser)
+    public async Task<string> Register(RegistrationDto newuser)
     {
         
        if (await CheckEmailExists(newuser.Email))
@@ -34,7 +34,7 @@ public class AccountService
        }
      
        //createasync method does it for u but i added it for clarity
-       if (await CheckUsernmaeExists(newuser.UserName))  
+       if (await CheckUsernameExists(newuser.UserName))  
        {
            return "username already here";
        }
@@ -58,7 +58,7 @@ public class AccountService
     }
 
     
-    public async Task<string> Login(UserLoginDTO userLogin)
+    public async Task<string> Login(UserLoginDto userLogin)
     {
         var user = await _userManager.FindByEmailAsync(userLogin.Email);
         
@@ -92,7 +92,7 @@ public class AccountService
     }
     
 //i could do it more fancy way but it works sooo... rule 1
-    private async Task<bool> CheckUsernmaeExists(string username)
+    private async Task<bool> CheckUsernameExists(string username)
     {
         var result = await _userManager.FindByNameAsync(username);
         if (result == null)
