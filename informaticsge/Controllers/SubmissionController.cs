@@ -39,7 +39,7 @@ public class SubmissionController : ControllerBase
             var submissionRequest = await PrepareSubmissionRequest(problemId, userCode);
             var submissionResponse = await CallCompilationApi(submissionRequest); 
             
-            await ProcessCompilationResult(problemId, User, userCode, submissionResponse);
+            await ProcessSubmissionResult(problemId, User, userCode, submissionResponse);
             
             return Ok(submissionResponse);
             
@@ -61,7 +61,7 @@ public class SubmissionController : ControllerBase
 
 
 
-    private async Task<CompilationRequestDto> PrepareSubmissionRequest(int problemId, string userCode)
+    private async Task<SubmissionRequestDTO> PrepareSubmissionRequest(int problemId, string userCode)
     {
         var problem = await _appDbContext.Problems.Include(pr => pr.TestCases).FirstOrDefaultAsync(problem => problem.Id == problemId);
     
@@ -71,7 +71,7 @@ public class SubmissionController : ControllerBase
             ExpectedOutput = tc.ExpectedOutput
         }).ToList();
 
-        return new CompilationRequestDto
+        return new SubmissionRequestDTO
         {
             Code = userCode,
             MemoryLimitMb = problem.MemoryLimit,
@@ -80,9 +80,9 @@ public class SubmissionController : ControllerBase
         };
     }
 
-    private async Task<List<SubmissionResultDTO>> CallCompilationApi(CompilationRequestDto compilationRequest)
+    private async Task<List<SubmissionResultDTO>> CallCompilationApi(SubmissionRequestDTO submissionRequestDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("http://localhost:5144/compile", compilationRequest);
+        var response = await _httpClient.PostAsJsonAsync("http://localhost:5144/compile", submissionRequestDto);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -103,13 +103,13 @@ public class SubmissionController : ControllerBase
     }
 
 
-    private async Task ProcessCompilationResult(int problemId,ClaimsPrincipal user , string userCode, List<SubmissionResultDTO> results)
+    private async Task ProcessSubmissionResult(int problemId,ClaimsPrincipal user , string userCode, List<SubmissionResultDTO> results)
     {
 
         var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == problemId);
         
         //checks if there is unsuccessful test and returns it. if there is no unsuccessful tests - returns first
-        var checkForUnSuccessful = results.FirstOrDefault(r => r.Success == false);
+        var checkForUnSuccessful = results.FirstOrDefault(r => r.Success == false) ?? results.FirstOrDefault();
         
         var submission = new Submissions
         {
@@ -117,51 +117,16 @@ public class SubmissionController : ControllerBase
             Code = userCode,
             ProblemId = problemId,
             ProblemName = problem.Name,
-            Input = checkForUnSuccessful.Input,
-            ExpectedOutput = checkForUnSuccessful.ExpectedOutput,
-            Output = checkForUnSuccessful.Output,
-            UserId = user.Claims.First(u => u.Type == "Id").Value
+            Status = checkForUnSuccessful?.Status,
+            Input = checkForUnSuccessful?.Input,
+            ExpectedOutput = checkForUnSuccessful?.ExpectedOutput,
+            Output = checkForUnSuccessful?.Output,
+            UserId = user.Claims.First(u => u.Type == "Id").Value,
         };
 
         _appDbContext.Submissions.Add(submission);
         await _appDbContext.SaveChangesAsync();
 
     }
-
-
-    
-/*foreach (var result in results)
-{
-    if (!result.Success)
-    {
-        var submission = new Submissions
-        {
-            AuthUsername = user.Claims.First(u => u.Type == "UserName").Value,
-            Code = userCode,
-            ProblemId = problemId,
-            ProblemName = problem.Name,
-            Input = result.Input,
-            ExpectedOutput = result.ExpectedOutput,
-            Output = result.Output,
-            UserId = user.Claims.First(u => u.Type == "Id").Value
-        }; 
-        return;
-    }
-    else
-    {
-        var submission = new Submissions
-        {
-            AuthUsername = user.Claims.First(u => u.Type == "UserName").Value,
-            Code = userCode,
-            ProblemId = problemId,
-            ProblemName = problem.Name,
-            Input = result.Input,
-            ExpectedOutput = result.ExpectedOutput,
-            Output = result.Output,
-            UserId = user.Claims.First(u => u.Type == "Id").Value
-        }; 
-        return;
-                
-    }*/
     
 }

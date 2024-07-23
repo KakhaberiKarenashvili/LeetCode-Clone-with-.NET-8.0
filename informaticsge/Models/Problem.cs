@@ -11,9 +11,9 @@ public class Problem
     
     public string ProblemText { set; get; }
     
-    public string Tag { set; get; }
+    public string? Tag { set; get; }
     
-    public string Difficulty { set; get; }
+    public string? Difficulty { set; get; }
 
     public int RuntimeLimit { set; get; }
     

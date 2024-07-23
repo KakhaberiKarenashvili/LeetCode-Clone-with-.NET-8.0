@@ -40,12 +40,21 @@ public class ProblemsService
         return problem;
     }
 
-    public async Task<List<SubmissionsDTO>> GetSubmissions(int id)
+    public async Task<List<GetSubmissionsDTO>> GetSubmissions(int id)
     {
         
-        var solutions = await _appDbContext.Submissions.Where(solution => solution.ProblemId == id).ToListAsync();
+        var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == id).ToListAsync();
 
-        return new List<SubmissionsDTO>();
+
+        var getSubmissions = submissionsList.Select(submissions => new GetSubmissionsDTO
+        {
+            Id = submissions.Id,
+            AuthUsername = submissions.AuthUsername,
+            ProblemName = submissions.ProblemName,
+            Status = submissions.Status
+        }).ToList();
+        
+        return getSubmissions;
     }
     
     public async Task<string> AddProblem(AddProblemDto problemDto)
@@ -72,7 +81,7 @@ public class ProblemsService
         await _appDbContext.SaveChangesAsync();
         
 
-        return "problem added sucessfully";
+        return "problem added successfully";
     }
     
 }

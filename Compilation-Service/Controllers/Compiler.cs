@@ -34,7 +34,7 @@ public class Compiler : ControllerBase
                 Input = submissionRequestDto.testcases.First().Input,
                 ExpectedOutput = submissionRequestDto.testcases.First().ExpectedOutput,
                 Output = compile.Error,
-                Error = "Compilation Error"
+                Status = "Compilation Error"
             });
             
             return results;
@@ -93,7 +93,7 @@ public class Compiler : ControllerBase
                     results.Add(new SubmissionResponceDTO
                     {
                         Success = false,
-                        Error = "Memory limit exceeded."
+                        Status = "Memory limit exceeded."
                     });
 
                     // Cancel the memory monitoring task
@@ -106,7 +106,7 @@ public class Compiler : ControllerBase
                     results.Add(new SubmissionResponceDTO
                     {
                         Success = false,
-                        Error = "Time limit exceeded."
+                        Status = "Time limit exceeded."
                     }); 
                     // Cancel the memory monitoring task
                     memoryCancellationTokenSource.Cancel();
@@ -138,7 +138,7 @@ public class Compiler : ControllerBase
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
-                                Error = "Output does not match expected output."
+                                Status = "Output does not match expected output."
                             });
                         }
                     }
@@ -150,7 +150,7 @@ public class Compiler : ControllerBase
                             Input = testCase.Input,
                             ExpectedOutput = testCase.ExpectedOutput,
                             Output = error,
-                            Error = "Output does not match expected output."
+                            Status = "Output does not match expected output."
                         });
                     }
                     

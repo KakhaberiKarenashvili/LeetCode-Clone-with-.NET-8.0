@@ -1,5 +1,6 @@
 ﻿using informaticsge.Dto;
 using informaticsge.models;
+using informaticsge.Models;
 using informaticsge.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +36,7 @@ public class ProblemsController : ControllerBase
     }
 
     [HttpGet("/problems/{id}/submissions")]
-    public async Task<List<SubmissionsDTO>> GetSubmissions(int id)
+    public async Task<List<GetSubmissionsDTO>> GetSubmissions(int id)
     {
         return await _problemsService.GetSubmissions(id);
     }

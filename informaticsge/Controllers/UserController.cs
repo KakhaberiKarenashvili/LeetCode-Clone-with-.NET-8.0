@@ -42,9 +42,9 @@ public class UserController : ControllerBase
         return  user;
     }
 
-    [HttpGet("/mysolutions")]
+    [HttpGet("/submissions")]
     [Authorize]
-    public async Task<IActionResult> MySolutions()
+    public async Task<IActionResult> MySubmissions()
     {
         try
         {

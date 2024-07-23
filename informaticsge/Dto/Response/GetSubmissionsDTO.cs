@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto;
 
-public class SubmissionsDTO
+public class GetSubmissionsDTO
 {
     public int Id { get; set; }
     
@@ -8,6 +8,6 @@ public class SubmissionsDTO
     
     public string ProblemName { get; set; }
     
-    public bool Success { get; set; }
+    public string? Status { get; set; }
     
 }

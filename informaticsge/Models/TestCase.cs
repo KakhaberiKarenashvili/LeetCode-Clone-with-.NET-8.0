@@ -11,9 +11,7 @@ public class TestCase
 
     public string ExpectedOutput { get; set; }
     
-    // Foreign key to link to the Problem table
     public int ProblemId { get; set; }
-
-    // Navigation property
+    
     public Problem Problem { get; set; }
 }

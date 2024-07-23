@@ -32,11 +32,19 @@ public class UserService
     }
 
 
-    public async Task<List<Submissions>> MySubmissions(string userId)
+    public async Task<List<GetSubmissionsDTO>> MySubmissions(string userId)
     {
         var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
+        
+        var getSubmissions = submissions.Select(sub => new GetSubmissionsDTO
+        {
+            Id = sub.Id,
+            AuthUsername = sub.AuthUsername,
+            ProblemName = sub.ProblemName,
+            Status = sub.Status
+        }).ToList();
 
-        return submissions;
+        return getSubmissions;
     }
     
 }

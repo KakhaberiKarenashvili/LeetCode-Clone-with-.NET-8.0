@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.models;
 
-public class CompilationRequestDto
+public class SubmissionRequestDTO
 {
     public string Code { set; get; }
 
