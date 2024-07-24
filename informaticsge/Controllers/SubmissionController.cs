@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using informaticsge.Dto;
-using informaticsge.entity;
+using informaticsge.Dto.Response;
+using informaticsge.Entity;
 using informaticsge.models;
 using informaticsge.Models;
 using informaticsge.Services;
@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Logging;
+
 
 namespace informaticsge.Controllers;
 
@@ -18,11 +17,11 @@ namespace informaticsge.Controllers;
 [ApiController]
 public class SubmissionController : ControllerBase
 {
-    private readonly AppDBContext _appDbContext;
+    private readonly AppDbContext _appDbContext;
     private readonly HttpClient _httpClient;
     private readonly UserManager<User> _userManager;
 
-    public SubmissionController(AppDBContext appDbContext, HttpClient httpClient, UserService userService, UserManager<User> userManager)
+    public SubmissionController(AppDbContext appDbContext, HttpClient httpClient, UserService userService, UserManager<User> userManager)
     {
         _appDbContext = appDbContext;
         _httpClient = httpClient;
@@ -61,7 +60,7 @@ public class SubmissionController : ControllerBase
 
 
 
-    private async Task<SubmissionRequestDTO> PrepareSubmissionRequest(int problemId, string userCode)
+    private async Task<SubmissionRequestDto> PrepareSubmissionRequest(int problemId, string userCode)
     {
         var problem = await _appDbContext.Problems.Include(pr => pr.TestCases).FirstOrDefaultAsync(problem => problem.Id == problemId);
     
@@ -71,7 +70,7 @@ public class SubmissionController : ControllerBase
             ExpectedOutput = tc.ExpectedOutput
         }).ToList();
 
-        return new SubmissionRequestDTO
+        return new SubmissionRequestDto
         {
             Code = userCode,
             MemoryLimitMb = problem.MemoryLimit,
@@ -80,7 +79,7 @@ public class SubmissionController : ControllerBase
         };
     }
 
-    private async Task<List<SubmissionResultDTO>> CallCompilationApi(SubmissionRequestDTO submissionRequestDto)
+    private async Task<List<SubmissionResultDto>> CallCompilationApi(SubmissionRequestDto submissionRequestDto)
     {
         var response = await _httpClient.PostAsJsonAsync("http://localhost:5144/compile", submissionRequestDto);
 
@@ -91,7 +90,7 @@ public class SubmissionController : ControllerBase
         }
 
         var content = await response.Content.ReadAsStringAsync();
-        var compilationResponse = JsonConvert.DeserializeObject<List<SubmissionResultDTO>>(content);
+        var compilationResponse = JsonConvert.DeserializeObject<List<SubmissionResultDto>>(content);
         
         if (compilationResponse == null)
         {
@@ -103,7 +102,7 @@ public class SubmissionController : ControllerBase
     }
 
 
-    private async Task ProcessSubmissionResult(int problemId,ClaimsPrincipal user , string userCode, List<SubmissionResultDTO> results)
+    private async Task ProcessSubmissionResult(int problemId,ClaimsPrincipal user , string userCode, List<SubmissionResultDto> results)
     {
 
         var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == problemId);

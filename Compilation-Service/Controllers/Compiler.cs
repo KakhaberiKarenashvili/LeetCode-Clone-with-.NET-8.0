@@ -1,53 +1,57 @@
 ﻿using System.Diagnostics;
-using System.IO;
-using System.Text;
-using informaticsge.models;
+using Compilation_Service.Dto.Request;
+using Compilation_Service.Dto.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace informaticsge.Controllers;
+namespace Compilation_Service.Controllers;
 
 [Route("/api/[controller]")]
 [ApiController]
 public class Compiler : ControllerBase
 {
     [HttpPost("/compile")]
-    public async Task<List<SubmissionResponceDTO>?> CompileAndRunCppCodeAsync(SubmissionRequestDTO submissionRequestDto)
+    public async Task<List<SubmissionResponseDto>?> CompileAndRunCppCodeAsync(SubmissionRequestDto submissionRequestDto)
     {
-        List<SubmissionResponceDTO> results = new List<SubmissionResponceDTO>();
-        
-        var fileId = Guid.NewGuid();
-        var cppFileName = $"temp_{fileId}.cpp";
-        var exeFileName = $"temp_{fileId}";
-        
-        var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
+        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
 
-        if (compile.Success)
+        var fileId = Guid.NewGuid();
+        var cppFileName = $"cpp-file_{fileId}.cpp";
+        var exeFileName = $"cpp-file_{fileId}";
+
+        try
         {
-            var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
-            return execute;
-        }
-        else
-        {
-            results.Add(new SubmissionResponceDTO
+            var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
+
+            if (compile.Success)
             {
-                Success = false,
-                Input = submissionRequestDto.testcases.First().Input,
-                ExpectedOutput = submissionRequestDto.testcases.First().ExpectedOutput,
-                Output = compile.Error,
-                Status = "Compilation Error"
-            });
-            
-            return results;
+                var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
+                return execute;
+            }
+            else
+            {
+                results.Add(new SubmissionResponseDto
+                {
+                    Success = false,
+                    Input = submissionRequestDto.Testcases.First().Input,
+                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput,
+                    Output = compile.Error,
+                    Status = "Compilation Error"
+                });
+                return results;
+            }
         }
-        
+        finally
+        {
+            CleanupTemporaryFiles(cppFileName, exeFileName);
+        }
     }
-    
-    private async Task<List<SubmissionResponceDTO>> ExecuteCppCode(string? exefilepath, SubmissionRequestDTO submissionRequestDto)
+
+    private async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
     {
-        List<SubmissionResponceDTO> results = new List<SubmissionResponceDTO>();
-        
-        
-        foreach (var testCase in submissionRequestDto.testcases)
+        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+
+
+        foreach (var testCase in submissionRequestDto.Testcases)
         {
             // Create a cancellation token source for monitoring memory usage and timeout
             CancellationTokenSource memoryCancellationTokenSource = new CancellationTokenSource();
@@ -56,7 +60,7 @@ public class Compiler : ControllerBase
             // Execute the C++ code file using the command prompt
             var processInfo = new ProcessStartInfo
             {
-                FileName = $"{exefilepath}",
+                FileName = $"{exeFileName}",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -68,7 +72,7 @@ public class Compiler : ControllerBase
                     ["TIME_LIMIT_MS"] = submissionRequestDto.TimeLimitMs.ToString()
                 }
             };
-           
+
             using (var process = new Process())
             {
                 process.StartInfo = processInfo;
@@ -79,10 +83,11 @@ public class Compiler : ControllerBase
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
+                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb,
+                    memoryCancellationTokenSource.Token);
                 Task timeoutTask = Task.Delay(submissionRequestDto.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
-                
+
                 // Wait for either the process to exit, memory limit exceeded, or timeout
                 Task completedTask = await Task.WhenAny(process.WaitForExitAsync(), monitorMemoryTask, timeoutTask);
 
@@ -90,7 +95,7 @@ public class Compiler : ControllerBase
                 {
                     // If the memory limit is exceeded, terminate the process
                     process.Kill();
-                    results.Add(new SubmissionResponceDTO
+                    results.Add(new SubmissionResponseDto
                     {
                         Success = false,
                         Status = "Memory limit exceeded."
@@ -103,36 +108,37 @@ public class Compiler : ControllerBase
                 {
                     // If the timeout is reached, terminate the process
                     process.Kill();
-                    results.Add(new SubmissionResponceDTO
+                    results.Add(new SubmissionResponseDto
                     {
                         Success = false,
                         Status = "Time limit exceeded."
-                    }); 
+                    });
                     // Cancel the memory monitoring task
                     memoryCancellationTokenSource.Cancel();
                 }
-                 
+
                 //in case there is not problem with memory or timeout
                 else
                 {
                     var output = process.StandardOutput.ReadToEndAsync(timeoutCancellationTokenSource.Token).Result;
                     var error = process.StandardError.ReadToEndAsync(timeoutCancellationTokenSource.Token).Result;
-                    
+
                     if (string.IsNullOrEmpty(error))
                     {
                         if (output.Trim() == testCase.ExpectedOutput?.Trim())
                         {
-                            results.Add(new SubmissionResponceDTO
+                            results.Add(new SubmissionResponseDto
                             {
                                 Success = true,
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
-                                Output = output
+                                Output = output,
+                                Status = "Successful"
                             });
                         }
                         else
                         {
-                            results.Add(new SubmissionResponceDTO
+                            results.Add(new SubmissionResponseDto
                             {
                                 Success = false,
                                 Input = testCase.Input,
@@ -144,7 +150,7 @@ public class Compiler : ControllerBase
                     }
                     else
                     {
-                        results.Add(new SubmissionResponceDTO
+                        results.Add(new SubmissionResponseDto
                         {
                             Success = false,
                             Input = testCase.Input,
@@ -153,22 +159,23 @@ public class Compiler : ControllerBase
                             Status = "Output does not match expected output."
                         });
                     }
-                    
+
                 }
             }
         }
+
         return results;
     }
-    
-    private async Task<CompilationResultDTO> CompileCppCode(string code, string cppFileName, string? exeFileName)
+
+    private async Task<CompilationResultDto> CompileCppCode(string code, string cppFileName, string? exeFileName)
     {
-        
+
         await System.IO.File.WriteAllTextAsync(cppFileName, code);
-        
+
         var processInfo = new ProcessStartInfo
         {
             FileName = "g++",
-            Arguments =$"{cppFileName} -o {exeFileName}",
+            Arguments = $"{cppFileName} -o {exeFileName}",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -180,13 +187,13 @@ public class Compiler : ControllerBase
             process.StartInfo = processInfo;
             process.Start();
 
-             await process.WaitForExitAsync();
-            
+            await process.WaitForExitAsync();
+
             var error = process.StandardError.ReadToEndAsync().Result;
 
             if (string.IsNullOrEmpty(error))
             {
-                return new CompilationResultDTO()
+                return new CompilationResultDto()
                 {
                     Success = true,
                     Error = error,
@@ -194,7 +201,7 @@ public class Compiler : ControllerBase
             }
             else
             {
-                return new CompilationResultDTO()
+                return new CompilationResultDto()
                 {
                     Success = false,
                     Error = error,
@@ -202,8 +209,8 @@ public class Compiler : ControllerBase
             }
         }
     }
-    
-//santas little helper monitors memory use by cpp code 
+
+
     private async Task MonitorMemoryUsage(Process process, int memoryLimitMb, CancellationToken cancellationToken)
     {
         while (!process.HasExited && !cancellationToken.IsCancellationRequested)
@@ -212,7 +219,7 @@ public class Compiler : ControllerBase
             {
                 Console.WriteLine("memory allocated " + process.PeakWorkingSet64);
                 Console.WriteLine("memory limit " + (memoryLimitMb * 1024 * 1024));
-                
+
                 if (process.WorkingSet64 > memoryLimitMb * 1024 * 1024)
                 {
                     process.Kill();
@@ -228,6 +235,19 @@ public class Compiler : ControllerBase
             await Task.Delay(100, cancellationToken);
         }
     }
+
+    
+    private void CleanupTemporaryFiles(string cppFileName, string exeFileName)
+    {
+        if (System.IO.File.Exists(cppFileName))
+        {
+            System.IO.File.Delete(cppFileName);
+        }
+
+        if (System.IO.File.Exists(exeFileName))
+        {
+            System.IO.File.Delete(exeFileName);
+        }
+    }
+
 }
-
-

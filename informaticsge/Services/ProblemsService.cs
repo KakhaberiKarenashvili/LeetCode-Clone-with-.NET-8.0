@@ -1,22 +1,21 @@
-﻿using informaticsge.Dto;
-using informaticsge.entity;
-using informaticsge.models;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using informaticsge.Dto.Request;
+using informaticsge.Dto.Response;
+using informaticsge.Entity;
 using informaticsge.Models;
 
 namespace informaticsge.Services;
 
 public class ProblemsService
 {
-    private readonly AppDBContext _appDbContext;
+    private readonly AppDbContext _appDbContext;
 
-    public ProblemsService(AppDBContext appDbContext)
+    public ProblemsService(AppDbContext appDbContext)
     {
         _appDbContext = appDbContext;
     }
 
-    public async Task<List<Problem>> GetAllProblems(int page)
+    public async Task<List<GetProblemsResponseDto>> GetAllProblems(int page)
     {
         //as there can be many problems i will enable pagination 
 
@@ -26,8 +25,15 @@ public class ProblemsService
             .Skip(skip)
             .Take(50)
             .ToListAsync();
+
+        var problemlist = data.Select(d => new GetProblemsResponseDto
+        {
+            Id = d.Id,
+            Name = d.Name,
+            Tag = d.Tag
+        }).ToList();
         
-        return data;
+        return problemlist;
     }
 
     
@@ -40,13 +46,13 @@ public class ProblemsService
         return problem;
     }
 
-    public async Task<List<GetSubmissionsDTO>> GetSubmissions(int id)
+    public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int id)
     {
         
         var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == id).ToListAsync();
 
 
-        var getSubmissions = submissionsList.Select(submissions => new GetSubmissionsDTO
+        var getSubmissions = submissionsList.Select(submissions => new GetSubmissionsResponseDto
         {
             Id = submissions.Id,
             AuthUsername = submissions.AuthUsername,

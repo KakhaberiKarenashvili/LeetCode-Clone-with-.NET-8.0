@@ -2,10 +2,10 @@ using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using informaticsge.Controllers;
-using informaticsge.entity;
+using informaticsge.Entity;
 using informaticsge.JWT;
-using informaticsge.models;
-using informaticsge.modules;
+using informaticsge.Models;
+using informaticsge.Modules;
 using informaticsge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Dbcontext
-builder.Services.AddDbContext<AppDBContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection")));
 
 //to be able to inject JWTService into our controler
@@ -38,7 +38,7 @@ builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
 builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<AppDBContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager<SignInManager<User>>()
     .AddUserManager<UserManager<User>>()
     .AddDefaultTokenProviders();

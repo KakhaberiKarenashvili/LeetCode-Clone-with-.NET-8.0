@@ -1,6 +1,6 @@
-﻿namespace informaticsge.models;
+﻿namespace Compilation_Service.Dto.Request;
 
-public class SubmissionRequestDTO
+public class SubmissionRequestDto
 {
     public string Code { set; get; }
 
@@ -8,5 +8,5 @@ public class SubmissionRequestDTO
     
     public int TimeLimitMs { set; get; }
     
-    public List<TestCaseDto>? Testcases { set; get; }
+    public List<TestCaseDto> Testcases { set; get; }
 }

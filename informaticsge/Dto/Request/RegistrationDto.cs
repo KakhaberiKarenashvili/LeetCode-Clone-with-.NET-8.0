@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace informaticsge.Dto;
+namespace informaticsge.Dto.Request;
 
 public class RegistrationDto
 {

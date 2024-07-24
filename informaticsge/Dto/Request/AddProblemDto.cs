@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using informaticsge.models;
 
-namespace informaticsge.Dto;
+namespace informaticsge.Dto.Request;
 
 public class AddProblemDto
 { 

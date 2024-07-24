@@ -1,6 +1,6 @@
-﻿namespace informaticsge.models;
+﻿namespace Compilation_Service.Dto.Request;
 
-public class TestCaseDTO
+public abstract class TestCaseDto
 {
     
     public string? Input { get; set; }

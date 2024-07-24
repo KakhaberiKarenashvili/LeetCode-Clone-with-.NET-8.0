@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace informaticsge.models;
+namespace informaticsge.Models;
 
 public class TestCase
 {

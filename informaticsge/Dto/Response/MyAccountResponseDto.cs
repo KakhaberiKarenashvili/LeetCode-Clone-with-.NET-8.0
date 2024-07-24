@@ -1,6 +1,6 @@
-﻿namespace informaticsge.Dto;
+﻿namespace informaticsge.Dto.Response;
 
-public class MyAccountDto
+public class MyAccountResponseDto
 {
     public string Username { set; get; }
     

@@ -1,7 +1,6 @@
-﻿using informaticsge.models;
-using informaticsge.Dto;
+﻿using informaticsge.Dto;
+using informaticsge.Dto.Request;
 using informaticsge.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace informaticsge.Controllers;
@@ -36,7 +35,6 @@ public class AccountController : ControllerBase
     [HttpPost("/login")]
     public async Task<IActionResult> Login([FromBody]UserLoginDto userLogin)
     {
-        Console.WriteLine(userLogin);
         try
         {
             var login = await _accountService.Login(userLogin);

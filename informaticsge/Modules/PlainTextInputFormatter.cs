@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
-namespace informaticsge.modules;
+namespace informaticsge.Modules;
 
 public class PlainTextInputFormatter : TextInputFormatter
 {

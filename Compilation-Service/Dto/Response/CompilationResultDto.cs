@@ -1,6 +1,6 @@
-﻿namespace informaticsge.models;
+﻿namespace Compilation_Service.Dto.Response;
 
-public class CompilationResultDTO
+public class CompilationResultDto
 {
     public bool Success { get; set; }
     public string? Error { get; set; }

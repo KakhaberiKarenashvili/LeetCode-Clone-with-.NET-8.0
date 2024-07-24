@@ -1,16 +1,13 @@
-﻿using System.Configuration;
-using informaticsge.models;
-using informaticsge.Models;
+﻿using informaticsge.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace informaticsge.entity;
+namespace informaticsge.Entity;
 
-public class AppDBContext : IdentityDbContext<User>
+public class AppDbContext : IdentityDbContext<User>
 
 {
-    public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
         
     }

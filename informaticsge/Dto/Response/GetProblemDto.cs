@@ -1,4 +1,4 @@
-﻿namespace informaticsge.Dto;
+﻿namespace informaticsge.Dto.Response;
 
 public class GetProblemDto
 {

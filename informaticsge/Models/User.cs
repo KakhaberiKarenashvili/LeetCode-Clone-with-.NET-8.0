@@ -2,7 +2,7 @@
 using informaticsge.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace informaticsge.models;
+namespace informaticsge.Models;
 
 public class User : IdentityUser
 {

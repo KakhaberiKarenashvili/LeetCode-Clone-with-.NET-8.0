@@ -1,23 +1,21 @@
-﻿
-using informaticsge.Dto;
-using informaticsge.entity;
+﻿using informaticsge.Dto;
+using informaticsge.Dto.Request;
+using informaticsge.Entity;
 using informaticsge.JWT;
-using informaticsge.models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using informaticsge.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace informaticsge.Services;
 
 public class AccountService
 {
-    private AppDBContext _appDbContext;
+    private AppDbContext _appDbContext;
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly JWTService _jwtService;
 
-    public AccountService(AppDBContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, JWTService jwtService)
+    public AccountService(AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, JWTService jwtService)
     {
         _appDbContext = appDbContext;
         _signInManager = signInManager;
@@ -91,7 +89,7 @@ public class AccountService
       return true;
     }
     
-//i could do it more fancy way but it works sooo... rule 1
+//i could do it more fancy way but it works sooo... 
     private async Task<bool> CheckUsernameExists(string username)
     {
         var result = await _userManager.FindByNameAsync(username);

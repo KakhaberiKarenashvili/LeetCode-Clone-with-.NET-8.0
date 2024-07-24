@@ -1,6 +1,5 @@
-﻿using informaticsge.Dto;
-using informaticsge.models;
-using informaticsge.Models;
+﻿using informaticsge.Dto.Request;
+using informaticsge.Dto.Response;
 using informaticsge.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,15 +17,19 @@ public class ProblemsController : ControllerBase
     }
     
     [HttpGet("/problems")]
-    public async Task<List<Problem>> GetProblems(int pagenumber)
+    public async Task<IActionResult> GetProblems(int pagenumber)
     {
-        return await _problemsService.GetAllProblems(pagenumber);
+        var problems =  await _problemsService.GetAllProblems(pagenumber);
+
+        return Ok(problems);
     }
 
     [HttpGet("/problems/{id}")]
-    public async Task<Problem> GetProblem(int id)
+    public async Task<IActionResult> GetProblem(int id)
     {
-        return await _problemsService.GetProblem(id);
+        var problem = await _problemsService.GetProblem(id);
+        
+        return Ok(problem);
     }
 
     [HttpPost("/add-problem")]
@@ -36,7 +39,7 @@ public class ProblemsController : ControllerBase
     }
 
     [HttpGet("/problems/{id}/submissions")]
-    public async Task<List<GetSubmissionsDTO>> GetSubmissions(int id)
+    public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int id)
     {
         return await _problemsService.GetSubmissions(id);
     }

@@ -1,5 +1,4 @@
-﻿using informaticsge.Dto;
-using informaticsge.models;
+﻿using informaticsge.Models;
 using informaticsge.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,26 +19,15 @@ public class UserController : ControllerBase
         _userManager = userManager;
         _userService = userService;
     }
-
-    [HttpGet("/hello")]
-    [Authorize]
-    public async Task<User> Hello()
-    {
-        
-        var userid = User.Claims.First(user => user.Type == "Email");
-        var test = userid.Value;
-        var user = await _userManager.FindByEmailAsync(test);
-        Console.WriteLine(test);
-        return user;
-    }
+    
     
     [HttpGet("/myaccount")]
     [Authorize]
-    public async Task<MyAccountDto> MyAccount()
+    public async Task<IActionResult> MyAccount()
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
         var user = await _userService.MyAccount(userid);
-        return  user;
+        return  Ok(user);
     }
 
     [HttpGet("/submissions")]
