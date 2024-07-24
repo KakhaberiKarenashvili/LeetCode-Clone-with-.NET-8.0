@@ -33,8 +33,7 @@ public class SubmissionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Submit(int problemId, [FromBody]string userCode)
     {
-        try
-        {
+       
             var submissionRequest = await PrepareSubmissionRequest(problemId, userCode);
             var submissionResponse = await CallCompilationApi(submissionRequest); 
             
@@ -42,20 +41,6 @@ public class SubmissionController : ControllerBase
             
             return Ok(submissionResponse);
             
-        }
-        catch (HttpRequestException ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
-        catch (JsonSerializationException ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
-        }
     }
 
 

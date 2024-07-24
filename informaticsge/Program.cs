@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using informaticsge.Controllers;
 using informaticsge.Entity;
 using informaticsge.JWT;
+using informaticsge.Middlewares;
 using informaticsge.Models;
 using informaticsge.Modules;
 using informaticsge.Services;
@@ -73,6 +74,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

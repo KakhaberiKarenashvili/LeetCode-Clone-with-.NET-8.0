@@ -20,30 +20,18 @@ public class AccountController : ControllerBase
     [HttpPost("/regiser")]
     public async Task<IActionResult> Register([FromBody]RegistrationDto newuser)
     {
-        try
-        {
             var register = await _accountService.Register(newuser);
 
             return Ok(register);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex);
-        }
     }
 
     [HttpPost("/login")]
     public async Task<IActionResult> Login([FromBody]UserLoginDto userLogin)
-    {
-        try
-        {
-            var login = await _accountService.Login(userLogin);
-            return Ok(login);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex);
-        }
+    { 
+        var login = await _accountService.Login(userLogin);
+        
+        return Ok(login);
+            
     }
 
 }

@@ -30,7 +30,8 @@ public class ProblemsService
         {
             Id = d.Id,
             Name = d.Name,
-            Tag = d.Tag
+            Tag = d.Tag,
+            Difficulty = d.Difficulty
         }).ToList();
         
         return problemlist;

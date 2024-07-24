@@ -20,13 +20,13 @@ public class UserController : ControllerBase
         _userService = userService;
     }
     
-    
     [HttpGet("/myaccount")]
     [Authorize]
     public async Task<IActionResult> MyAccount()
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
         var user = await _userService.MyAccount(userid);
+      
         return  Ok(user);
     }
 
@@ -34,16 +34,10 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> MySubmissions()
     {
-        try
-        {
             var userid = User.Claims.First(user => user.Type == "Id").Value;
             var solutions = await _userService.MySubmissions(userid);
 
             return Ok(solutions);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
     }
 }

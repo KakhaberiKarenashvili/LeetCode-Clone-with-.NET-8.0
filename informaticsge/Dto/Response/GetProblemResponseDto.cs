@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto.Response;
 
-public class GetProblemDto
+public class GetProblemResponseDto
 {
     public int Id { set; get; }
     

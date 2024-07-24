@@ -33,15 +33,19 @@ public class ProblemsController : ControllerBase
     }
 
     [HttpPost("/add-problem")]
-    public async Task<string> AddProblem(AddProblemDto problem)
+    public async Task<IActionResult> AddProblem(AddProblemDto problem)
     {
-        return await _problemsService.AddProblem(problem);
+        var addProblem=  await _problemsService.AddProblem(problem);
+
+        return Ok(addProblem);
     }
 
     [HttpGet("/problems/{id}/submissions")]
-    public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int id)
+    public async Task<IActionResult> GetSubmissions(int id)
     {
-        return await _problemsService.GetSubmissions(id);
+        var submissions = await _problemsService.GetSubmissions(id);
+
+        return Ok(submissions);
     }
     
     

@@ -7,4 +7,6 @@ public class GetProblemsResponseDto
     public string Name { set; get; }
     
     public string? Tag { set; get; }
+    
+    public string? Difficulty { set; get; }
 }
