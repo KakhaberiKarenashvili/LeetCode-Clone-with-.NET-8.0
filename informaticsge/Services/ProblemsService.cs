@@ -38,13 +38,27 @@ public class ProblemsService
     }
 
     
-    public async Task<Problem> GetProblem(int id)
+    public async Task<GetProblemResponseDto> GetProblem(int id)
     {
-        var problem = await _appDbContext.Problems
+       var problem = await _appDbContext.Problems
             .Include(p => p.TestCases)
-            .FirstOrDefaultAsync(p => p.Id == id) ?? new Problem();
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+       var exampleTestCase = problem?.TestCases.First();
+
+       var problemResponse = new GetProblemResponseDto
+       {
+           Id = problem.Id,
+           Name = problem.Name,
+           ProblemText = problem.ProblemText,
+           Tag = problem.Tag,
+           Timelimit = problem.RuntimeLimit,
+           MemoryLimit = problem.MemoryLimit,
+           ExampleInput = exampleTestCase?.Input,
+           ExampleOutput = exampleTestCase?.ExpectedOutput
+       };
         
-        return problem;
+        return problemResponse;
     }
 
     public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int id)
@@ -71,7 +85,7 @@ public class ProblemsService
         {
         
             Name = problemDto.Name,
-            ProblemText = problemDto.Problem,
+            ProblemText = problemDto.ProblemText,
             Tag = problemDto.Tag,
             Difficulty = problemDto.Difficulty,
             RuntimeLimit = problemDto.RuntimeLimit,
@@ -90,5 +104,31 @@ public class ProblemsService
 
         return "problem added successfully";
     }
+
+    public async Task<string> EditProblem(int id, AddProblemDto editProblemDto)
+    {
+        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == id);
+        
+        if (problem == null)
+        {
+            throw new Exception("Problem not found");
+        }
+        
+        problem.Name = editProblemDto.Name;
+        problem.ProblemText = editProblemDto.ProblemText;
+        problem.Tag = editProblemDto.Tag;
+        problem.RuntimeLimit = editProblemDto.RuntimeLimit;
+        problem.MemoryLimit = editProblemDto.MemoryLimit;
+        problem.TestCases = editProblemDto.TestCases?.Select(tc => new TestCase
+        {
+            Input = tc.Input,
+            ExpectedOutput = tc.ExpectedOutput
+        }).ToList() ?? new List<TestCase>();
+        
+        await _appDbContext.SaveChangesAsync();
+
+        return "Problem Edited Successfully";
+    }
+
     
 }

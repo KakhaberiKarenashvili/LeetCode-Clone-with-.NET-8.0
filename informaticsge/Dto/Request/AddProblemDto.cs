@@ -6,10 +6,11 @@ namespace informaticsge.Dto.Request;
 public class AddProblemDto
 { 
         [Required]
+        [MinLength(2)]
         public string Name { get; set; }
 
         [Required]
-        public string Problem { get; set; }
+        public string ProblemText { get; set; }
         
         [Required]
         public string Tag { get; set; }

@@ -19,10 +19,12 @@ public class AccountController : ControllerBase
 
     [HttpPost("/regiser")]
     public async Task<IActionResult> Register([FromBody]RegistrationDto newuser)
-    {
-            var register = await _accountService.Register(newuser);
+    { 
+        
+        var register = await _accountService.Register(newuser);
 
             return Ok(register);
+            
     }
 
     [HttpPost("/login")]

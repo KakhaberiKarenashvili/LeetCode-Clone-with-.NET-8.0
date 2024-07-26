@@ -32,7 +32,7 @@ public class JWTService
         var sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
             _config["Jwt:Issuer"],
             userClaims,
-            expires: DateTime.Now.AddMinutes(120),
+            expires: DateTime.Now.AddDays(7),
             signingCredentials: credentials);
         
         var token = new JwtSecurityTokenHandler().WriteToken(sectoken);

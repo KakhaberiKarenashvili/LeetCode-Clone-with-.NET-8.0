@@ -1,8 +1,6 @@
-using System.Configuration;
 using System.Text;
-using System.Text.Json.Serialization;
-using informaticsge.Controllers;
 using informaticsge.Entity;
+using informaticsge.Filters;
 using informaticsge.JWT;
 using informaticsge.Middlewares;
 using informaticsge.Models;
@@ -17,10 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers(options => 
-    options.InputFormatters.Insert(0,new PlainTextInputFormatter()))
+builder.Services.AddControllers(options =>
+    {
+        options.InputFormatters.Insert(0, new PlainTextInputFormatter());
+        options.Filters.Add<ModelValidationActionFilter>();
+    })
     .AddJsonOptions(options => 
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

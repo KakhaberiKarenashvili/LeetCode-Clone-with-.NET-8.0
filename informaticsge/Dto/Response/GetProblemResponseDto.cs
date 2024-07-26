@@ -10,9 +10,9 @@ public class GetProblemResponseDto
     
     public string Tag { set; get; }
     
-    public string Timelimit { set; get; }
+    public int Timelimit { set; get; }
     
-    public string MemoryLimit { set; get; }
+    public int MemoryLimit { set; get; }
     
     public string ExampleInput { set; get; }
     

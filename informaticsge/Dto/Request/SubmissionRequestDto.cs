@@ -1,4 +1,6 @@
-﻿namespace informaticsge.models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace informaticsge.models;
 
 public class SubmissionRequestDto
 {

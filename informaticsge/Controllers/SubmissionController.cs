@@ -20,12 +20,14 @@ public class SubmissionController : ControllerBase
     private readonly AppDbContext _appDbContext;
     private readonly HttpClient _httpClient;
     private readonly UserManager<User> _userManager;
+    private readonly ILogger<SubmissionController> _logger;
 
-    public SubmissionController(AppDbContext appDbContext, HttpClient httpClient, UserService userService, UserManager<User> userManager)
+    public SubmissionController(AppDbContext appDbContext, HttpClient httpClient, UserService userService, UserManager<User> userManager, ILogger<SubmissionController> logger)
     {
         _appDbContext = appDbContext;
         _httpClient = httpClient;
         _userManager = userManager;
+        _logger = logger;
     }
     
 
@@ -33,83 +35,137 @@ public class SubmissionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Submit(int problemId, [FromBody]string userCode)
     {
-       
-            var submissionRequest = await PrepareSubmissionRequest(problemId, userCode);
-            var submissionResponse = await CallCompilationApi(submissionRequest); 
-            
-            await ProcessSubmissionResult(problemId, User, userCode, submissionResponse);
-            
-            return Ok(submissionResponse);
-            
+        var username = User.Claims.First(u => u.Type == "UserName").Value;
+        
+            _logger.LogInformation("Received submission request for problem Id: {ProblemId} from User: {Username}. Code: {UserCode}",
+            problemId, username, userCode);
+
+            try
+            {
+                var submissionRequest = await PrepareSubmissionRequest(problemId, userCode);
+
+                var submissionResponse = await CallCompilationApi(submissionRequest);
+
+                await ProcessSubmissionResult(problemId, User, userCode, submissionResponse);
+
+                return Ok(submissionResponse);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError( "submission request for problem Id: {ProblemId} from User: {Username} failed. ",problemId,username);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
     }
 
 
 
     private async Task<SubmissionRequestDto> PrepareSubmissionRequest(int problemId, string userCode)
     {
-        var problem = await _appDbContext.Problems.Include(pr => pr.TestCases).FirstOrDefaultAsync(problem => problem.Id == problemId);
-    
-        var testCaseDtos = problem.TestCases.Select(tc => new TestCaseDto
-        {
-            Input = tc.Input,
-            ExpectedOutput = tc.ExpectedOutput
-        }).ToList();
+        _logger.LogInformation("preparing submission Request");
 
-        return new SubmissionRequestDto
+        try
         {
-            Code = userCode,
-            MemoryLimitMb = problem.MemoryLimit,
-            TimeLimitMs = problem.RuntimeLimit,
-            Testcases = testCaseDtos
-        };
+
+            var problem = await _appDbContext.Problems.Include(pr => pr.TestCases)
+                .FirstOrDefaultAsync(problem => problem.Id == problemId);
+
+            if (problem == null)
+            {
+                _logger.LogWarning("Problem with Id {id} not found", problemId);
+
+                throw new InvalidOperationException("problem not found");
+            }
+
+            var testCaseDtos = problem.TestCases.Select(tc => new TestCaseDto
+            {
+                Input = tc.Input,
+                ExpectedOutput = tc.ExpectedOutput
+            }).ToList();
+
+            return new SubmissionRequestDto
+            {
+                Code = userCode,
+                MemoryLimitMb = problem.MemoryLimit,
+                TimeLimitMs = problem.RuntimeLimit,
+                Testcases = testCaseDtos
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error preparing submission request for problem {id}.",problemId);
+            throw;
+        }
+
     }
 
     private async Task<List<SubmissionResultDto>> CallCompilationApi(SubmissionRequestDto submissionRequestDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("http://localhost:5144/compile", submissionRequestDto);
-
-        if (!response.IsSuccessStatusCode)
+        _logger.LogInformation("calling compilation-API");
+     
+        try
         {
-            Console.WriteLine($"API call failed with status code: {response.StatusCode}");
-            throw new HttpRequestException($"API call failed with status code: {response.StatusCode}");
+            var response = await _httpClient.PostAsJsonAsync("http://localhost:5144/compile", submissionRequestDto);
+            
+            var content = await response.Content.ReadAsStringAsync();
+            var compilationResponse = JsonConvert.DeserializeObject<List<SubmissionResultDto>>(content);
+            
+            if (compilationResponse == null)
+            { 
+                _logger.LogError("Failed to deserialize API response");
+                
+                throw new JsonSerializationException("Failed to deserialize API response");
+            }
+            return compilationResponse;
         }
-
-        var content = await response.Content.ReadAsStringAsync();
-        var compilationResponse = JsonConvert.DeserializeObject<List<SubmissionResultDto>>(content);
-        
-        if (compilationResponse == null)
+        catch (Exception ex)
         {
-            Console.WriteLine("Failed to deserialize API response");
-            throw new JsonSerializationException("Failed to deserialize API response");
+            _logger.LogCritical( ex.Message);
+            
+            throw new HttpRequestException("Submission Failed Try Again later");
         }
-
-        return compilationResponse;
     }
 
 
     private async Task ProcessSubmissionResult(int problemId,ClaimsPrincipal user , string userCode, List<SubmissionResultDto> results)
     {
+        _logger.LogInformation("starting processing submission result");
 
-        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == problemId);
-        
-        //checks if there is unsuccessful test and returns it. if there is no unsuccessful tests - returns first
-        var checkForUnSuccessful = results.FirstOrDefault(r => r.Success == false) ?? results.FirstOrDefault();
-        
-        var submission = new Submissions
+        try
         {
-            AuthUsername = user.Claims.First(u => u.Type == "UserName").Value,
-            Code = userCode,
-            ProblemId = problemId,
-            ProblemName = problem.Name,
-            Status = checkForUnSuccessful?.Status,
-            Input = checkForUnSuccessful?.Input,
-            ExpectedOutput = checkForUnSuccessful?.ExpectedOutput,
-            Output = checkForUnSuccessful?.Output,
-            UserId = user.Claims.First(u => u.Type == "Id").Value,
-        };
+            var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == problemId);
+        
+            if (problem == null)
+            {
+                _logger.LogWarning("Problem with Id {id} not found", problemId);
 
-        _appDbContext.Submissions.Add(submission);
-        await _appDbContext.SaveChangesAsync();
+                throw new InvalidOperationException("problem not found");
+            }
+        
+            var checkForUnSuccessful = results.FirstOrDefault(r => r.Success == false) ?? results.FirstOrDefault();
+        
+            var submission = new Submissions
+            {
+                AuthUsername = user.Claims.First(u => u.Type == "UserName").Value,
+                Code = userCode,
+                ProblemId = problemId,
+                ProblemName = problem.Name,
+                Status = checkForUnSuccessful?.Status,
+                Input = checkForUnSuccessful?.Input,
+                ExpectedOutput = checkForUnSuccessful?.ExpectedOutput,
+                Output = checkForUnSuccessful?.Output,
+                UserId = user.Claims.First(u => u.Type == "Id").Value,
+            };
+            
+            _appDbContext.Submissions.Add(submission);
+            await _appDbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Submission result successfully added in database");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing submission result.");
+            throw;
+        }
 
     }
     

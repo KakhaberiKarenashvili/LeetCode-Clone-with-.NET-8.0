@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace informaticsge.Dto;
+namespace informaticsge.Dto.Request;
 
 public class UserLoginDto
 {
     [Required]
-    public string Email { set; get; }
+    [EmailAddress]
+    public string Email { get; set; }
 
     [Required]
-    public string Password { set; get; }
+    [MinLength(8)]
+    [MaxLength(32)]
+    public string Password { get; set; }
 }
