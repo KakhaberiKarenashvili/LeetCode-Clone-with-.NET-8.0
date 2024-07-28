@@ -23,5 +23,5 @@ public class AddProblemDto
         [Required]
         public int MemoryLimit { get; set; }
         
-        public ICollection<TestCaseDto> TestCases { get; set; }
+        public ICollection<TestCaseDto>? TestCases { get; set; }
 }

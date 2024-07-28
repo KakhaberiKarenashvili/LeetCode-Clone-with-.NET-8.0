@@ -1,6 +1,4 @@
-﻿using informaticsge.Dto;
-using informaticsge.Dto.Request;
-using informaticsge.Entity;
+﻿using informaticsge.Dto.Request;
 using informaticsge.JWT;
 using informaticsge.Models;
 using Microsoft.AspNetCore.Identity;
@@ -10,74 +8,95 @@ namespace informaticsge.Services;
 
 public class AccountService
 {
-    private AppDbContext _appDbContext;
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly JWTService _jwtService;
+    private readonly ILogger<AccountService> _logger;
 
-    public AccountService(AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, JWTService jwtService)
+    public AccountService(UserManager<User> userManager, JWTService jwtService, ILogger<AccountService> logger)
     {
-        _appDbContext = appDbContext;
-        _signInManager = signInManager;
         _jwtService = jwtService;
+        _logger = logger;
         _userManager = userManager;
     }
     
-    public async Task<string> Register(RegistrationDto newuser)
+    public async Task Register(RegistrationDto newUser)
     {
+        _logger.LogInformation("Started Registration Process for Username: {username}", newUser.UserName);
         
-       if (await CheckEmailExists(newuser.Email))
+       if (await CheckEmailExists(newUser.Email))
        {
-           return "email already here";
+           _logger.LogError("Email Already Exists {email}", newUser.Email);
+
+           throw new Exception("Email already exists");
        }
      
-       //createasync method does it for u but i added it for clarity
-       if (await CheckUsernameExists(newuser.UserName))  
+
+       if (await CheckUsernameExists(newUser.UserName))  
        {
-           return "username already here";
+           _logger.LogError("Username Already Exists {username}",newUser.UserName);
+
+           throw new Exception("username already exists");
        }
        
        var userToAdd = new User()
        {
-           Email = newuser.Email,
-           UserName = newuser.UserName,
+           Email = newUser.Email,
+           UserName = newUser.UserName,
        };
        
        //errors are quite tricky hard to debug in case of errors use debugger 
-       var createprocess = await _userManager.CreateAsync(userToAdd, newuser.Password);
+       var createProcess = await _userManager.CreateAsync(userToAdd, newUser.Password);
         
-       if (!createprocess.Succeeded)
+       if (!createProcess.Succeeded)
        {
-           //made for logging createasync errors not best option but does its job well
-           var errors = string.Join("\n ", createprocess.Errors.Select(e=>e.Description));
-           return errors;
+           var errorMessage = string.Join("\n", createProcess.Errors.Select(e => e.Description));
+          
+           _logger.LogError(errorMessage);
+           
+           throw new AggregateException(errorMessage); 
        }
-       return "user added successfully";
+       
     }
 
     
     public async Task<string> Login(UserLoginDto userLogin)
     {
-        var user = await _userManager.FindByEmailAsync(userLogin.Email);
+        _logger.LogInformation("Started Login Process for Email: {email}", userLogin.Email);
         
+        var user = await _userManager.FindByEmailAsync(userLogin.Email);
+
         if (user == null)
         {
-            return "Invalid Email or Password";
+            _logger.LogError("User Not Found For Email: {email}", userLogin.Email);
+
+            throw new InvalidOperationException("Invalid Email or Password");
         }
 
-        var checkpass = await _userManager.CheckPasswordAsync(user, userLogin.Password);
+        var checkPassword = await _userManager.CheckPasswordAsync(user, userLogin.Password);
 
-        if (checkpass == false)
+        if (checkPassword == false)
         {
-            return "Invalid Email or Password";
+            _logger.LogError("wrong password");
+            
+            throw new InvalidOperationException("Invalid Email or Password");
         }
         
-        var jwt = _jwtService.CreateJwt(user);
-
-        return jwt;
+        try
+        {
+            _logger.LogInformation("Started generating JWT for UserName: {username}", user.UserName);
+            
+            var jwt = _jwtService.CreateJwt(user);
+            
+            return jwt;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate JWT for Username: {username}", user.UserName);
+            throw; 
+        }
     }
-
-    //santas little helpers
+    
+    
     private async Task<bool> CheckEmailExists(string email)
     {
       var result =  await _userManager.FindByEmailAsync(email);
@@ -89,10 +108,10 @@ public class AccountService
       return true;
     }
     
-//i could do it more fancy way but it works sooo... 
     private async Task<bool> CheckUsernameExists(string username)
     {
         var result = await _userManager.FindByNameAsync(username);
+        
         if (result == null)
         {
             return false;

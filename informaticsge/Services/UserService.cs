@@ -23,8 +23,8 @@ public class UserService
 
         var account = new MyAccountResponseDto()
         {
-            Email = user?.Email ?? string.Empty,
-            Username = user?.UserName ?? string.Empty
+            Username = user?.UserName ?? string.Empty,
+            Email = user?.Email ?? string.Empty
         };
         return account;
     }

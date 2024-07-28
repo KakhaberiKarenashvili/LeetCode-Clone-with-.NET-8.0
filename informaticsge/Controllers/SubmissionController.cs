@@ -3,9 +3,7 @@ using informaticsge.Dto.Response;
 using informaticsge.Entity;
 using informaticsge.models;
 using informaticsge.Models;
-using informaticsge.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -19,14 +17,12 @@ public class SubmissionController : ControllerBase
 {
     private readonly AppDbContext _appDbContext;
     private readonly HttpClient _httpClient;
-    private readonly UserManager<User> _userManager;
     private readonly ILogger<SubmissionController> _logger;
 
-    public SubmissionController(AppDbContext appDbContext, HttpClient httpClient, UserService userService, UserManager<User> userManager, ILogger<SubmissionController> logger)
+    public SubmissionController(AppDbContext appDbContext, HttpClient httpClient,  ILogger<SubmissionController> logger)
     {
         _appDbContext = appDbContext;
         _httpClient = httpClient;
-        _userManager = userManager;
         _logger = logger;
     }
     
@@ -76,7 +72,7 @@ public class SubmissionController : ControllerBase
                 throw new InvalidOperationException("problem not found");
             }
 
-            var testCaseDtos = problem.TestCases.Select(tc => new TestCaseDto
+            var testCaseDtoList = problem.TestCases.Select(tc => new TestCaseDto
             {
                 Input = tc.Input,
                 ExpectedOutput = tc.ExpectedOutput
@@ -87,7 +83,7 @@ public class SubmissionController : ControllerBase
                 Code = userCode,
                 MemoryLimitMb = problem.MemoryLimit,
                 TimeLimitMs = problem.RuntimeLimit,
-                Testcases = testCaseDtos
+                Testcases = testCaseDtoList
             };
         }
         catch (Exception ex)
@@ -121,7 +117,7 @@ public class SubmissionController : ControllerBase
         {
             _logger.LogCritical( ex.Message);
             
-            throw new HttpRequestException("Submission Failed Try Again later");
+            throw new HttpRequestException(" Failed To Connect Submission-API Try Again later");
         }
     }
 
@@ -133,13 +129,6 @@ public class SubmissionController : ControllerBase
         try
         {
             var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == problemId);
-        
-            if (problem == null)
-            {
-                _logger.LogWarning("Problem with Id {id} not found", problemId);
-
-                throw new InvalidOperationException("problem not found");
-            }
         
             var checkForUnSuccessful = results.FirstOrDefault(r => r.Success == false) ?? results.FirstOrDefault();
         

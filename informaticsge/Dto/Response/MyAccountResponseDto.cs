@@ -2,7 +2,7 @@
 
 public class MyAccountResponseDto
 {
-    public string Username { set; get; }
+    public string? Username { set; get; }
     
-    public string Email { set; get; }
+    public string? Email { set; get; }
 }

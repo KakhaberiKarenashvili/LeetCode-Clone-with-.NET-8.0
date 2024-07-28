@@ -1,7 +1,5 @@
-﻿using informaticsge.Models;
-using informaticsge.Services;
+﻿using informaticsge.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace informaticsge.Controllers;
@@ -11,22 +9,26 @@ namespace informaticsge.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
     private readonly UserService _userService;
+    private readonly ILogger<UserController> _logger;
     
-    public UserController(UserManager<User> userManager, UserService userService)
+    public UserController( UserService userService, ILogger<UserController> logger)
     {
-        _userManager = userManager;
+
         _userService = userService;
+        _logger = logger;
     }
     
-    [HttpGet("/myaccount")]
+    [HttpGet("/account")]
     [Authorize]
-    public async Task<IActionResult> MyAccount()
+    public async Task<IActionResult> Account()
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
+        
+        _logger.LogInformation("User Requested MyAccount UserId: {id}", userid);
+        
         var user = await _userService.MyAccount(userid);
-      
+        
         return  Ok(user);
     }
 
@@ -35,9 +37,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> MySubmissions()
     {
             var userid = User.Claims.First(user => user.Type == "Id").Value;
-            var solutions = await _userService.MySubmissions(userid);
+            
+            _logger.LogInformation("User Requested MySubmissions UserId: {id}", userid);
 
-            return Ok(solutions);
+            var submissions = await _userService.MySubmissions(userid);
+
+            return Ok(submissions);
 
     }
 }
