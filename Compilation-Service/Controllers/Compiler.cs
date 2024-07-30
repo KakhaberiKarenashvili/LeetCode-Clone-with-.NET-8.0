@@ -9,31 +9,54 @@ namespace Compilation_Service.Controllers;
 [ApiController]
 public class Compiler : ControllerBase
 {
+    private readonly ILogger<Compiler> _logger;
+
+    public Compiler(ILogger<Compiler> logger)
+    {
+        _logger = logger;
+    }
+
+
     [HttpPost("/compile")]
     public async Task<List<SubmissionResponseDto>?> CompileAndRunCppCodeAsync(SubmissionRequestDto submissionRequestDto)
     {
+        
+        _logger.LogInformation(@"Compiler-API Received Submission Request For Code:\n {code}", submissionRequestDto.Code);
+        
         List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
 
         var fileId = Guid.NewGuid();
         var cppFileName = $"cpp-file_{fileId}.cpp";
         var exeFileName = $"cpp-file_{fileId}";
 
+        _logger.LogInformation("Provided Code Was Saved In {filename}", cppFileName);
+        
+        
         try
         {
+            _logger.LogInformation("Trying To Compile {filename}", cppFileName);
+            
             var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
 
             if (compile.Success)
             {
+                _logger.LogInformation("Successful Compilation for File: {filename} \n Running Tests....",cppFileName);
+                
                 var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
+                
+                _logger.LogInformation("Finished Testing Returning Results");
+                
                 return execute;
             }
             else
             {
+                _logger.LogInformation("Unsuccessful Compilation for File: {filename}",cppFileName);
+                
                 results.Add(new SubmissionResponseDto
                 {
                     Success = false,
-                    Input = submissionRequestDto.Testcases.First().Input,
-                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput,
+                    Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
+                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
                     Output = compile.Error,
                     Status = "Compilation Error"
                 });
@@ -42,6 +65,7 @@ public class Compiler : ControllerBase
         }
         finally
         {
+            _logger.LogInformation("Deleting Temporary Files...");
             CleanupTemporaryFiles(cppFileName, exeFileName);
         }
     }
@@ -79,12 +103,11 @@ public class Compiler : ControllerBase
                 process.Start();
 
                 // Pass the input string to the running process
-                process.StandardInput.WriteLine(testCase.Input);
+                await process.StandardInput.WriteLineAsync(testCase.Input);
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb,
-                    memoryCancellationTokenSource.Token);
+                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
                 Task timeoutTask = Task.Delay(submissionRequestDto.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
 
@@ -102,7 +125,7 @@ public class Compiler : ControllerBase
                     });
 
                     // Cancel the memory monitoring task
-                    memoryCancellationTokenSource.Cancel();
+                    await memoryCancellationTokenSource.CancelAsync();
                 }
                 else if (completedTask == timeoutTask)
                 {
@@ -114,7 +137,7 @@ public class Compiler : ControllerBase
                         Status = "Time limit exceeded."
                     });
                     // Cancel the memory monitoring task
-                    memoryCancellationTokenSource.Cancel();
+                    await memoryCancellationTokenSource.CancelAsync();
                 }
 
                 //in case there is not problem with memory or timeout
@@ -217,9 +240,6 @@ public class Compiler : ControllerBase
         {
             try
             {
-                Console.WriteLine("memory allocated " + process.PeakWorkingSet64);
-                Console.WriteLine("memory limit " + (memoryLimitMb * 1024 * 1024));
-
                 if (process.WorkingSet64 > memoryLimitMb * 1024 * 1024)
                 {
                     process.Kill();
@@ -228,8 +248,7 @@ public class Compiler : ControllerBase
             }
             catch (Exception ex)
             {
-                // Handle potential errors during memory usage retrieval (optional: log error)
-                Console.WriteLine($"Error monitoring memory usage: {ex.Message}");
+                _logger.LogError("Error monitoring memory usage: {Message}",ex.Message);
             }
 
             await Task.Delay(100, cancellationToken);

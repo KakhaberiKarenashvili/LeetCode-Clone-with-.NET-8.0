@@ -8,5 +8,5 @@ public class SubmissionRequestDto
     
     public int TimeLimitMs { set; get; }
     
-    public List<TestCaseDto> Testcases { set; get; }
+    public required List<TestCaseDto> Testcases { set; get; }
 }
