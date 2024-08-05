@@ -7,6 +7,8 @@ namespace informaticsge.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+
+[Authorize(AuthenticationSchemes = "Bearer")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
@@ -20,7 +22,6 @@ public class UserController : ControllerBase
     }
     
     [HttpGet("/account")]
-    [Authorize]
     public async Task<IActionResult> Account()
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
@@ -33,7 +34,6 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("/submissions")]
-    [Authorize]
     public async Task<IActionResult> MySubmissions()
     {
             var userid = User.Claims.First(user => user.Type == "Id").Value;

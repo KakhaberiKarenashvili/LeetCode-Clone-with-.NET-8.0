@@ -16,15 +16,19 @@ public class JWTService
     {
         _config = config;
     }
-    public string CreateJwt(User user)
+    public string CreateJwt(User user,IList<string> roles)
     {
 
         var userClaims = new List<Claim>  
         {
             new Claim("Id", user.Id),
-            new Claim("Email", user.Email),
-            new Claim("UserName", user.UserName)
+            new Claim("UserName", user.UserName),
         };
+
+        foreach (var role in roles)
+        {
+            userClaims.Add(new Claim(ClaimTypes.Role, role));
+        }
         
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

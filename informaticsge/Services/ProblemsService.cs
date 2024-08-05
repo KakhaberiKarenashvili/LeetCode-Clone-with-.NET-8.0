@@ -96,72 +96,7 @@ public class ProblemsService
         return getSubmissions;
     }
     
-    public async Task AddProblem(AddProblemDto problemDto)
-    {
-        var problem = new Problem
-        {
-        
-            Name = problemDto.Name,
-            ProblemText = problemDto.ProblemText,
-            Tag = problemDto.Tag,
-            Difficulty = problemDto.Difficulty,
-            RuntimeLimit = problemDto.RuntimeLimit,
-            MemoryLimit = problemDto.MemoryLimit,
-            TestCases = problemDto.TestCases.Select(tc => new TestCase
-            {
-                Input = tc.Input,
-                ExpectedOutput = tc.ExpectedOutput
-            }).ToList() 
-        };
-
-        try
-        {
-            await _appDbContext.Problems.AddAsync(problem);
-            await _appDbContext.SaveChangesAsync();
-            
-            _logger.LogInformation("Problem Added Successfully");
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message,"Error While Adding Problem");
-            throw;
-        }
-        
-    }
-
-    public async Task EditProblem(int id, AddProblemDto editProblemDto)
-    {
-        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == id);
-        
-        if (problem == null)
-        {
-            throw new InvalidOperationException("Problem not found");
-        }
-        
-        problem.Name = editProblemDto.Name;
-        problem.ProblemText = editProblemDto.ProblemText;
-        problem.Tag = editProblemDto.Tag;
-        problem.Difficulty = editProblemDto.Difficulty;
-        problem.RuntimeLimit = editProblemDto.RuntimeLimit;
-        problem.MemoryLimit = editProblemDto.MemoryLimit;
-        problem.TestCases = editProblemDto.TestCases.Select(tc => new TestCase
-        {
-            Input = tc.Input,
-            ExpectedOutput = tc.ExpectedOutput
-        }).ToList();
-
-
-        try
-        {
-            await _appDbContext.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message,"Error While Editing Problem");
-            throw;
-        }
-        
-    }
+   
 
     
 }

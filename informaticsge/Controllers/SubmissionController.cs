@@ -28,7 +28,7 @@ public class SubmissionController : ControllerBase
     
 
     [HttpPost("/submit")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Submit(int problemId, [FromBody]string userCode)
     {
         var username = User.Claims.First(u => u.Type == "UserName").Value;
@@ -83,7 +83,7 @@ public class SubmissionController : ControllerBase
                 Code = userCode,
                 MemoryLimitMb = problem.MemoryLimit,
                 TimeLimitMs = problem.RuntimeLimit,
-                Testcases = testCaseDtoList
+                TestCases = testCaseDtoList
             };
         }
         catch (Exception ex)

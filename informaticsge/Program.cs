@@ -1,4 +1,5 @@
 using System.Text;
+using informaticsge.Data.Seeder;
 using informaticsge.Entity;
 using informaticsge.Filters;
 using informaticsge.JWT;
@@ -34,12 +35,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //to be able to inject JWTService into our controler
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProblemsService>();
 builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentity<User,IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager<SignInManager<User>>()
     .AddUserManager<UserManager<User>>()
@@ -86,5 +88,24 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+     
+        await RoleSeeder.SeedRoles(roleManager);
+        
+        logger.LogInformation("Roles Seeded Successfully");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding the roles.");
+    }
+}
 
 app.Run();

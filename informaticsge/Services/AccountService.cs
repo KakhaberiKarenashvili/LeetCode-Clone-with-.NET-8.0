@@ -9,6 +9,7 @@ namespace informaticsge.Services;
 public class AccountService
 {
     private readonly UserManager<User> _userManager;
+
     private readonly JWTService _jwtService;
     private readonly ILogger<AccountService> _logger;
 
@@ -55,7 +56,20 @@ public class AccountService
            
            throw new AggregateException(errorMessage); 
        }
-       
+
+       var roleAssignmentResult = await _userManager.AddToRoleAsync(userToAdd, "User");
+      
+       if (!roleAssignmentResult.Succeeded)
+       {
+           var roleErrorMessage = string.Join("\n", roleAssignmentResult.Errors.Select(e => e.Description));
+           
+           _logger.LogError("Error assigning role: {errors}", roleErrorMessage);
+          
+           throw new InvalidOperationException("Failed To Assign Role.");
+       }
+
+       _logger.LogInformation("User {username} registered successfully and assigned role 'User'.", newUser.UserName);
+
     }
 
     
@@ -80,19 +94,22 @@ public class AccountService
             
             throw new InvalidOperationException("Invalid Email or Password");
         }
+
+        var userRole = await _userManager.GetRolesAsync(user);
         
         try
         {
             _logger.LogInformation("Started generating JWT for UserName: {username}", user.UserName);
             
-            var jwt = _jwtService.CreateJwt(user);
+            var jwt = _jwtService.CreateJwt(user,userRole);
             
             return jwt;
         }
         catch(Exception ex)
         {
-            _logger.LogError(ex, "Failed to generate JWT for Username: {username}", user.UserName);
-            throw; 
+            _logger.LogError(ex, "Failed To Generate JWT For Username: {username}", user.UserName);
+
+            throw new Exception("Failed To Generate JWT Token");
         }
     }
     

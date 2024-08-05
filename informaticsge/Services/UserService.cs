@@ -10,11 +10,13 @@ public class UserService
 {
     private readonly AppDbContext _appDbContext;
     private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
 
-    public UserService(AppDbContext appDbContext, UserManager<User> userManager)
+    public UserService(AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager)
     {
         _appDbContext = appDbContext;
         _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     public async Task<MyAccountResponseDto> MyAccount(string id)
@@ -23,8 +25,8 @@ public class UserService
 
         var account = new MyAccountResponseDto()
         {
-            Username = user?.UserName ?? string.Empty,
-            Email = user?.Email ?? string.Empty
+            Username = user?.UserName,
+            Email = user?.Email 
         };
         return account;
     }
@@ -44,5 +46,6 @@ public class UserService
 
         return getSubmissions;
     }
-    
+
+
 }
