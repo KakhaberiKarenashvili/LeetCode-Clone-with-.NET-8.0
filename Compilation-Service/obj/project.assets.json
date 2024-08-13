@@ -45,6 +45,35 @@
           }
         }
       },
+      "Serilog/3.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/Serilog.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Serilog.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Serilog.Sinks.Console/5.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Serilog": "3.1.1"
+        },
+        "compile": {
+          "lib/net7.0/Serilog.Sinks.Console.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Serilog.Sinks.Console.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.4.0": {
         "type": "package",
         "dependencies": {
@@ -371,6 +400,60 @@
         "microsoft.openapi.nuspec"
       ]
     },
+    "Serilog/3.1.1": {
+      "sha512": "P6G4/4Kt9bT635bhuwdXlJ2SCqqn2nhh4gqFqQueCOr9bK/e7W9ll/IoX1Ter948cV2Z/5+5v8pAfJYUISY03A==",
+      "type": "package",
+      "path": "serilog/3.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net462/Serilog.dll",
+        "lib/net462/Serilog.xml",
+        "lib/net471/Serilog.dll",
+        "lib/net471/Serilog.xml",
+        "lib/net5.0/Serilog.dll",
+        "lib/net5.0/Serilog.xml",
+        "lib/net6.0/Serilog.dll",
+        "lib/net6.0/Serilog.xml",
+        "lib/net7.0/Serilog.dll",
+        "lib/net7.0/Serilog.xml",
+        "lib/netstandard2.0/Serilog.dll",
+        "lib/netstandard2.0/Serilog.xml",
+        "lib/netstandard2.1/Serilog.dll",
+        "lib/netstandard2.1/Serilog.xml",
+        "serilog.3.1.1.nupkg.sha512",
+        "serilog.nuspec"
+      ]
+    },
+    "Serilog.Sinks.Console/5.0.1": {
+      "sha512": "6Jt8jl9y2ey8VV7nVEUAyjjyxjAQuvd5+qj4XYAT9CwcsvR70HHULGBeD+K2WCALFXf7CFsNQT4lON6qXcu2AA==",
+      "type": "package",
+      "path": "serilog.sinks.console/5.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net462/Serilog.Sinks.Console.dll",
+        "lib/net462/Serilog.Sinks.Console.xml",
+        "lib/net471/Serilog.Sinks.Console.dll",
+        "lib/net471/Serilog.Sinks.Console.xml",
+        "lib/net5.0/Serilog.Sinks.Console.dll",
+        "lib/net5.0/Serilog.Sinks.Console.xml",
+        "lib/net6.0/Serilog.Sinks.Console.dll",
+        "lib/net6.0/Serilog.Sinks.Console.xml",
+        "lib/net7.0/Serilog.Sinks.Console.dll",
+        "lib/net7.0/Serilog.Sinks.Console.xml",
+        "lib/netstandard2.0/Serilog.Sinks.Console.dll",
+        "lib/netstandard2.0/Serilog.Sinks.Console.xml",
+        "lib/netstandard2.1/Serilog.Sinks.Console.dll",
+        "lib/netstandard2.1/Serilog.Sinks.Console.xml",
+        "serilog.sinks.console.5.0.1.nupkg.sha512",
+        "serilog.sinks.console.nuspec"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.4.0": {
       "sha512": "eUBr4TW0up6oKDA5Xwkul289uqSMgY0xGN4pnbOIBqCcN9VKGGaPvHX3vWaG/hvocfGDP+MGzMA0bBBKz2fkmQ==",
       "type": "package",
@@ -456,6 +539,8 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.OpenApi >= 8.0.2",
+      "Serilog >= 3.1.1",
+      "Serilog.Sinks.Console >= 5.0.1",
       "Swashbuckle.AspNetCore >= 6.4.0"
     ]
   },
@@ -511,6 +596,14 @@
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[8.0.2, )"
+          },
+          "Serilog": {
+            "target": "Package",
+            "version": "[3.1.1, )"
+          },
+          "Serilog.Sinks.Console": {
+            "target": "Package",
+            "version": "[5.0.1, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

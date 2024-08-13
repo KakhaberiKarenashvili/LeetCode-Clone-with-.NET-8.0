@@ -110,3 +110,13 @@ C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\obj\Debu
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\obj\Debug\net8.0\informaticsge.pdb
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\obj\Debug\net8.0\informaticsge.genruntimeconfig.cache
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\obj\Debug\net8.0\ref\informaticsge.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\System.Text.Json.dll

@@ -93,6 +93,10 @@
               "target": "Package",
               "version": "[3.5.0-next.2, )"
             },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"

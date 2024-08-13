@@ -55,6 +55,8 @@ public class AdminService
             throw new InvalidOperationException("problem not found");
         }
         
+        _logger.LogInformation("Successfully Returned Problem With Id:{id}",problemId);
+        
         return problem;
     }
     
@@ -116,13 +118,35 @@ public class AdminService
         try
         {
             await _appDbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Problem Edited Successfully");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            _logger.LogError(e.Message,"Error While Editing Problem");
-            throw;
+            throw new Exception(ex.Message);
         }
         
     }
+    
+    public async Task DeleteProblem(int id)
+    { 
+        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == id);
+        
+        if (problem == null)
+        {
+            throw new InvalidOperationException("Problem not found");
+        }
 
+        try
+        {
+            _appDbContext.Problems.Remove(problem);
+            await _appDbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Problem With Id: {id} Deleted Successfully", id);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
 }

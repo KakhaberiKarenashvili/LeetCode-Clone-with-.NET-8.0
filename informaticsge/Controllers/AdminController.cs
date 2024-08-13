@@ -40,7 +40,7 @@ public class AdminController : ControllerBase
     [HttpPost("/add-problem")]
     public async Task<IActionResult> AddProblem(AddProblemDto problem)
     { 
-        _logger.LogInformation(" Adding Problem Initiated");
+        _logger.LogInformation("Admin Is Adding Problem");
 
         try
         {
@@ -54,15 +54,14 @@ public class AdminController : ControllerBase
             
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
-
-
+        
     }
 
 
     [HttpPut("/edit-problem/{id}")]
     public async Task<IActionResult> EditProblem(int id, AddProblemDto editProblem)
     {
-        _logger.LogInformation(" Editing Problem Initiated");
+        _logger.LogInformation("Admin Is Editing Problem");
         try
         {
             await _adminService.EditProblem(id, editProblem);
@@ -75,5 +74,24 @@ public class AdminController : ControllerBase
         }
         
         return Accepted();
+    }
+
+    [HttpDelete("/delete-problem/{id}")]
+    public async Task<IActionResult> DeleteProblem(int id)
+    {
+        _logger.LogInformation("Admin Is Deleting Problem");
+
+        try
+        {
+            await _adminService.DeleteProblem(id);
+        }
+        catch (Exception ex)
+        {
+           _logger.LogError(ex.Message,"Failed To Delete Problem");
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+
+        return Ok();
     }
 }

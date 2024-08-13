@@ -11,10 +11,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 
 builder.Services.AddControllers(options =>
     {
@@ -77,6 +86,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
