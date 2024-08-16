@@ -4,6 +4,10 @@
     build:
       context: .
       dockerfile: informaticsge/Dockerfile
+    restart: on-failure
+    networks:
+      - backend
+      - compilation
     ports:
       - 5276:5276
       
@@ -12,6 +16,9 @@
     build:
       context: .
       dockerfile: Compilation-Service/Dockerfile
+    restart: always
+    networks:
+      - compilation
     ports:
       - 5144:5144
     
@@ -22,12 +29,19 @@
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    restart: always
+    networks:
+      - backend
     ports:
       - 5432:5432
     volumes: 
-      - database:/home/data
+      - database:/var/lib/postgresql/data
 
     
 volumes:
   database:
-    external: true
+
+
+networks:
+  compilation:
+  backend:
