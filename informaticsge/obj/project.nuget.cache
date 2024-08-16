@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0roIl5nQH7IlvczNL2kKk1FqwiFzgR/2xmRUl2zdfiTZAZgCFCKE1jD1J3eCeGqf+mxklnQRt/RL4JgEofamJg==",
+  "dgSpecHash": "VwVKGo0ywCAkVbeVaSGkB/3Q2y3Q1kNMBx/FK5jPQshWh830bKGGTdG/ZM1XqE9+iPKzcLjh3uI+iTFBJZymEg==",
   "success": true,
   "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\informaticsge\\informaticsge.csproj",
   "expectedPackageFiles": [
@@ -46,7 +46,7 @@
     "C:\\Users\\kaxaq\\.nuget\\packages\\npgsql\\7.0.6\\npgsql.7.0.6.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\7.0.11\\npgsql.entityframeworkcore.postgresql.7.0.11.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\riok.mapperly\\3.5.0-next.2\\riok.mapperly.3.5.0-next.2.nupkg.sha512",
-    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog\\4.0.0\\serilog.4.0.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.aspnetcore\\8.0.2\\serilog.aspnetcore.8.0.2.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.extensions.hosting\\8.0.0\\serilog.extensions.hosting.8.0.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.extensions.logging\\8.0.0\\serilog.extensions.logging.8.0.0.nupkg.sha512",
@@ -55,6 +55,7 @@
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.console\\5.0.0\\serilog.sinks.console.5.0.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.debug\\2.0.0\\serilog.sinks.debug.2.0.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.seq\\9.0.0-dev-00310\\serilog.sinks.seq.9.0.0-dev-00310.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",

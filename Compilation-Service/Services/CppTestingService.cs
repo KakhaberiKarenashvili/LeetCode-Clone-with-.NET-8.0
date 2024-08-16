@@ -1,76 +1,63 @@
 ﻿using System.Diagnostics;
 using Compilation_Service.Dto.Request;
 using Compilation_Service.Dto.Response;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Compilation_Service.Controllers;
+namespace Compilation_Service.Services;
 
-[Route("/api/[controller]")]
-[ApiController]
-public class Compiler : ControllerBase
+public class CppTestingService
 {
-    private readonly ILogger<Compiler> _logger;
+    private readonly MemoryMonitorService _memoryMonitorService;
 
-    public Compiler(ILogger<Compiler> logger)
+    public CppTestingService(MemoryMonitorService memoryMonitorService)
     {
-        _logger = logger;
+        _memoryMonitorService = memoryMonitorService;
     }
 
 
-    [HttpPost("/compile")]
-    public async Task<List<SubmissionResponseDto>?> CompileAndRunCppCodeAsync(SubmissionRequestDto submissionRequestDto)
+    public async Task<CompilationResultDto> CompileCppCode(string code, string cppFileName, string? exeFileName)
     {
-        
-        _logger.LogInformation(@"Compiler-API Received Submission Request For Code:\n {code}", submissionRequestDto.Code);
-        
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
 
-        var fileId = Guid.NewGuid();
-        var cppFileName = $"cpp-file_{fileId}.cpp";
-        var exeFileName = $"cpp-file_{fileId}";
+        await System.IO.File.WriteAllTextAsync(cppFileName, code);
 
-        _logger.LogInformation("Provided Code Was Saved In {filename}", cppFileName);
-        
-        
-        try
+        var processInfo = new ProcessStartInfo
         {
-            _logger.LogInformation("Trying To Compile {filename}", cppFileName);
-            
-            var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
+            FileName = "g++",
+            Arguments = $"{cppFileName} -o {exeFileName}",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
 
-            if (compile.Success)
+        using (var process = new Process())
+        {
+            process.StartInfo = processInfo;
+            process.Start();
+
+            await process.WaitForExitAsync();
+
+            var error = process.StandardError.ReadToEndAsync().Result;
+
+            if (string.IsNullOrEmpty(error))
             {
-                _logger.LogInformation("Successful Compilation for File: {filename} \n Running Tests....",cppFileName);
-                
-                var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
-                
-                _logger.LogInformation("Finished Testing Returning Results");
-                
-                return execute;
+                return new CompilationResultDto()
+                {
+                    Success = true,
+                    Error = error,
+                };
             }
             else
             {
-                _logger.LogInformation("Unsuccessful Compilation for File: {filename}",cppFileName);
-                
-                results.Add(new SubmissionResponseDto
+                return new CompilationResultDto()
                 {
                     Success = false,
-                    Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
-                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
-                    Output = compile.Error,
-                    Status = "Compilation Error"
-                });
-                return results;
+                    Error = error,
+                };
             }
         }
-        finally
-        {
-            _logger.LogInformation("Deleting Temporary Files...");
-            CleanupTemporaryFiles(cppFileName, exeFileName);
-        }
     }
-
-    private async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
+    
+      public async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
     {
         List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
 
@@ -107,7 +94,7 @@ public class Compiler : ControllerBase
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
+                Task monitorMemoryTask = _memoryMonitorService.MonitorMemoryUsage(process, submissionRequestDto.MemoryLimitMb, memoryCancellationTokenSource.Token);
                 Task timeoutTask = Task.Delay(submissionRequestDto.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
 
@@ -189,84 +176,5 @@ public class Compiler : ControllerBase
 
         return results;
     }
-
-    private async Task<CompilationResultDto> CompileCppCode(string code, string cppFileName, string? exeFileName)
-    {
-
-        await System.IO.File.WriteAllTextAsync(cppFileName, code);
-
-        var processInfo = new ProcessStartInfo
-        {
-            FileName = "g++",
-            Arguments = $"{cppFileName} -o {exeFileName}",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-
-        using (var process = new Process())
-        {
-            process.StartInfo = processInfo;
-            process.Start();
-
-            await process.WaitForExitAsync();
-
-            var error = process.StandardError.ReadToEndAsync().Result;
-
-            if (string.IsNullOrEmpty(error))
-            {
-                return new CompilationResultDto()
-                {
-                    Success = true,
-                    Error = error,
-                };
-            }
-            else
-            {
-                return new CompilationResultDto()
-                {
-                    Success = false,
-                    Error = error,
-                };
-            }
-        }
-    }
-
-
-    private async Task MonitorMemoryUsage(Process process, int memoryLimitMb, CancellationToken cancellationToken)
-    {
-        while (!process.HasExited && !cancellationToken.IsCancellationRequested)
-        {
-            try
-            {
-                if (process.WorkingSet64 > memoryLimitMb * 1024 * 1024)
-                {
-                    process.Kill();
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error monitoring memory usage: {Message}",ex.Message);
-            }
-
-            await Task.Delay(100, cancellationToken);
-        }
-    }
-
     
-    private void CleanupTemporaryFiles(string cppFileName, string exeFileName)
-    {
-        if (System.IO.File.Exists(cppFileName))
-        {
-            System.IO.File.Delete(cppFileName);
-        }
-
-        if (System.IO.File.Exists(exeFileName))
-        {
-            System.IO.File.Delete(exeFileName);
-        }
-    }
-
 }

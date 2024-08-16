@@ -1,0 +1,33 @@
+﻿services:
+  informaticsge:
+    container_name: informatics
+    build:
+      context: .
+      dockerfile: informaticsge/Dockerfile
+    ports:
+      - 5276:5276
+      
+  compilation-service:
+    container_name: compilation-service
+    build:
+      context: .
+      dockerfile: Compilation-Service/Dockerfile
+    ports:
+      - 5144:5144
+    
+  Postgres.Db:
+    image: postgres:latest
+    container_name: PostgresDb
+    environment: 
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes: 
+      - database:/home/data
+
+    
+volumes:
+  database:
+    external: true

@@ -20,6 +20,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
     .WriteTo.Console()
+    .WriteTo.Seq("http://localhost:5341/")
     .CreateLogger();
 
 builder.Host.UseSerilog();

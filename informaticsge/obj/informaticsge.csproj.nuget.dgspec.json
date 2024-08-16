@@ -97,6 +97,10 @@
               "target": "Package",
               "version": "[8.0.2, )"
             },
+            "Serilog.Sinks.Seq": {
+              "target": "Package",
+              "version": "[9.0.0-dev-00310, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"

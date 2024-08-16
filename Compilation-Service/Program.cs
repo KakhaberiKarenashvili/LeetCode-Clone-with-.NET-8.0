@@ -1,3 +1,4 @@
+using Compilation_Service.Services;
 using Serilog;
 using Serilog.Events;
 
@@ -5,8 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .WriteTo.Console()
+    .WriteTo.Seq("http://localhost:5341/")
     .CreateLogger();
 
 
@@ -14,6 +16,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<MemoryMonitorService>();
+builder.Services.AddTransient<CppTestingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

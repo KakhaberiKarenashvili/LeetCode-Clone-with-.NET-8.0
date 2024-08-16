@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fKAwXl3SSDYMYnENw4wZUKjuaO3hrjr/U67QYw/BxluqMIMLAoHZ+LNkH2FYDsPBJyLdeEL7/xTuT1fb0jl1FA==",
+  "dgSpecHash": "fbn6kIhWHU1djJSPyBWV/P/edyfovS8+ZevGEIwvZ7in3UuRXLizmMUKRigqFNUjrbpeWJFpEM90gn1+9zCPdw==",
   "success": true,
   "projectFilePath": "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service\\Compilation-Service.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,11 @@
     "C:\\Users\\kaxaq\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.formatting.compact\\1.1.0\\serilog.formatting.compact.1.1.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.console\\5.0.1\\serilog.sinks.console.5.0.1.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.periodicbatching\\3.1.0\\serilog.sinks.periodicbatching.3.1.0.nupkg.sha512",
+    "C:\\Users\\kaxaq\\.nuget\\packages\\serilog.sinks.seq\\5.2.2\\serilog.sinks.seq.5.2.2.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "C:\\Users\\kaxaq\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",

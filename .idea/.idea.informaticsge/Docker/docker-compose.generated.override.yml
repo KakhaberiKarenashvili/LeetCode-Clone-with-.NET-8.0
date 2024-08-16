@@ -1,0 +1,44 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  compilation-service:
+    build:
+      context: "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0"
+      dockerfile: "Compilation-Service/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Compilation-Service.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "C:\\Users\\kaxaq\\.nuget\\packages"
+      NUGET_FALLBACK_PACKAGES: "C:\\Users\\kaxaq\\.nuget\\packages"
+    image: "compilation-service:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\kaxaq\\.nuget\\packages:/root/.nuget/fallbackpackages"
+    - "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\Compilation-Service:/app:rw"
+    - "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0:/src:rw"
+    working_dir: "/app"
+  informaticsge:
+    build:
+      context: "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0"
+      dockerfile: "informaticsge/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/informaticsge.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "C:\\Users\\kaxaq\\.nuget\\packages"
+      NUGET_FALLBACK_PACKAGES: "C:\\Users\\kaxaq\\.nuget\\packages"
+    image: "informaticsge:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\kaxaq\\.nuget\\packages:/root/.nuget/fallbackpackages"
+    - "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0\\informaticsge:/app:rw"
+    - "C:\\Users\\kaxaq\\RiderProjects\\LeetCode-Clone-with-.NET-8.0:/src:rw"
+    working_dir: "/app"

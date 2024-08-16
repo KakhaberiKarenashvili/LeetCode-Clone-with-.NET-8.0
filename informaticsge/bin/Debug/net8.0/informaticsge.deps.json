@@ -19,6 +19,7 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": "7.0.11",
           "Riok.Mapperly": "3.5.0-next.2",
           "Serilog.AspNetCore": "8.0.2",
+          "Serilog.Sinks.Seq": "9.0.0-dev-00310",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "7.4.0"
         },
@@ -364,18 +365,18 @@
           }
         }
       },
-      "Serilog/3.1.1": {
+      "Serilog/4.0.0": {
         "runtime": {
-          "lib/net7.0/Serilog.dll": {
-            "assemblyVersion": "2.0.0.0",
-            "fileVersion": "3.1.1.0"
+          "lib/net8.0/Serilog.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
           }
         }
       },
       "Serilog.AspNetCore/8.0.2": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "8.0.0",
-          "Serilog": "3.1.1",
+          "Serilog": "4.0.0",
           "Serilog.Extensions.Hosting": "8.0.0",
           "Serilog.Formatting.Compact": "2.0.0",
           "Serilog.Settings.Configuration": "8.0.2",
@@ -395,7 +396,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
-          "Serilog": "3.1.1",
+          "Serilog": "4.0.0",
           "Serilog.Extensions.Logging": "8.0.0"
         },
         "runtime": {
@@ -408,7 +409,7 @@
       "Serilog.Extensions.Logging/8.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "8.0.0",
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Extensions.Logging.dll": {
@@ -419,7 +420,7 @@
       },
       "Serilog.Formatting.Compact/2.0.0": {
         "dependencies": {
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/net7.0/Serilog.Formatting.Compact.dll": {
@@ -432,7 +433,7 @@
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
           "Microsoft.Extensions.DependencyModel": "8.0.1",
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/net8.0/Serilog.Settings.Configuration.dll": {
@@ -443,7 +444,7 @@
       },
       "Serilog.Sinks.Console/5.0.0": {
         "dependencies": {
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/net7.0/Serilog.Sinks.Console.dll": {
@@ -454,7 +455,7 @@
       },
       "Serilog.Sinks.Debug/2.0.0": {
         "dependencies": {
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/netstandard2.1/Serilog.Sinks.Debug.dll": {
@@ -465,12 +466,24 @@
       },
       "Serilog.Sinks.File/5.0.0": {
         "dependencies": {
-          "Serilog": "3.1.1"
+          "Serilog": "4.0.0"
         },
         "runtime": {
           "lib/net5.0/Serilog.Sinks.File.dll": {
             "assemblyVersion": "5.0.0.0",
             "fileVersion": "5.0.0.0"
+          }
+        }
+      },
+      "Serilog.Sinks.Seq/9.0.0-dev-00310": {
+        "dependencies": {
+          "Serilog": "4.0.0",
+          "Serilog.Sinks.File": "5.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/Serilog.Sinks.Seq.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.0.0"
           }
         }
       },
@@ -849,12 +862,12 @@
       "path": "riok.mapperly/3.5.0-next.2",
       "hashPath": "riok.mapperly.3.5.0-next.2.nupkg.sha512"
     },
-    "Serilog/3.1.1": {
+    "Serilog/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-P6G4/4Kt9bT635bhuwdXlJ2SCqqn2nhh4gqFqQueCOr9bK/e7W9ll/IoX1Ter948cV2Z/5+5v8pAfJYUISY03A==",
-      "path": "serilog/3.1.1",
-      "hashPath": "serilog.3.1.1.nupkg.sha512"
+      "sha512": "sha512-2jDkUrSh5EofOp7Lx5Zgy0EB+7hXjjxE2ktTb1WVQmU00lDACR2TdROGKU0K1pDTBSJBN1PqgYpgOZF8mL7NJw==",
+      "path": "serilog/4.0.0",
+      "hashPath": "serilog.4.0.0.nupkg.sha512"
     },
     "Serilog.AspNetCore/8.0.2": {
       "type": "package",
@@ -911,6 +924,13 @@
       "sha512": "sha512-uwV5hdhWPwUH1szhO8PJpFiahqXmzPzJT/sOijH/kFgUx+cyoDTMM8MHD0adw9+Iem6itoibbUXHYslzXsLEAg==",
       "path": "serilog.sinks.file/5.0.0",
       "hashPath": "serilog.sinks.file.5.0.0.nupkg.sha512"
+    },
+    "Serilog.Sinks.Seq/9.0.0-dev-00310": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BP4i+nxgB5cvzSK983kXfD8uCq5FhnR+onfpXg3Kv/6ILiMnXbR6IehCbL7V509a7SRspjShwaH7bNy7hpRelQ==",
+      "path": "serilog.sinks.seq/9.0.0-dev-00310",
+      "hashPath": "serilog.sinks.seq.9.0.0-dev-00310.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.5.0": {
       "type": "package",

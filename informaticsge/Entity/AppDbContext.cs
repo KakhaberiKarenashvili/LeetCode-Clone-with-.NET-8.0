@@ -1,15 +1,31 @@
 ﻿using informaticsge.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace informaticsge.Entity;
 
 public class AppDbContext : IdentityDbContext<User>
-
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    private readonly ILogger<AppDbContext> _logger;
+    public AppDbContext(DbContextOptions<AppDbContext> options, ILogger<AppDbContext> logger) : base(options)
     {
+        _logger = logger;
         
+        try
+        {
+            var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+            if (databaseCreator != null)
+            {
+                if(!databaseCreator.CanConnect()) databaseCreator.Create();
+                if(!databaseCreator.HasTables()) databaseCreator.CreateTables();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogCritical(exception.Message);
+        }
     }
     
     public DbSet<Submissions> Submissions { set; get; }

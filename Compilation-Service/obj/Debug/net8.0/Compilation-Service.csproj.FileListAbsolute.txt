@@ -66,3 +66,9 @@ C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\ob
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\obj\Debug\net8.0\Compilation-Service.pdb
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\obj\Debug\net8.0\Compilation-Service.genruntimeconfig.cache
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\obj\Debug\net8.0\ref\Compilation-Service.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.PeriodicBatching.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.Seq.dll
