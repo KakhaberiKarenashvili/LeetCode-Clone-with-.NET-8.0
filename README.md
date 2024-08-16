@@ -21,24 +21,10 @@ This project aims to create a scalable and secure coding challenge platform simi
 
 ## How to Run
 
-1. **Navigate into the `compilation-service` directory**
+1. **Use Command below to run**
 
     ```bash
-    cd compilation-service
+    docker-compose up
     ```
 
-2. **Build the Docker image**
 
-    ```bash
-    docker build -t compilation-service .
-    ```
-
-3. **Run the Docker container**
-
-    ```bash
-    docker run -p 5144:5144 compilation-service
-    ```
-
-4. **Run the project with your IDE**
-
-    Open your IDE and run the project as usual.
