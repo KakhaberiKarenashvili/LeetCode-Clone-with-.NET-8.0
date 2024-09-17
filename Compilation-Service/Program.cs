@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<MemoryMonitorService>();
 builder.Services.AddTransient<CppTestingService>();
+builder.Services.AddTransient<PythonTestingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

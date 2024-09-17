@@ -94,7 +94,6 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
-//adding authentication before authorization
 app.UseAuthentication();
 
 app.UseAuthorization();
@@ -108,15 +107,19 @@ using (var scope = app.Services.CreateScope())
     var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
+        // Seed roles
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-     
         await RoleSeeder.SeedRoles(roleManager);
-        
         logger.LogInformation("Roles Seeded Successfully");
+
+        // Seed admin user
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        await AdminSeeder.SeedAdmin(userManager);
+        logger.LogInformation("Admin User Seeded Successfully");
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred while seeding the roles.");
+        logger.LogError(ex, "An error occurred while seeding roles or admin user.");
     }
 }
 

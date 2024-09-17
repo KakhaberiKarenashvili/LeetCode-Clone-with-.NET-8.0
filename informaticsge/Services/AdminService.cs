@@ -11,13 +11,11 @@ public class AdminService
 {
     private readonly ILogger<AdminService> _logger;
     private readonly AppDbContext _appDbContext;
-    private readonly UserManager<User> _userManager;
 
-    public AdminService(ILogger<AdminService> logger, AppDbContext appDbContext, UserManager<User> userManager)
+    public AdminService(ILogger<AdminService> logger, AppDbContext appDbContext)
     {
         _logger = logger;
         _appDbContext = appDbContext;
-        _userManager = userManager;
     }
 
     public async Task<List<GetUsersRespoonse>> GetUsers()

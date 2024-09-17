@@ -9,6 +9,8 @@ namespace informaticsge.Models
         [Key]
         public int Id { get; set; }
         public string AuthUsername { get; set; }
+        
+        public string Language { set; get; }
         public string Code { get; set; }
         public int ProblemId { get; set; }
         public string ProblemName { get; set; }

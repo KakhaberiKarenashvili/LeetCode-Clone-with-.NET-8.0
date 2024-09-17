@@ -12,79 +12,35 @@ public class CompilationController : ControllerBase
 {
     private readonly ILogger<CompilationController> _logger;
     private readonly CppTestingService _cppTestingService;
+    private readonly PythonTestingService _pythonTestingService;
 
-    public CompilationController(ILogger<CompilationController> logger, CppTestingService cppTestingService)
+    public CompilationController(ILogger<CompilationController> logger, CppTestingService cppTestingService, PythonTestingService pythonTestingService)
     {
         _logger = logger;
         _cppTestingService = cppTestingService;
+        _pythonTestingService = pythonTestingService;
     }
 
 
-    [HttpPost("/compile")]
-    public async Task<List<SubmissionResponseDto>?> CompileAndRunCppCodeAsync(SubmissionRequestDto submissionRequestDto)
+    [HttpPost("/submit")]
+    public async Task<List<SubmissionResponseDto>?> Submit(SubmissionRequestDto submissionRequestDto)
     {
+        _logger.LogInformation(@" Received Submission Request For {language} Code:\n {code}", submissionRequestDto.Language, submissionRequestDto.Code);
         
-        _logger.LogInformation(@"CompilationController-API Received Submission Request For Code:\n {code}", submissionRequestDto.Code);
+        var result = new List<SubmissionResponseDto>();
         
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
-
-        var fileId = Guid.NewGuid();
-        var cppFileName = $"cpp-file_{fileId}.cpp";
-        var exeFileName = $"cpp-file_{fileId}";
-
-        _logger.LogInformation("Provided Code Was Saved In {filename}", cppFileName);
-        
-        try
+        switch (submissionRequestDto.Language)
         {
-            _logger.LogInformation("Trying To Compile {filename}", cppFileName);
-            
-            var compile = await _cppTestingService.CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
-
-            if (compile.Success)
-            {
-                _logger.LogInformation("Successful Compilation for File: {filename} \n Running Tests....",cppFileName);
-                
-                var execute = await _cppTestingService.ExecuteCppCode(exeFileName, submissionRequestDto);
-                
-                _logger.LogInformation("Finished Testing Returning Results");
-                
-                return execute;
-            }
-            else
-            {
-                _logger.LogInformation("Unsuccessful Compilation for File: {filename}",cppFileName);
-                
-                results.Add(new SubmissionResponseDto
-                {
-                    Success = false,
-                    Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
-                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
-                    Output = compile.Error,
-                    Status = "Compilation Error"
-                });
-                return results;
-            }
+            case "C++" :
+                result = await _cppTestingService.TestCppCode(submissionRequestDto);
+                break;
+            case  "Python":
+                result = await _pythonTestingService.TestPythonCode(submissionRequestDto);
+                break;
         }
-        finally
-        {
-            _logger.LogInformation("Deleting Temporary Files...");
-            CleanupTemporaryFiles(cppFileName, exeFileName);
-        }
+        
+        return result;
     }
 
-    
-    
-    private void CleanupTemporaryFiles(string cppFileName, string exeFileName)
-    {
-        if (System.IO.File.Exists(cppFileName))
-        {
-            System.IO.File.Delete(cppFileName);
-        }
-
-        if (System.IO.File.Exists(exeFileName))
-        {
-            System.IO.File.Delete(exeFileName);
-        }
-    }
 
 }

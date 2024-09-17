@@ -7,7 +7,8 @@ ENV ASPNETCORE_HTTP_PORTS=5144
 
 RUN apt-get update
 
-RUN apt-get install -y g++
+RUN apt-get install -y g++ && apt-get install -y python3 
+
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

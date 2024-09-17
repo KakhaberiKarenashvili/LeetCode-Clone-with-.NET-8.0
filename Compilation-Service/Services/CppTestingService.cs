@@ -7,14 +7,67 @@ namespace Compilation_Service.Services;
 public class CppTestingService
 {
     private readonly MemoryMonitorService _memoryMonitorService;
+    private readonly ILogger<CppTestingService> _logger;
 
-    public CppTestingService(MemoryMonitorService memoryMonitorService)
+    public CppTestingService(MemoryMonitorService memoryMonitorService, ILogger<CppTestingService> logger)
     {
         _memoryMonitorService = memoryMonitorService;
+        _logger = logger;
     }
 
 
-    public async Task<CompilationResultDto> CompileCppCode(string code, string cppFileName, string? exeFileName)
+    public async Task<List<SubmissionResponseDto>?> TestCppCode(SubmissionRequestDto submissionRequestDto)
+    {
+        _logger.LogInformation(@"CompilationController-API Received Submission Request For Code:\n {code}", submissionRequestDto.Code);
+        
+        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+
+        var fileId = Guid.NewGuid();
+        var cppFileName = $"cpp-file_{fileId}.cpp";
+        var exeFileName = $"cpp-file_{fileId}";
+
+        _logger.LogInformation("Provided Code Was Saved In {filename}", cppFileName);
+        
+        try
+        {
+            _logger.LogInformation("Trying To Compile {filename}", cppFileName);
+            
+            var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
+
+            if (compile.Success)
+            {
+                _logger.LogInformation("Successful Compilation for File: {filename} \n Running Tests....",cppFileName);
+                
+                var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
+                
+                _logger.LogInformation("Finished Testing Returning Results");
+                
+                return execute;
+            }
+            else
+            {
+                _logger.LogInformation("Unsuccessful Compilation for File: {filename}",cppFileName);
+                
+                results.Add(new SubmissionResponseDto
+                {
+                    Success = false,
+                    Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
+                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
+                    Output = compile.Error,
+                    Status = "Compilation Error"
+                });
+                return results;
+            }
+        }
+        finally
+        {
+            _logger.LogInformation("Deleting Temporary Files...");
+            CleanupTemporaryFiles(cppFileName, exeFileName);
+        }
+    }
+
+
+    private async Task<CompilationResultDto> CompileCppCode(string code, string cppFileName, string? exeFileName)
     {
 
         await System.IO.File.WriteAllTextAsync(cppFileName, code);
@@ -57,7 +110,7 @@ public class CppTestingService
         }
     }
     
-      public async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
+      private async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
     {
         List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
 
@@ -176,5 +229,18 @@ public class CppTestingService
 
         return results;
     }
+      
+      private void CleanupTemporaryFiles(string cppFileName, string exeFileName)
+      {
+          if (System.IO.File.Exists(cppFileName))
+          {
+              System.IO.File.Delete(cppFileName);
+          }
+
+          if (System.IO.File.Exists(exeFileName))
+          {
+              System.IO.File.Delete(exeFileName);
+          }
+      }
     
 }
