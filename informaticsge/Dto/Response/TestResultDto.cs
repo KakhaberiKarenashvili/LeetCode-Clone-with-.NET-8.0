@@ -1,6 +1,6 @@
 ﻿namespace informaticsge.Dto.Response;
 
-public class SubmissionResultDto
+public class TestResultsDto
 {
     public bool Success { get; set; }
     public string? Input {  get; set; }

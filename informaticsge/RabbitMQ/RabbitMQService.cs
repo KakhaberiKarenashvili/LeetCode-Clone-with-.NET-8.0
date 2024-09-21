@@ -1,10 +1,10 @@
 ﻿using System.Text;
-using System.Text.Json;
 using informaticsge.Dto.Response;
 using informaticsge.models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace informaticsge.RabbitMQ;
 
@@ -18,9 +18,10 @@ public class RabbitMqService
     {
         _connectionFactory = new ConnectionFactory()
         {
-            HostName = "localhost",
-            UserName = "guest",
-            Password = "guest",
+            HostName = "rabbitmq",
+            Port = 5672,
+            UserName = "user", 
+            Password = "password"
         };
         _connection = _connectionFactory.CreateConnection();
 
@@ -54,14 +55,19 @@ public class RabbitMqService
     }
     
 
-    public void ReceiveResult(Action<string> processResult)
+    public void ReceiveResult(Action<SubmissionResponseDto> processResult)
     {
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += (model, ea) =>
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            processResult(message);
+            var submissionResult = JsonConvert.DeserializeObject<SubmissionResponseDto>(message);
+            
+            if (submissionResult != null)
+            {
+                processResult(submissionResult);  
+            }
         };
         _channel.BasicConsume(queue: "resultQueue", autoAck: true, consumer: consumer);
     }
