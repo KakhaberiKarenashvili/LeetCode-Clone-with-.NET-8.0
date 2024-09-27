@@ -1,4 +1,6 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   informaticsge:
     container_name: informatics
     build:
@@ -10,7 +12,7 @@
       - compilation
     ports:
       - 5276:5276
-      
+  
   compilation-service:
     container_name: compilation-service
     build:
@@ -21,11 +23,11 @@
       - compilation
     ports:
       - 5144:5144
-    
+  
   Postgres.Db:
     image: postgres:latest
     container_name: PostgresDb
-    environment: 
+    environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -34,13 +36,25 @@
       - backend
     ports:
       - 5432:5432
-    volumes: 
+    volumes:
       - database:/var/lib/postgresql/data
 
-    
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"          # RabbitMQ main port
+      - "15672:15672"        # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    restart: always
+    networks:
+      - backend
+      - compilation
+
 volumes:
   database:
-
 
 networks:
   compilation:

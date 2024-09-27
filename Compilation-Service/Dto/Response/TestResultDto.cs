@@ -1,6 +1,6 @@
 ﻿namespace Compilation_Service.Dto.Response;
 
-public class TestingResultDto
+public class TestResultDto
 {
     public bool Success { get; set; }
     public string? Input { set; get; }

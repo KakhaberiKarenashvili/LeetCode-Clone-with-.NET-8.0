@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("informaticsge")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43dbc0593e201de84754e848071967e0946a881e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a00393d5037d4d1f9cfdc826f5269c8724f1bc0e")]
 [assembly: System.Reflection.AssemblyProductAttribute("informaticsge")]
 [assembly: System.Reflection.AssemblyTitleAttribute("informaticsge")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

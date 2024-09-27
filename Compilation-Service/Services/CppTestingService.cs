@@ -16,11 +16,11 @@ public class CppTestingService
     }
 
 
-    public async Task<List<SubmissionResponseDto>?> TestCppCode(SubmissionRequestDto submissionRequestDto)
+    public async Task<List<TestResultDto>?> TestCppCode(SubmissionRequestDto submissionRequestDto)
     {
         _logger.LogInformation(@"CompilationController-API Received Submission Request For Code:\n {code}", submissionRequestDto.Code);
         
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+        List<TestResultDto> results = new List<TestResultDto>();
 
         var fileId = Guid.NewGuid();
         var cppFileName = $"cpp-file_{fileId}.cpp";
@@ -48,8 +48,9 @@ public class CppTestingService
             {
                 _logger.LogInformation("Unsuccessful Compilation for File: {filename}",cppFileName);
                 
-                results.Add(new SubmissionResponseDto
+                results.Add(new TestResultDto
                 {
+                    
                     Success = false,
                     Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
                     ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
@@ -110,9 +111,9 @@ public class CppTestingService
         }
     }
     
-      private async Task<List<SubmissionResponseDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
+      private async Task<List<TestResultDto>> ExecuteCppCode(string? exeFileName, SubmissionRequestDto submissionRequestDto)
     {
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+        List<TestResultDto> results = new List<TestResultDto>();
 
 
         foreach (var testCase in submissionRequestDto.Testcases)
@@ -158,7 +159,7 @@ public class CppTestingService
                 {
                     // If the memory limit is exceeded, terminate the process
                     process.Kill();
-                    results.Add(new SubmissionResponseDto
+                    results.Add(new TestResultDto
                     {
                         Success = false,
                         Status = "Memory limit exceeded."
@@ -171,7 +172,7 @@ public class CppTestingService
                 {
                     // If the timeout is reached, terminate the process
                     process.Kill();
-                    results.Add(new SubmissionResponseDto
+                    results.Add(new TestResultDto
                     {
                         Success = false,
                         Status = "Time limit exceeded."
@@ -190,7 +191,7 @@ public class CppTestingService
                     {
                         if (output.Trim() == testCase.ExpectedOutput?.Trim())
                         {
-                            results.Add(new SubmissionResponseDto
+                            results.Add(new TestResultDto
                             {
                                 Success = true,
                                 Input = testCase.Input,
@@ -201,7 +202,7 @@ public class CppTestingService
                         }
                         else
                         {
-                            results.Add(new SubmissionResponseDto
+                            results.Add(new TestResultDto
                             {
                                 Success = false,
                                 Input = testCase.Input,
@@ -213,7 +214,7 @@ public class CppTestingService
                     }
                     else
                     {
-                        results.Add(new SubmissionResponseDto
+                        results.Add(new TestResultDto
                         {
                             Success = false,
                             Input = testCase.Input,

@@ -89,6 +89,10 @@
               "target": "Package",
               "version": "[7.0.11, )"
             },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[6.8.1, )"
+            },
             "Riok.Mapperly": {
               "target": "Package",
               "version": "[3.5.0-next.2, )"

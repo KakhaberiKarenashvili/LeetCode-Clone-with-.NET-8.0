@@ -3,7 +3,6 @@ using informaticsge.JWT;
 using informaticsge.Models;
 using Microsoft.AspNetCore.Identity;
 
-
 namespace informaticsge.Services;
 
 public class AccountService

@@ -15,11 +15,11 @@ public class PythonTestingService
         _logger = logger;
     }
 
-    public async Task<List<SubmissionResponseDto>?> TestPythonCode(SubmissionRequestDto submissionRequestDto)
+    public async Task<List<TestResultDto>?> TestPythonCode(SubmissionRequestDto submissionRequestDto)
     {
         _logger.LogInformation(@"CompilationController-API Received Submission Request For Python Code:\n {code}", submissionRequestDto.Code);
     
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+        List<TestResultDto> results = new List<TestResultDto>();
 
         var fileId = Guid.NewGuid();
         var pythonFileName = $"python-file_{fileId}.py";
@@ -43,9 +43,9 @@ public class PythonTestingService
         }
     }
     
-     public async Task<List<SubmissionResponseDto>> ExecutePythonCode(string pythonFileName, SubmissionRequestDto submissionRequestDto)
+     public async Task<List<TestResultDto>> ExecutePythonCode(string pythonFileName, SubmissionRequestDto submissionRequestDto)
     {
-        List<SubmissionResponseDto> results = new List<SubmissionResponseDto>();
+        List<TestResultDto> results = new List<TestResultDto>();
 
         foreach (var testCase in submissionRequestDto.Testcases)
         {
@@ -87,7 +87,7 @@ public class PythonTestingService
                 if (completedTask == monitorMemoryTask)
                 {
                     process.Kill();
-                    results.Add(new SubmissionResponseDto
+                    results.Add(new TestResultDto
                     {
                         Success = false,
                         Status = "Memory limit exceeded."
@@ -98,7 +98,7 @@ public class PythonTestingService
                 else if (completedTask == timeoutTask)
                 {
                     process.Kill();
-                    results.Add(new SubmissionResponseDto
+                    results.Add(new TestResultDto
                     {
                         Success = false,
                         Status = "Time limit exceeded."
@@ -115,7 +115,7 @@ public class PythonTestingService
                     {
                         if (output.Trim() == testCase.ExpectedOutput?.Trim())
                         {
-                            results.Add(new SubmissionResponseDto
+                            results.Add(new TestResultDto
                             {
                                 Success = true,
                                 Input = testCase.Input,
@@ -126,7 +126,7 @@ public class PythonTestingService
                         }
                         else
                         {
-                            results.Add(new SubmissionResponseDto
+                            results.Add(new TestResultDto
                             {
                                 Success = false,
                                 Input = testCase.Input,
@@ -138,7 +138,7 @@ public class PythonTestingService
                     }
                     else
                     {
-                        results.Add(new SubmissionResponseDto
+                        results.Add(new TestResultDto
                         {
                             Success = false,
                             Input = testCase.Input,

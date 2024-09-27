@@ -6,6 +6,7 @@ using informaticsge.JWT;
 using informaticsge.Middlewares;
 using informaticsge.Models;
 using informaticsge.Modules;
+using informaticsge.RabbitMQ;
 using informaticsge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +49,9 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProblemsService>();
+builder.Services.AddScoped<SubmissionService>();
+builder.Services.AddSingleton<ResponseListener>();
+builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
@@ -104,7 +108,8 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
+    var logger = services.GetRequiredService<ILogger<Program>>(); 
+
     try
     {
         // Seed roles
@@ -121,6 +126,15 @@ using (var scope = app.Services.CreateScope())
     {
         logger.LogError(ex, "An error occurred while seeding roles or admin user.");
     }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<ResponseListener>>();
+    var rabbitMqService = services.GetRequiredService<RabbitMqService>();
+    var responseListener = new ResponseListener(rabbitMqService, services.GetRequiredService<IServiceScopeFactory>(),
+        logger);
 }
 
 app.Run();

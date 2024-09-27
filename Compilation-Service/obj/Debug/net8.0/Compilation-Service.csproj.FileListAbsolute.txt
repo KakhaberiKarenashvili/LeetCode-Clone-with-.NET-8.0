@@ -72,3 +72,5 @@ C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bi
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.File.dll
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.PeriodicBatching.dll
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Serilog.Sinks.Seq.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\Compilation-Service\bin\Debug\net8.0\Newtonsoft.Json.dll

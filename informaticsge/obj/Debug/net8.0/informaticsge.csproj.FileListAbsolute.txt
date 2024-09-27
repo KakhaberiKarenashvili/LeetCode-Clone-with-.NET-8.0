@@ -121,3 +121,4 @@ C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debu
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Sinks.File.dll
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\System.Text.Json.dll
 C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\Serilog.Sinks.Seq.dll
+C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0\informaticsge\bin\Debug\net8.0\RabbitMQ.Client.dll

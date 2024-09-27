@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using informaticsge.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace informaticsge.Models;
 
