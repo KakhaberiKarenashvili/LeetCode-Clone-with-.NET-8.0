@@ -50,8 +50,8 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProblemsService>();
 builder.Services.AddScoped<SubmissionService>();
-builder.Services.AddSingleton<ResponseListener>();
 builder.Services.AddSingleton<RabbitMqService>();
+builder.Services.AddHostedService<ResponseListener>();
 builder.Services.AddHttpClient();
 
 //adding identity service as user manager and signin manager
@@ -126,15 +126,6 @@ using (var scope = app.Services.CreateScope())
     {
         logger.LogError(ex, "An error occurred while seeding roles or admin user.");
     }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<ResponseListener>>();
-    var rabbitMqService = services.GetRequiredService<RabbitMqService>();
-    var responseListener = new ResponseListener(rabbitMqService, services.GetRequiredService<IServiceScopeFactory>(),
-        logger);
 }
 
 app.Run();

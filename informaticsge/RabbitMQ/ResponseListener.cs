@@ -4,7 +4,7 @@ using informaticsge.Services;
 
 namespace informaticsge.RabbitMQ;
 
-public class ResponseListener
+public class ResponseListener : BackgroundService
 {
     private readonly ILogger<ResponseListener> _logger;
     private readonly RabbitMqService _rabbitMqService;
@@ -15,22 +15,28 @@ public class ResponseListener
         _rabbitMqService = rabbitMqService;
         _scopeFactory = scopeFactory;
         _logger = logger;
-
-        // Start listening for messages
+    }
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
         _rabbitMqService.ReceiveResult(ProcessResult);
     }
-
+    
     // Method to process the request
-    private void ProcessResult(SubmissionResponseDto request)
+    private async Task ProcessResult(SubmissionResponseDto request)
     {
         using (var scope = _scopeFactory.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            // Resolve any services you need from the scope
             var submissionService = scope.ServiceProvider.GetRequiredService<SubmissionService>();
-
-            // Handle the request using the service
-           submissionService.HandleSubmissionResults(request);
+            
+            try
+            {
+                await submissionService.HandleSubmissionResults(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process submission result for SubmissionId {SubmissionId}", request.SubmissionId);
+            }
         }
     }
+    
 }

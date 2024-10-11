@@ -10,29 +10,29 @@ namespace informaticsge.RabbitMQ;
 
 public class RabbitMqService
 {
-    private readonly IConnectionFactory _connectionFactory;
     private IConnection _connection;
     private IModel _channel;
 
     public RabbitMqService()
     {
-        _connectionFactory = new ConnectionFactory()
+        IConnectionFactory connectionFactory = new ConnectionFactory()
         {
             HostName = "rabbitmq",
             Port = 5672,
             UserName = "user", 
             Password = "password"
         };
-        _connection = _connectionFactory.CreateConnection();
-
-        _channel = _connection.CreateModel();
         
+            _connection = connectionFactory.CreateConnection();
+
+            _channel = _connection.CreateModel();
+            
         _channel.QueueDeclare(queue: "requestQueue",
             durable: false,
             exclusive: false,
             autoDelete: false,
             arguments: null);
-        
+
         _channel.QueueDeclare(queue: "resultQueue",
             durable: false,
             exclusive: false,
@@ -55,7 +55,7 @@ public class RabbitMqService
     }
     
 
-    public void ReceiveResult(Action<SubmissionResponseDto> processResult)
+    public void ReceiveResult(Func<SubmissionResponseDto, Task> processResult)
     {
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += (model, ea) =>
@@ -65,7 +65,7 @@ public class RabbitMqService
             var submissionResult = JsonConvert.DeserializeObject<SubmissionResponseDto>(message);
             
             if (submissionResult != null)
-            {
+            { 
                 processResult(submissionResult);  
             }
         };

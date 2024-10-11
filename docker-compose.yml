@@ -1,17 +1,39 @@
 ﻿version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 20s
+      timeout: 20s
+      retries: 3
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"          # RabbitMQ main port
+      - "15672:15672"        # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    restart: always
+    networks:
+      - compilation
+  
   informaticsge:
     container_name: informatics
     build:
       context: .
       dockerfile: informaticsge/Dockerfile
     restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - backend
       - compilation
     ports:
       - 5276:5276
+
   
   compilation-service:
     container_name: compilation-service
@@ -19,10 +41,14 @@ services:
       context: .
       dockerfile: Compilation-Service/Dockerfile
     restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - compilation
     ports:
       - 5144:5144
+
   
   Postgres.Db:
     image: postgres:latest
@@ -39,19 +65,6 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"          # RabbitMQ main port
-      - "15672:15672"        # RabbitMQ management UI
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
-    restart: always
-    networks:
-      - backend
-      - compilation
 
 volumes:
   database:

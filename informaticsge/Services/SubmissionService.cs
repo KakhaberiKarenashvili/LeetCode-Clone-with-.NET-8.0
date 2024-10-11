@@ -105,7 +105,7 @@ public class SubmissionService
 
     }
     
-    public void HandleSubmissionResults(SubmissionResponseDto submissionResponseDto)
+    public async Task HandleSubmissionResults(SubmissionResponseDto submissionResponseDto)
     {   
         var submission =  _appDbContext.Submissions.FirstOrDefault(
             s => s.Id == submissionResponseDto.SubmissionId);
@@ -124,9 +124,19 @@ public class SubmissionService
         submission.Input = checkForUnSuccessful?.Input;
         submission.ExpectedOutput = checkForUnSuccessful?.ExpectedOutput;
 
-         _appDbContext.Update(submission);
-        
-        _logger.LogInformation("Submission with Id {SubmissionId} updated successfully", submissionResponseDto.SubmissionId);
+        try
+        {
+            _appDbContext.Update(submission);
+
+            await _appDbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Submission with Id {SubmissionId} updated successfully",
+                submissionResponseDto.SubmissionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,"Error While Updating Submission");
+        }
     }
 
 }

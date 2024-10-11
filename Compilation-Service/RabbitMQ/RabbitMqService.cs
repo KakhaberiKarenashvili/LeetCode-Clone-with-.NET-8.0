@@ -10,7 +10,6 @@ namespace Compilation_Service.RabbitMQ;
 
 public class RabbitMqService
 {
-    private readonly IConnectionFactory _connectionFactory;
     private readonly ILogger<RabbitMqService> _logger;
     private  IConnection _connection;
     private  IModel _channel;
@@ -19,28 +18,29 @@ public class RabbitMqService
     {
         _logger = logger;
         
-        _connectionFactory = new ConnectionFactory()
-        {
-            HostName = "rabbitmq",
-            Port = 5672,
-            UserName = "user", 
-            Password = "password"
-        };
-        _connection = _connectionFactory.CreateConnection();
-
-        _channel = _connection.CreateModel();
+        IConnectionFactory connectionFactory = new ConnectionFactory()
+              {
+                  HostName = "rabbitmq",
+                  Port = 5672,
+                  UserName = "user", 
+                  Password = "password"
+              };
         
-        _channel.QueueDeclare(queue: "requestQueue",
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
-        
-        _channel.QueueDeclare(queue: "resultQueue",
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
+           _connection = connectionFactory.CreateConnection();
+          
+           _channel = _connection.CreateModel();
+           
+           _channel.QueueDeclare(queue: "requestQueue",
+           durable: false,
+           exclusive: false,
+           autoDelete: false,
+           arguments: null);
+           
+           _channel.QueueDeclare(queue: "resultQueue",
+           durable: false,
+           exclusive: false,
+           autoDelete: false,
+           arguments: null);
     }
     
     public void SendResult(SubmissionResultResponseDto result)
@@ -63,8 +63,10 @@ public class RabbitMqService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             _logger.LogInformation("Received request in queue");
+           
             var request = JsonConvert.DeserializeObject<SubmissionRequestDto>(message);
-            processRequest(request);
+           
+            if (request != null) processRequest(request);
         };
         _channel.BasicConsume(queue: "requestQueue", autoAck: true, consumer: consumer);
     }
