@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MainApp.Api.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
 
 [Authorize(AuthenticationSchemes = "Bearer")]
-[Authorize(Roles = "Admin")]
+//[Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
     private readonly AdminService _adminService;

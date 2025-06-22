@@ -1,7 +1,10 @@
 using MainApp.Api;
 using MainApp.Api.Middlewares;
 using MainApp.Application;
+using MainApp.Domain.Models;
 using MainApp.Infrastructure;
+using MainApp.Infrastructure.Data.Seeder;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -33,5 +37,27 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>(); 
+
+    try
+    {
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await RoleSeeder.SeedRoles(roleManager);
+        logger.LogInformation("Roles Seeded Successfully");
+        
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        await AdminSeeder.SeedAdmin(userManager);
+        logger.LogInformation("Admin User Seeded Successfully");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding roles or admin user.");
+    }
+}
 
 app.Run();
