@@ -16,8 +16,7 @@ services:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
     restart: always
-    networks:
-      - compilation
+
   
   informaticsge:
     container_name: informatics
