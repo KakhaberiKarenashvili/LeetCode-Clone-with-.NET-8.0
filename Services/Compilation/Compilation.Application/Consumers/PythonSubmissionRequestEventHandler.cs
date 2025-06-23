@@ -4,7 +4,7 @@ using MassTransit;
 
 namespace Compilation.Application.Consumers;
 
-public class PythonSubmissionRequestEventHandler : IConsumer<PythonSubmissionRequestEvent>
+public class PythonSubmissionRequestEventHandler : IConsumer<PythonSubmissionRequestedEvent>
 {
     private readonly PythonTestingService _service;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -15,7 +15,7 @@ public class PythonSubmissionRequestEventHandler : IConsumer<PythonSubmissionReq
         _publishEndpoint = publishEndpoint;
     }
 
-    public async Task Consume(ConsumeContext<PythonSubmissionRequestEvent> context)
+    public async Task Consume(ConsumeContext<PythonSubmissionRequestedEvent> context)
     {
         var result = await _service.TestPythonCode(context.Message);
 

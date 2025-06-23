@@ -4,7 +4,7 @@ using MassTransit;
 
 namespace Compilation.Application.Consumers;
 
-public class CppSubmissionRequestEventHandler : IConsumer<CppSubmissionRequestEvent>
+public class CppSubmissionRequestEventHandler : IConsumer<CppSubmissionRequestedEvent>
 {
     
     private readonly CppTestingService _service;
@@ -16,10 +16,10 @@ public class CppSubmissionRequestEventHandler : IConsumer<CppSubmissionRequestEv
         _publishEndpoint = publishEndpoint;
     }
     
-    public async Task Consume(ConsumeContext<CppSubmissionRequestEvent> context)
+    public async Task Consume(ConsumeContext<CppSubmissionRequestedEvent> context)
     {
         var result = await _service.TestCppCode(context.Message);
-
+        
         var response = new SubmissionResponseEvent()
         {
             SubmissionId = context.Message.SubmissionId,

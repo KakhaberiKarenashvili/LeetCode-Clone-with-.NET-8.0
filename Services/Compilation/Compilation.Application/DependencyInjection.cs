@@ -1,4 +1,6 @@
-﻿using Compilation.Application.Services;
+﻿using System.Reflection;
+using BuildingBlocks.Messaging.MassTransit;
+using Compilation.Application.Services;
 
 namespace Compilation.Application;
 
@@ -10,6 +12,8 @@ public static class DependencyInjection
         services.AddScoped<CppTestingService>();
         services.AddScoped<PythonTestingService>();
         services.AddTransient<MemoryMonitorService>();
+        
+        services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
         
         return services;
     }

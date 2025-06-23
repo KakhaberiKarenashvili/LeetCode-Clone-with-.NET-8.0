@@ -1,4 +1,6 @@
-﻿using MainApp.Application.Services;
+﻿using System.Reflection;
+using BuildingBlocks.Messaging.MassTransit;
+using MainApp.Application.Services;
 using MainApp.Domain.Models;
 using MainApp.Infrastructure.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +25,8 @@ public static class DependencyInjection
         services.AddScoped<UserService>();
         services.AddScoped<ProblemsService>();
         services.AddScoped<SubmissionService>();
+        
+        services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
         
         return services;
     }

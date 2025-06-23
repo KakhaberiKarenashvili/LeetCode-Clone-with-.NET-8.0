@@ -1,29 +1,41 @@
 ﻿using System.Security.Claims;
+using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Messaging.Events;
 using MainApp.Domain.Models;
 using MainApp.Infrastructure.Entity;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SubmissionDto = MainApp.Application.Dto.Request.SubmissionDto;
-using SubmissionRequestDto = MainApp.Application.Dto.Request.SubmissionRequestDto;
-using SubmissionResponseDto = MainApp.Application.Dto.Response.SubmissionResponseDto;
-using TestCaseDto = MainApp.Application.Dto.Request.TestCaseDto;
+
 
 namespace MainApp.Application.Services;
 
 public class SubmissionService
 {
     private readonly AppDbContext _appDbContext;
+    private readonly IPublishEndpoint _publishEndpoint;
 
 
-    public SubmissionService(AppDbContext appDbContext)
+    public SubmissionService(AppDbContext appDbContext, IPublishEndpoint publishEndpoint)
     {
         _appDbContext = appDbContext;
+        _publishEndpoint = publishEndpoint;
     }
+
+
+
+    public async Task HandleSubmission(SubmissionDto submission,ClaimsPrincipal user)
+    {
+        var submissionId = await SaveSubmission(submission, user);
+        
+        var submissionPayload = await PrepareSubmissionPayload(submission, submissionId);
+        
+        await _publishEndpoint.Publish(submissionPayload);
+    }
+    
     
     public async Task<int> SaveSubmission(SubmissionDto submissionDto,ClaimsPrincipal user)
     {
-        try
-        {
             var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == submissionDto.ProblemId);
             
             if (problem == null)
@@ -41,84 +53,51 @@ public class SubmissionService
                 Status = "Testing",
                 UserId = user.Claims.First(u => u.Type == "Id").Value,
             };
-            
-            _appDbContext.Submissions.Add(submission);
-            await _appDbContext.SaveChangesAsync();
-            
-            return submission.Id;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+            try
+            {
+                _appDbContext.Submissions.Add(submission);
+                await _appDbContext.SaveChangesAsync();
+
+                return submission.Id;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
     }
 
 
-    public async Task<SubmissionRequestDto> PrepareSubmissionPayload(SubmissionDto submissionDto, int submissionId)
+    public async Task<dynamic> PrepareSubmissionPayload(SubmissionDto submissionDto, int submissionId)
     {
-        try
+        var problem = await _appDbContext.Problems.Include(pr => pr.TestCases)
+            .FirstOrDefaultAsync(problem => problem.Id == submissionDto.ProblemId);
+
+        if (problem == null) throw new InvalidOperationException("problem not found");
+
+        var testCaseDtoList = problem.TestCases.Select(tc => new TestCaseDto
         {
-            var problem = await _appDbContext.Problems.Include(pr => pr.TestCases)
-                .FirstOrDefaultAsync(problem => problem.Id == submissionDto.ProblemId);
+            Input = tc.Input,
+            ExpectedOutput = tc.ExpectedOutput
+        }).ToList();
 
-            if (problem == null)
-            {
-                throw new InvalidOperationException("problem not found");
-            }
-
-            var testCaseDtoList = problem.TestCases.Select(tc => new TestCaseDto
-            {
-                Input = tc.Input,
-                ExpectedOutput = tc.ExpectedOutput
-            }).ToList();
-
-            return new SubmissionRequestDto
+        if (submissionDto.Language == "C++")
+            return new CppSubmissionRequestedEvent
             {
                 SubmissionId = submissionId,
-                Language = submissionDto.Language,
                 Code = submissionDto.Code,
                 MemoryLimitMb = problem.MemoryLimit,
                 TimeLimitMs = problem.RuntimeLimit,
-                TestCases = testCaseDtoList
+                Testcases = testCaseDtoList
             };
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-
+        else
+            return new PythonSubmissionRequestedEvent
+            {
+                SubmissionId = submissionId,
+                Code = submissionDto.Code,
+                MemoryLimitMb = problem.MemoryLimit,
+                TimeLimitMs = problem.RuntimeLimit,
+                Testcases = testCaseDtoList
+            };
     }
-    
-    public async Task HandleSubmissionResults(SubmissionResponseDto submissionResponseDto)
-    {   
-        var submission =  _appDbContext.Submissions.FirstOrDefault(
-            s => s.Id == submissionResponseDto.SubmissionId);
-
-        if (submission == null)
-        {
-            throw new InvalidOperationException("Submission not found");
-        }
-        
-        var checkForUnSuccessful = submissionResponseDto.Results?.FirstOrDefault(r => r.Success == false) 
-                                   ?? submissionResponseDto.Results?.FirstOrDefault();
-
-        submission.Status = checkForUnSuccessful?.Status;
-        submission.Output = checkForUnSuccessful?.Output; 
-        submission.Input = checkForUnSuccessful?.Input;
-        submission.ExpectedOutput = checkForUnSuccessful?.ExpectedOutput;
-
-        try
-        {
-            _appDbContext.Update(submission);
-
-            await _appDbContext.SaveChangesAsync();
-
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
 }

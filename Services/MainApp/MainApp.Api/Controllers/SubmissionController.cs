@@ -25,11 +25,7 @@ public class SubmissionController : ControllerBase
         
             try
             {
-                var submissionId = await _submissionService.SaveSubmission(submissionDto, User);
-                
-                var submissionPayload = await _submissionService.PrepareSubmissionPayload(submissionDto, submissionId);
-                
-               // _rabbitMqService.SendRequest(submissionPayload);
+                await _submissionService.HandleSubmission(submissionDto, User);
                 
                 return Accepted("Submission request received and being processed.");
             }

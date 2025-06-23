@@ -17,7 +17,7 @@ public class CppTestingService
     }
 
 
-    public async Task<List<TestResultDto>?> TestCppCode(CppSubmissionRequestEvent submissionRequestDto)
+    public async Task<List<TestResultDto>?> TestCppCode(CppSubmissionRequestedEvent submissionRequestedDto)
     {
         List<TestResultDto> results = new List<TestResultDto>();
 
@@ -27,11 +27,11 @@ public class CppTestingService
         
         try
         {
-            var compile = await CompileCppCode(submissionRequestDto.Code, cppFileName, exeFileName);
+            var compile = await CompileCppCode(submissionRequestedDto.Code, cppFileName, exeFileName);
 
             if (compile.Success)
             {
-                var execute = await ExecuteCppCode(exeFileName, submissionRequestDto);
+                var execute = await ExecuteCppCode(exeFileName, submissionRequestedDto);
                
                 return execute;
             }
@@ -41,8 +41,8 @@ public class CppTestingService
                 {
                     
                     Success = false,
-                    Input = submissionRequestDto.Testcases.First().Input ?? new TestCaseDto().Input,
-                    ExpectedOutput = submissionRequestDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
+                    Input = submissionRequestedDto.Testcases.First().Input ?? new TestCaseDto().Input,
+                    ExpectedOutput = submissionRequestedDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
                     Output = compile.Error,
                     Status = "Compilation Error"
                 });
@@ -99,12 +99,12 @@ public class CppTestingService
         }
     }
     
-      private async Task<List<TestResultDto>> ExecuteCppCode(string? exeFileName, CppSubmissionRequestEvent submissionRequest)
+      private async Task<List<TestResultDto>> ExecuteCppCode(string? exeFileName, CppSubmissionRequestedEvent submissionRequested)
     {
         List<TestResultDto> results = new List<TestResultDto>();
 
 
-        foreach (var testCase in submissionRequest.Testcases)
+        foreach (var testCase in submissionRequested.Testcases)
         {
             // Create a cancellation token source for monitoring memory usage and timeout
             CancellationTokenSource memoryCancellationTokenSource = new CancellationTokenSource();
@@ -121,8 +121,8 @@ public class CppTestingService
                 CreateNoWindow = true,
                 Environment =
                 {
-                    ["MEMORY_LIMIT_MB"] = submissionRequest.MemoryLimitMb.ToString(),
-                    ["TIME_LIMIT_MS"] = submissionRequest.TimeLimitMs.ToString()
+                    ["MEMORY_LIMIT_MB"] = submissionRequested.MemoryLimitMb.ToString(),
+                    ["TIME_LIMIT_MS"] = submissionRequested.TimeLimitMs.ToString()
                 }
             };
 
@@ -136,8 +136,8 @@ public class CppTestingService
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = _memoryMonitorService.MonitorMemoryUsage(process, submissionRequest.MemoryLimitMb, memoryCancellationTokenSource.Token);
-                Task timeoutTask = Task.Delay(submissionRequest.TimeLimitMs, timeoutCancellationTokenSource.Token);
+                Task monitorMemoryTask = _memoryMonitorService.MonitorMemoryUsage(process, submissionRequested.MemoryLimitMb, memoryCancellationTokenSource.Token);
+                Task timeoutTask = Task.Delay(submissionRequested.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
 
                 // Wait for either the process to exit, memory limit exceeded, or timeout

@@ -39,7 +39,6 @@ public static class DependencyInjection
                 };
             });
         
-        services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
         
         return services;
     }

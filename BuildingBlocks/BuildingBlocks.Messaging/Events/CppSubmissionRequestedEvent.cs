@@ -2,7 +2,7 @@
 
 namespace BuildingBlocks.Messaging.Events;
 
-public record CppSubmissionRequestEvent
+public record CppSubmissionRequestedEvent
 {
     public int SubmissionId { set; get; }
     
@@ -12,5 +12,5 @@ public record CppSubmissionRequestEvent
     
     public int TimeLimitMs { set; get; }
     
-    public required List<TestCaseDto> Testcases { set; get; }
+    public List<TestCaseDto>? Testcases { set; get; }
 }

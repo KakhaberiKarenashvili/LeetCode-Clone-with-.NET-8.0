@@ -13,7 +13,7 @@ public class PythonTestingService
         _memoryMonitorService = memoryMonitorService;
     }
 
-    public async Task<List<TestResultDto>?> TestPythonCode(PythonSubmissionRequestEvent submissionRequestDto)
+    public async Task<List<TestResultDto>?> TestPythonCode(PythonSubmissionRequestedEvent submissionRequestedDto)
     {
         List<TestResultDto> results = new List<TestResultDto>();
 
@@ -22,9 +22,9 @@ public class PythonTestingService
     
         try
         {
-            await System.IO.File.WriteAllTextAsync(pythonFileName, submissionRequestDto.Code);
+            await System.IO.File.WriteAllTextAsync(pythonFileName, submissionRequestedDto.Code);
             
-            var execute = await ExecutePythonCode(pythonFileName, submissionRequestDto);
+            var execute = await ExecutePythonCode(pythonFileName, submissionRequestedDto);
             
             return execute;
         }
@@ -34,11 +34,11 @@ public class PythonTestingService
         }
     }
     
-     public async Task<List<TestResultDto>> ExecutePythonCode(string pythonFileName, PythonSubmissionRequestEvent submissionRequest)
+     public async Task<List<TestResultDto>> ExecutePythonCode(string pythonFileName, PythonSubmissionRequestedEvent submissionRequested)
     {
         List<TestResultDto> results = new List<TestResultDto>();
 
-        foreach (var testCase in submissionRequest.Testcases)
+        foreach (var testCase in submissionRequested.Testcases)
         {
             // Create a cancellation token source for monitoring memory usage and timeout
             CancellationTokenSource memoryCancellationTokenSource = new CancellationTokenSource();
@@ -55,8 +55,8 @@ public class PythonTestingService
                 CreateNoWindow = true,
                 Environment =
                 {
-                    ["MEMORY_LIMIT_MB"] = submissionRequest.MemoryLimitMb.ToString(),
-                    ["TIME_LIMIT_MS"] = submissionRequest.TimeLimitMs.ToString()
+                    ["MEMORY_LIMIT_MB"] = submissionRequested.MemoryLimitMb.ToString(),
+                    ["TIME_LIMIT_MS"] = submissionRequested.TimeLimitMs.ToString()
                 }
             };
 
@@ -70,8 +70,8 @@ public class PythonTestingService
                 process.StandardInput.Close();
 
                 // Create tasks for monitoring memory usage and timeout
-                Task monitorMemoryTask = _memoryMonitorService.MonitorMemoryUsage(process, submissionRequest.MemoryLimitMb, memoryCancellationTokenSource.Token);
-                Task timeoutTask = Task.Delay(submissionRequest.TimeLimitMs, timeoutCancellationTokenSource.Token);
+                Task monitorMemoryTask = _memoryMonitorService.MonitorMemoryUsage(process, submissionRequested.MemoryLimitMb, memoryCancellationTokenSource.Token);
+                Task timeoutTask = Task.Delay(submissionRequested.TimeLimitMs, timeoutCancellationTokenSource.Token);
 
                 Task completedTask = await Task.WhenAny(process.WaitForExitAsync(), monitorMemoryTask, timeoutTask);
 

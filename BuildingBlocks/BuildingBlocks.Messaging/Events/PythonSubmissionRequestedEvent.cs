@@ -2,7 +2,7 @@
 
 namespace BuildingBlocks.Messaging.Events;
 
-public class PythonSubmissionRequestEvent
+public record PythonSubmissionRequestedEvent
 {
     public int SubmissionId { set; get; }
     
@@ -12,5 +12,5 @@ public class PythonSubmissionRequestEvent
     
     public int TimeLimitMs { set; get; }
     
-    public required List<TestCaseDto> Testcases { set; get; }
+    public List<TestCaseDto>? Testcases { set; get; }
 }

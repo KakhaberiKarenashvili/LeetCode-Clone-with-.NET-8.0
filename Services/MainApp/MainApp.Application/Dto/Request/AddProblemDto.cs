@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BuildingBlocks.Common.Classes;
 
 namespace MainApp.Application.Dto.Request;
 
