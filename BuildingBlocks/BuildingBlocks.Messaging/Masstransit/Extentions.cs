@@ -12,7 +12,7 @@ public static class Extentions
         services.AddMassTransit(config =>
         {
             config.SetKebabCaseEndpointNameFormatter();
-
+            
             if (assembly != null)
                 config.AddConsumers(assembly);
 
@@ -23,6 +23,9 @@ public static class Extentions
                     host.Username(configuration["MessageBroker:UserName"]);
                     host.Password(configuration["MessageBroker:Password"]);
                 });
+                
+                configurator.UseMessageRetry(r => r.Interval(3,TimeSpan.FromSeconds(10)));
+                
                 configurator.ConfigureEndpoints(context);
             });
         });
