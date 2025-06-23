@@ -15,7 +15,7 @@ public class JwtService
     {
         _config = config;
     }
-    public string CreateJwt(User user,IList<string> roles)
+    public string  CreateJwt(User user,IList<string> roles)
     {
 
         var userClaims = new List<Claim>  
@@ -38,8 +38,8 @@ public class JwtService
             expires: DateTime.Now.AddDays(7),
             signingCredentials: credentials);
         
-        var token = new JwtSecurityTokenHandler().WriteToken(sectoken);
-        
-        return token;
+        var tokenToken = new JwtSecurityTokenHandler().WriteToken(sectoken);
+
+        return tokenToken;
     }
 }

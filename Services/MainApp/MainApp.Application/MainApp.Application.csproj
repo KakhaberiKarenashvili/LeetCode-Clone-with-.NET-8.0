@@ -11,4 +11,8 @@
       <ProjectReference Include="..\MainApp.Infrastructure\MainApp.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Consumers\" />
+    </ItemGroup>
+
 </Project>
