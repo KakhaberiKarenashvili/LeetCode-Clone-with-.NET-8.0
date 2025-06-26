@@ -18,12 +18,13 @@ services:
     restart: always
     networks:
       - compilation
+
   
-  informaticsge:
-    container_name: informatics
+  main-app:
+    container_name: main-app
     build:
       context: .
-      dockerfile: informaticsge/Dockerfile
+      dockerfile: /Services/MainApp/MainApp.Api/Dockerfile
     restart: on-failure
     depends_on:
       rabbitmq:
@@ -32,22 +33,20 @@ services:
       - backend
       - compilation
     ports:
-      - 5276:5276
+      - 5001:5001
 
   
   compilation-service:
     container_name: compilation-service
     build:
       context: .
-      dockerfile: Compilation-Service/Dockerfile
+      dockerfile: /Services/Compilation/Compilation.Application/Dockerfile
     restart: always
     depends_on:
       rabbitmq:
         condition: service_healthy
     networks:
       - compilation
-    ports:
-      - 5144:5144
 
   
   Postgres.Db:
