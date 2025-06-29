@@ -11,12 +11,10 @@ namespace MainApp.Application.Services;
 public class ProblemsService
 {
     private readonly AppDbContext _appDbContext;
-    private readonly ILogger<ProblemsService> _logger;
 
-    public ProblemsService(AppDbContext appDbContext, ILogger<ProblemsService> logger)
+    public ProblemsService(AppDbContext appDbContext)
     {
         _appDbContext = appDbContext;
-        _logger = logger;
     }
 
     public async Task<List<GetProblemsResponseDto>> GetAllProblems(int page)
@@ -50,8 +48,6 @@ public class ProblemsService
 
        if (problem == null)
        {
-           _logger.LogWarning("Problem with Id {problemId} not found", problemId);
-
            throw new InvalidOperationException("problem not found");
        }
        
@@ -79,8 +75,6 @@ public class ProblemsService
         
         if (checkProblemExists == false)
         {
-            _logger.LogWarning("Problem with Id {problemId} not found", problemId);
-
             throw new InvalidOperationException("problem not found");
         }
         
