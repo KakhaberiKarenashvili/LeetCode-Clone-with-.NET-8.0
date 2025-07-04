@@ -24,10 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Services\MainApp\MainApp.Api\MainApp.Api.csproj" />
-      <ProjectReference Include="..\Services\MainApp\MainApp.Application\MainApp.Application.csproj" />
-      <ProjectReference Include="..\Services\MainApp\MainApp.Domain\MainApp.Domain.csproj" />
-      <ProjectReference Include="..\Services\MainApp\MainApp.Infrastructure\MainApp.Infrastructure.csproj" />
+      <ProjectReference Include="..\MainApp.Application\MainApp.Application.csproj" />
     </ItemGroup>
 
 </Project>

@@ -26,4 +26,5 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ae944973_002D4b43_002D4a97_002Da638_002D4b389c21624d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Services&amp;gt;\&amp;lt;MainAPP&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0" Presentation="&amp;lt;Services&amp;gt;\&amp;lt;MainAPP&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
 	</wpf:ResourceDictionary>
