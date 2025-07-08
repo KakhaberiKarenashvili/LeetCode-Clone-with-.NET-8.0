@@ -23,6 +23,9 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\kaxaq\.nuget\packages\rabbitmq.client\7.0.0-rc.10\lib\net6.0\RabbitMQ.Client.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=BE9B3255_002D0B74_002D48AB_002DAB63_002D492516C844E1/@EntryIndexedValue">41A50903-F1C7-49FA-A237-F2285E0F05CE</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ae944973_002D4b43_002D4a97_002Da638_002D4b389c21624d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;Services&amp;gt;\&amp;lt;MainAPP&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\kaxaq\RiderProjects\LeetCode-Clone-with-.NET-8.0" Presentation="&amp;lt;Services&amp;gt;\&amp;lt;MainAPP&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>

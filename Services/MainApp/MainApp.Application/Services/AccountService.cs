@@ -8,9 +8,9 @@ namespace MainApp.Application.Services;
 public class AccountService
 {
     private readonly UserManager<User> _userManager;
-    private readonly JwtService _jwtService;
+    private readonly IJwtService _jwtService;
 
-    public AccountService(UserManager<User> userManager, JwtService jwtService)
+    public AccountService(UserManager<User> userManager, IJwtService jwtService)
     {
         _jwtService = jwtService;
         _userManager = userManager;
