@@ -19,7 +19,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DBConnection")));
 
-        services.AddScoped<JwtService>();
+        services.AddScoped<IJwtService,JwtService>();
         
         var jwtIssuer = configuration.GetSection("Jwt:Issuer").Get<string>();
         var jwtKey = configuration.GetSection("Jwt:Key").Get<string>();

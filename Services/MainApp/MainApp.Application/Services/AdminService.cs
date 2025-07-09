@@ -9,19 +9,15 @@ namespace MainApp.Application.Services;
 
 public class AdminService
 {
-    private readonly ILogger<AdminService> _logger;
     private readonly AppDbContext _appDbContext;
 
-    public AdminService(ILogger<AdminService> logger, AppDbContext appDbContext)
+    public AdminService(AppDbContext appDbContext)
     {
-        _logger = logger;
         _appDbContext = appDbContext;
     }
 
     public async Task<List<GetUsersRespoonse>> GetUsers()
     {
-        _logger.LogInformation("Retrieving All Users From Database");
-        
           var usersWithRoles = await (from user in _appDbContext.Users
             join userRole in _appDbContext.UserRoles on user.Id equals userRole.UserId into userRoles
             from ur in userRoles.DefaultIfEmpty()
@@ -35,7 +31,6 @@ public class AdminService
                 Role = r.Name
             }).ToListAsync();
         
-          _logger.LogInformation("Successfully Retrieved All Users From Database");
           
         return usersWithRoles;
     }
@@ -48,12 +43,9 @@ public class AdminService
 
         if (problem == null)
         {
-            _logger.LogWarning("Problem with Id {problemId} not found", problemId);
 
             throw new InvalidOperationException("problem not found");
         }
-        
-        _logger.LogInformation("Successfully Returned Problem With Id:{id}",problemId);
         
         return problem;
     }
@@ -81,11 +73,9 @@ public class AdminService
             await _appDbContext.Problems.AddAsync(problem);
             await _appDbContext.SaveChangesAsync();
             
-            _logger.LogInformation("Problem Added Successfully");
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message,"Error While Adding Problem");
             throw;
         }
         
@@ -117,7 +107,6 @@ public class AdminService
         {
             await _appDbContext.SaveChangesAsync();
             
-            _logger.LogInformation("Problem Edited Successfully");
         }
         catch (Exception ex)
         {
@@ -140,7 +129,6 @@ public class AdminService
             _appDbContext.Problems.Remove(problem);
             await _appDbContext.SaveChangesAsync();
             
-            _logger.LogInformation("Problem With Id: {id} Deleted Successfully", id);
         }
         catch (Exception ex)
         {

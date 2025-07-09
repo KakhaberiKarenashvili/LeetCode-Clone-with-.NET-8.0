@@ -34,7 +34,7 @@ public class SubmissionService
     }
     
     
-    public async Task<int> SaveSubmission(SubmissionDto submissionDto,ClaimsPrincipal user)
+    private async Task<int> SaveSubmission(SubmissionDto submissionDto,ClaimsPrincipal user)
     {
             var problem = await _appDbContext.Problems.FirstOrDefaultAsync(pr => pr.Id == submissionDto.ProblemId);
             
@@ -68,7 +68,7 @@ public class SubmissionService
     }
 
 
-    public async Task<dynamic> PrepareSubmissionPayload(SubmissionDto submissionDto, int submissionId)
+    private async Task<dynamic> PrepareSubmissionPayload(SubmissionDto submissionDto, int submissionId)
     {
         var problem = await _appDbContext.Problems.Include(pr => pr.TestCases)
             .FirstOrDefaultAsync(problem => problem.Id == submissionDto.ProblemId);
