@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MainApp.Domain.Models
+namespace MainApp.Domain.Entity
 {
     public class Submissions
     {

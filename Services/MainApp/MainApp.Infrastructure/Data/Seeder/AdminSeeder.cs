@@ -1,5 +1,4 @@
-﻿
-using MainApp.Domain.Models;
+﻿using MainApp.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 
 namespace MainApp.Infrastructure.Data.Seeder;

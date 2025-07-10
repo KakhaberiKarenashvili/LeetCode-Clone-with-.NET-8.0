@@ -8,7 +8,7 @@ public class GetProblemResponseDto
     
     public string? ProblemText { set; get; }
     
-    public string? Tag { set; get; }
+    public List<string>? Categories { set; get; }
     
     public string? Difficulty { set; get; }
     

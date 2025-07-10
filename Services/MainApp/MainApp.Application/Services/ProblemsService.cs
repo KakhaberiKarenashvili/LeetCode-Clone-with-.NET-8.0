@@ -1,5 +1,6 @@
-﻿using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+﻿using BuildingBlocks.Common.Enums;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using GetProblemResponseDto = MainApp.Application.Dto.Response.GetProblemResponseDto;
@@ -28,12 +29,12 @@ public class ProblemsService
             .Take(50)
             .ToListAsync();
 
-        var problemList = data.Select(d => new GetProblemsResponseDto
+        var problemList = data.Select(p => new GetProblemsResponseDto
         {
-            Id = d.Id,
-            Name = d.Name,
-            Tag = d.Tag,
-            Difficulty = d.Difficulty
+            Id = p.Id,
+            Name = p.Name,
+            Categories = ParseCategories(p.Category),
+            Difficulty = ParseDifficulty(p.Difficulty)
         }).ToList();
         
         return problemList;
@@ -58,8 +59,8 @@ public class ProblemsService
            Id = problem.Id,
            Name = problem.Name,
            ProblemText = problem.ProblemText,
-           Tag = problem.Tag,
-           Difficulty = problem.Difficulty,
+           Categories = ParseCategories(problem.Category),
+           Difficulty = ParseDifficulty(problem.Difficulty),
            TimelimitMs = problem.RuntimeLimit,
            MemoryLimitMb = problem.MemoryLimit,
            ExampleInput = exampleTestCase.Input,
@@ -91,8 +92,20 @@ public class ProblemsService
         
         return getSubmissions;
     }
-    
-   
 
+
+    private static List<string> ParseCategories(Category category)
+    {
+        return Enum.GetValues(typeof(Category))
+            .Cast<Category>()
+            .Where(c => c != Category.None && category.HasFlag(c))
+            .Select(c => c.ToString())
+            .ToList();
+    }
+
+    private static string ParseDifficulty(Difficulty difficulty)
+    {
+        return difficulty.ToString();
+    }
     
 }

@@ -1,5 +1,6 @@
-﻿using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+﻿using BuildingBlocks.Common.Enums;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using AddProblemDto = MainApp.Application.Dto.Request.AddProblemDto;
@@ -51,14 +52,20 @@ public class AdminService
     }
     
      public async Task AddProblem(AddProblemDto problemDto)
-    {
+     {
+
+         var parsedCategory = ParseCategories(problemDto.Categories);
+         
+         var parsedDifficulty = ParseDifficulty(problemDto.Difficulty);
+         
+        
         var problem = new Problem
         {
         
             Name = problemDto.Name,
             ProblemText = problemDto.ProblemText,
-            Tag = problemDto.Tag,
-            Difficulty = problemDto.Difficulty,
+            Category =  parsedCategory,
+            Difficulty = parsedDifficulty,
             RuntimeLimit = problemDto.RuntimeLimit,
             MemoryLimit = problemDto.MemoryLimit,
             TestCases = problemDto.TestCases.Select(tc => new TestCase
@@ -90,10 +97,14 @@ public class AdminService
             throw new InvalidOperationException("Problem not found");
         }
         
+        var parsedCategory = ParseCategories(editProblemDto.Categories);
+         
+        var parsedDifficulty = ParseDifficulty(editProblemDto.Difficulty);
+        
         problem.Name = editProblemDto.Name;
         problem.ProblemText = editProblemDto.ProblemText;
-        problem.Tag = editProblemDto.Tag;
-        problem.Difficulty = editProblemDto.Difficulty;
+        problem.Category = parsedCategory;
+        problem.Difficulty = parsedDifficulty;
         problem.RuntimeLimit = editProblemDto.RuntimeLimit;
         problem.MemoryLimit = editProblemDto.MemoryLimit;
         problem.TestCases = editProblemDto.TestCases.Select(tc => new TestCase
@@ -135,4 +146,34 @@ public class AdminService
             throw new Exception(ex.Message);
         }
     }
+    
+    private static  Category ParseCategories(List<string> categoryStrings)
+    {
+        Category categories = Category.None;
+
+        foreach (var categoryStr in categoryStrings)
+        {
+            if (Enum.TryParse<Category>(categoryStr, out var category))
+            {
+                categories |= category; // Add to the bitmask
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid category: {categoryStr}");
+            }
+        }
+
+        return categories;
+    }
+    
+    private static Difficulty ParseDifficulty(string difficulty)
+    {
+        if (Enum.TryParse<Difficulty>(difficulty, out var parsedDifficulty))
+        {
+            return parsedDifficulty;
+        }
+
+        return Difficulty.Easy;
+    }
+    
 }

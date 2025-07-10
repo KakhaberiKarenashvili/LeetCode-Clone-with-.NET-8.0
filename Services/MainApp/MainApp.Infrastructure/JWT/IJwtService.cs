@@ -1,4 +1,4 @@
-﻿using MainApp.Domain.Models;
+﻿using MainApp.Domain.Entity;
 
 namespace MainApp.Infrastructure.JWT;
 

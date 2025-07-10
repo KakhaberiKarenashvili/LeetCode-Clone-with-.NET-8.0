@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 using BuildingBlocks.Messaging.MassTransit;
-using MainApp.Infrastructure.Entity;
+using MainApp.Infrastructure.Data;
 using MainApp.Infrastructure.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

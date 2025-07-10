@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Messaging.Events;
 using MainApp.Application.Dto.Response;
-using MainApp.Infrastructure.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 
 namespace MainApp.Application.Consumers;

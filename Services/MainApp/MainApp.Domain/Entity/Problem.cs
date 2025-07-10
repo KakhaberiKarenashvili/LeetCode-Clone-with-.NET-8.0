@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BuildingBlocks.Common.Enums;
 
-namespace MainApp.Domain.Models;
+namespace MainApp.Domain.Entity;
 
 public class Problem
 {
@@ -11,13 +12,12 @@ public class Problem
     
     public string ProblemText { set; get; }
     
-    public string? Tag { set; get; }
+    public Difficulty Difficulty { set; get; }
     
-    public string? Difficulty { set; get; }
-
+    public Category Category { set; get; }
+    
     public int RuntimeLimit { set; get; }
     
     public int MemoryLimit { set; get; }
-    
     public virtual ICollection<TestCase>? TestCases { get; set; }
 }

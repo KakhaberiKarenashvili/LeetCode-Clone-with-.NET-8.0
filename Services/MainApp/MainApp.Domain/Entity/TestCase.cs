@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MainApp.Domain.Models;
+namespace MainApp.Domain.Entity;
 
 public class TestCase
 {

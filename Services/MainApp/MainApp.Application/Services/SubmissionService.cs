@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using BuildingBlocks.Common.Classes;
 using BuildingBlocks.Messaging.Events;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using SubmissionDto = MainApp.Application.Dto.Request.SubmissionDto;
