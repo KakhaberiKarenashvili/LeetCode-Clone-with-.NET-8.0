@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MainApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Changedstringstoenums : Migration
+    public partial class changedsatusfromstringtoenum : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -186,7 +186,7 @@ namespace MainApp.Infrastructure.Migrations
                     Code = table.Column<string>(type: "text", nullable: false),
                     ProblemId = table.Column<int>(type: "integer", nullable: false),
                     ProblemName = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     Input = table.Column<string>(type: "text", nullable: true),
                     ExpectedOutput = table.Column<string>(type: "text", nullable: true),
                     Output = table.Column<string>(type: "text", nullable: true),
