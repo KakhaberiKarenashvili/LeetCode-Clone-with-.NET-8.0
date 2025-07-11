@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using BuildingBlocks.Common.Enums;
+using FakeItEasy;
 using FluentAssertions;
 using MainApp.Application.Services;
 using MainApp.Domain.Entity;
@@ -100,8 +101,8 @@ public class UserServiceTests
         var userId = "123";
         var submissions = new List<Submissions>
         {
-            new Submissions { Id = 1, UserId = userId, AuthUsername = "author1", Language = "C++", Code = "Testcode", ProblemId = 1,  ProblemName = "Problem1", Status = "Completed", },
-            new Submissions { Id = 2, UserId = userId, AuthUsername = "author2",  Language = "Python", Code = "Testcode", ProblemId = 2, ProblemName = "Problem2", Status = "Pending" }
+            new Submissions { Id = 1, UserId = userId, AuthUsername = "author1", Language = "C++", Code = "Testcode", ProblemId = 1,  ProblemName = "Problem1", Status = Status.TestPassed, },
+            new Submissions { Id = 2, UserId = userId, AuthUsername = "author2",  Language = "Python", Code = "Testcode", ProblemId = 2, ProblemName = "Problem2", Status = Status.TestRunning }
         };
 
         await _fakeDbContext.Submissions.AddRangeAsync(submissions);
@@ -117,12 +118,12 @@ public class UserServiceTests
         result[0].Id.Should().Be(1);
         result[0].AuthUsername.Should().Be("author1");
         result[0].ProblemName.Should().Be("Problem1");
-        result[0].Status.Should().Be("Completed");
+        result[0].Status.Should().Be("TestPassed");
 
         result[1].Id.Should().Be(2);
         result[1].AuthUsername.Should().Be("author2");
         result[1].ProblemName.Should().Be("Problem2");
-        result[1].Status.Should().Be("Pending");
+        result[1].Status.Should().Be("TestRunning");;
     }
 
     [Fact]

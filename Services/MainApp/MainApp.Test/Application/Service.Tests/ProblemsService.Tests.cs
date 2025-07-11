@@ -147,8 +147,8 @@ public class ProblemsServiceTests
 
         var mockSubmissionsData = new List<Submissions>
         {
-            new Submissions { Id = 1, ProblemId = problemId, AuthUsername = "User1", ProblemName = "FizzBuzz", Status = "Success" },
-            new Submissions { Id = 2, ProblemId = problemId, AuthUsername = "User2", ProblemName = "FizzBuzz", Status = "Failed" }
+            new Submissions { Id = 1, ProblemId = problemId, AuthUsername = "User1", ProblemName = "FizzBuzz", Status = Status.TestPassed },
+            new Submissions { Id = 2, ProblemId = problemId, AuthUsername = "User2", ProblemName = "FizzBuzz", Status = Status.TestFailed }
         };
         
         _fakeDbContext.Submissions.AddRange(mockSubmissionsData);
