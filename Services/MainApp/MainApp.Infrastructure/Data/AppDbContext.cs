@@ -29,6 +29,10 @@ public class AppDbContext : IdentityDbContext<User>
            .WithMany(p => p.TestCases)
            .HasForeignKey(t => t.ProblemId);
        
+       modelBuilder.Entity<Problem>()
+           .Property(p => p.Difficulty)
+           .HasConversion<int>();
+       
    }
     
 }
