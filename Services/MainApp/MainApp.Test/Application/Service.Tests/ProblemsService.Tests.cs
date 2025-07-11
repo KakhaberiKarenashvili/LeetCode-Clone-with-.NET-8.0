@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
+﻿using BuildingBlocks.Common.Enums;
+using FluentAssertions;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace MainApp.Test.Application.Service.Tests;
@@ -37,8 +38,8 @@ public class ProblemsServiceTests
                 Name = "FizzBuzz",
                 ProblemText =
                     "Write a program that prints numbers from 1 to 100. For multiples of three print 'Fizz' instead of the number and for the multiples of five print 'Buzz'. For numbers which are multiples of both three and five print 'FizzBuzz'.",
-                Tag = "Basic Algorithms",
-                Difficulty = "Easy",
+                Category = Category.Graphs,
+                Difficulty = Difficulty.Easy,
                 RuntimeLimit = 500, // ms
                 MemoryLimit = 64, // MB
                 TestCases = new List<TestCase>
@@ -55,8 +56,8 @@ public class ProblemsServiceTests
                 Name = "Detect Cycle in Linked List",
                 ProblemText =
                     "Given the head of a linked list, return true if there is a cycle in the linked list. Otherwise, return false.",
-                Tag = "Data Structures",
-                Difficulty = "Medium",
+                Category = Category.Arrays,
+                Difficulty = Difficulty.Medium,
                 RuntimeLimit = 1200, // ms
                 MemoryLimit = 256, // MB
                 TestCases = new List<TestCase>
@@ -71,8 +72,8 @@ public class ProblemsServiceTests
                 Name = "Longest Palindromic Substring",
                 ProblemText =
                     "Given a string s, return the longest palindromic substring in s. A substring is a contiguous non-empty sequence of characters within the original string.",
-                Tag = "Strings",
-                Difficulty = "Hard",
+                Category = Category.Strings,
+                Difficulty = Difficulty.Hard,
                 RuntimeLimit = 3000, // ms
                 MemoryLimit = 512, // MB
                 TestCases = new List<TestCase>

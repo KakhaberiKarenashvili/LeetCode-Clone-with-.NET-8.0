@@ -4,8 +4,8 @@ using FakeItEasy;
 using FluentAssertions;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 

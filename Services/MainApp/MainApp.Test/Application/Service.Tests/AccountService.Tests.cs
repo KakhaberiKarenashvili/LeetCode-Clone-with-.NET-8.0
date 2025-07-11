@@ -2,7 +2,7 @@
 using FluentAssertions;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
+using MainApp.Domain.Entity;
 using MainApp.Infrastructure.JWT;
 using Microsoft.AspNetCore.Identity;
 
