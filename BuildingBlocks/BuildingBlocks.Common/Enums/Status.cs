@@ -2,6 +2,7 @@
 
 public enum Status
 {
+    TestRunning,
     TestPassed,
     TestFailed,
     CompilationFailed,

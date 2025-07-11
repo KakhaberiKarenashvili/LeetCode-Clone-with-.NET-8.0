@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
@@ -50,7 +51,7 @@ public class SubmissionService
                 ProblemId = submissionDto.ProblemId,
                 Language = submissionDto.Language,
                 ProblemName = problem.Name,
-                Status = "Testing",
+                Status = Status.TestRunning,
                 UserId = user.Claims.First(u => u.Type == "Id").Value,
             };
             try

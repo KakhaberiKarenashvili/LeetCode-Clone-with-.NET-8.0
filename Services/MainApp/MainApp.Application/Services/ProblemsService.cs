@@ -36,7 +36,7 @@ public class ProblemsService
             Id = p.Id,
             Name = p.Name,
             Categories = EnumParser.ParseCategories(p.Category),
-            Difficulty = EnumParser.ParseDifficulty(p.Difficulty)
+            Difficulty = p.Difficulty.ToString(),
         }).ToList();
         
         return problemList;
@@ -69,7 +69,7 @@ public class ProblemsService
            Name = problem.Name,
            ProblemText = problem.ProblemText,
            Categories = EnumParser.ParseCategories(problem.Category),
-           Difficulty = EnumParser.ParseDifficulty(problem.Difficulty),
+           Difficulty = problem.Difficulty.ToString(),
            TimelimitMs = problem.RuntimeLimit,
            MemoryLimitMb = problem.MemoryLimit,
            TestCases = exampleTestCases
@@ -95,7 +95,7 @@ public class ProblemsService
             Id = submissions.Id,
             AuthUsername = submissions.AuthUsername,
             ProblemName = submissions.ProblemName,
-            Status = submissions.Status
+            Status = submissions.Status.ToString(),
         }).ToList();
         
         return getSubmissions;

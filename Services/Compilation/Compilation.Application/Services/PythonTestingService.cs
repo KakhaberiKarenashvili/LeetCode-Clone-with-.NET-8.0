@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
 
 namespace Compilation.Application.Services;
@@ -81,7 +82,7 @@ public class PythonTestingService
                     results.Add(new TestResultDto
                     {
                         Success = false,
-                        Status = "Memory limit exceeded."
+                        Status = Status.MemoryLimitExceeded
                     });
 
                     await memoryCancellationTokenSource.CancelAsync();
@@ -92,7 +93,7 @@ public class PythonTestingService
                     results.Add(new TestResultDto
                     {
                         Success = false,
-                        Status = "Time limit exceeded."
+                        Status = Status.TimeLimitExceeded
                     });
 
                     await memoryCancellationTokenSource.CancelAsync();
@@ -112,7 +113,7 @@ public class PythonTestingService
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
-                                Status = "Successful"
+                                Status = Status.TestPassed
                             });
                         }
                         else
@@ -123,7 +124,7 @@ public class PythonTestingService
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
-                                Status = "Output does not match expected output."
+                                Status = Status.TestFailed
                             });
                         }
                     }
@@ -135,7 +136,7 @@ public class PythonTestingService
                             Input = testCase.Input,
                             ExpectedOutput = testCase.ExpectedOutput,
                             Output = error,
-                            Status = "Error occurred during execution."
+                            Status = Status.TestFailed
                         });
                     }
                 }

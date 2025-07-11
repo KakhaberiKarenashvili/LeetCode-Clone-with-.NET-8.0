@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
 using Compilation.Application.Dto.Common;
 
@@ -44,7 +45,7 @@ public class CppTestingService
                     Input = submissionRequestedDto.Testcases.First().Input ?? new TestCaseDto().Input,
                     ExpectedOutput = submissionRequestedDto.Testcases.First().ExpectedOutput ?? new TestCaseDto().ExpectedOutput,
                     Output = compile.Error,
-                    Status = "Compilation Error"
+                    Status = Status.CompilationFailed
                 });
                 return results;
             }
@@ -150,7 +151,7 @@ public class CppTestingService
                     results.Add(new TestResultDto
                     {
                         Success = false,
-                        Status = "Memory limit exceeded."
+                        Status = Status.MemoryLimitExceeded
                     });
 
                     // Cancel the memory monitoring task
@@ -163,7 +164,7 @@ public class CppTestingService
                     results.Add(new TestResultDto
                     {
                         Success = false,
-                        Status = "Time limit exceeded."
+                        Status = Status.TimeLimitExceeded
                     });
                     // Cancel the memory monitoring task
                     await memoryCancellationTokenSource.CancelAsync();
@@ -185,7 +186,7 @@ public class CppTestingService
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
-                                Status = "Successful"
+                                Status = Status.TestPassed
                             });
                         }
                         else
@@ -196,7 +197,7 @@ public class CppTestingService
                                 Input = testCase.Input,
                                 ExpectedOutput = testCase.ExpectedOutput,
                                 Output = output,
-                                Status = "Output does not match expected output."
+                                Status = Status.TestFailed
                             });
                         }
                     }
@@ -208,7 +209,7 @@ public class CppTestingService
                             Input = testCase.Input,
                             ExpectedOutput = testCase.ExpectedOutput,
                             Output = error,
-                            Status = "Output does not match expected output."
+                            Status = Status.TestFailed
                         });
                     }
 

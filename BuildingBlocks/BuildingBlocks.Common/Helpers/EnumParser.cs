@@ -12,9 +12,4 @@ public static class EnumParser
             .Select(c => c.ToString())
             .ToList();
     }
-
-    public static string ParseDifficulty(Difficulty difficulty)
-    {
-        return difficulty.ToString();
-    }
 }

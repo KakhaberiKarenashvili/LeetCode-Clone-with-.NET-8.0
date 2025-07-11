@@ -42,7 +42,7 @@ public class UserService
             Id = sub.Id,
             AuthUsername = sub.AuthUsername,
             ProblemName = sub.ProblemName,
-            Status = sub.Status
+            Status = sub.Status.ToString()
         }).ToList();
 
         return getSubmissions;
