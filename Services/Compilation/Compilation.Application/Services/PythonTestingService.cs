@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
 using BuildingBlocks.Messaging.Events;
 
 namespace Compilation.Application.Services;

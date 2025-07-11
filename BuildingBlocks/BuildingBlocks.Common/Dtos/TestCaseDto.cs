@@ -1,4 +1,4 @@
-﻿namespace BuildingBlocks.Common.Classes;
+﻿namespace BuildingBlocks.Common.Dtos;
 
 public class TestCaseDto
 {

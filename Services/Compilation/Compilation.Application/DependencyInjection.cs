@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Messaging.Masstransit;
 using Compilation.Application.Services;
 
 namespace Compilation.Application;

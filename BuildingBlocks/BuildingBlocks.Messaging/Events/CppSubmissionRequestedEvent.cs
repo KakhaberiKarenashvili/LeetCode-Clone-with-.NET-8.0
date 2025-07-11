@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Common.Classes;
+﻿using BuildingBlocks.Common.Dtos;
 
 namespace BuildingBlocks.Messaging.Events;
 

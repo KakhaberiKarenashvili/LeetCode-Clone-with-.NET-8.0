@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Messaging.Masstransit;
 using MainApp.Application.Services;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;

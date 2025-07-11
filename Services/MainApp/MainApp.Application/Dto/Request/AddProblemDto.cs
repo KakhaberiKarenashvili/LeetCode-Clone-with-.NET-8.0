@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
 
 namespace MainApp.Application.Dto.Request;
 

@@ -1,4 +1,6 @@
-﻿using BuildingBlocks.Common.Enums;
+﻿using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
+using BuildingBlocks.Common.Helpers;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +35,8 @@ public class ProblemsService
         {
             Id = p.Id,
             Name = p.Name,
-            Categories = ParseCategories(p.Category),
-            Difficulty = ParseDifficulty(p.Difficulty)
+            Categories = EnumParser.ParseCategories(p.Category),
+            Difficulty = EnumParser.ParseDifficulty(p.Difficulty)
         }).ToList();
         
         return problemList;
@@ -52,19 +54,25 @@ public class ProblemsService
            throw new InvalidOperationException("problem not found");
        }
        
-       var exampleTestCase = problem.TestCases?.First() ?? new TestCase();
+       var exampleTestCases = problem.TestCases?
+           .Select(@case => new TestCaseDto
+           {
+               Input = @case.Input,
+               ExpectedOutput = @case.ExpectedOutput
+           })
+           .Take(3)
+           .ToList() ?? new List<TestCaseDto>();
        
        var problemResponse = new GetProblemResponseDto
        {
            Id = problem.Id,
            Name = problem.Name,
            ProblemText = problem.ProblemText,
-           Categories = ParseCategories(problem.Category),
-           Difficulty = ParseDifficulty(problem.Difficulty),
+           Categories = EnumParser.ParseCategories(problem.Category),
+           Difficulty = EnumParser.ParseDifficulty(problem.Difficulty),
            TimelimitMs = problem.RuntimeLimit,
            MemoryLimitMb = problem.MemoryLimit,
-           ExampleInput = exampleTestCase.Input,
-           ExampleOutput = exampleTestCase.ExpectedOutput
+           TestCases = exampleTestCases
        };
         
         return problemResponse;
@@ -92,20 +100,4 @@ public class ProblemsService
         
         return getSubmissions;
     }
-
-
-    private static List<string> ParseCategories(Category category)
-    {
-        return Enum.GetValues(typeof(Category))
-            .Cast<Category>()
-            .Where(c => c != Category.None && category.HasFlag(c))
-            .Select(c => c.ToString())
-            .ToList();
-    }
-
-    private static string ParseDifficulty(Difficulty difficulty)
-    {
-        return difficulty.ToString();
-    }
-    
 }

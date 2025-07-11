@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
 using BuildingBlocks.Messaging.Events;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;

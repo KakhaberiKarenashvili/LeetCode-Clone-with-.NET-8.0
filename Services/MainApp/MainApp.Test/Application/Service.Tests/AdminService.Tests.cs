@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Common.Classes;
+﻿using BuildingBlocks.Common.Dtos;
 using BuildingBlocks.Common.Enums;
 using FakeItEasy;
 using FluentAssertions;

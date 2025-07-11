@@ -1,9 +1,9 @@
-﻿using MassTransit;
+﻿using System.Reflection;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
-namespace BuildingBlocks.Messaging.MassTransit;
+namespace BuildingBlocks.Messaging.Masstransit;
 public static class Extentions
 {
     public static IServiceCollection AddMessageBroker
