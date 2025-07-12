@@ -1,7 +1,7 @@
 using MainApp.Api;
 using MainApp.Api.Middlewares;
 using MainApp.Application;
-using MainApp.Domain.Models;
+using MainApp.Domain.Entity;
 using MainApp.Infrastructure;
 using MainApp.Infrastructure.Data.Seeder;
 using Microsoft.AspNetCore.Identity;

@@ -1,5 +1,8 @@
-﻿using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+﻿using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
+using BuildingBlocks.Common.Helpers;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using GetProblemResponseDto = MainApp.Application.Dto.Response.GetProblemResponseDto;
@@ -28,12 +31,12 @@ public class ProblemsService
             .Take(50)
             .ToListAsync();
 
-        var problemList = data.Select(d => new GetProblemsResponseDto
+        var problemList = data.Select(p => new GetProblemsResponseDto
         {
-            Id = d.Id,
-            Name = d.Name,
-            Tag = d.Tag,
-            Difficulty = d.Difficulty
+            Id = p.Id,
+            Name = p.Name,
+            Categories = EnumParser.ParseCategories(p.Category),
+            Difficulty = p.Difficulty.ToString(),
         }).ToList();
         
         return problemList;
@@ -51,19 +54,25 @@ public class ProblemsService
            throw new InvalidOperationException("problem not found");
        }
        
-       var exampleTestCase = problem.TestCases?.First() ?? new TestCase();
+       var exampleTestCases = problem.TestCases?
+           .Select(@case => new TestCaseDto
+           {
+               Input = @case.Input,
+               ExpectedOutput = @case.ExpectedOutput
+           })
+           .Take(3)
+           .ToList() ?? new List<TestCaseDto>();
        
        var problemResponse = new GetProblemResponseDto
        {
            Id = problem.Id,
            Name = problem.Name,
            ProblemText = problem.ProblemText,
-           Tag = problem.Tag,
-           Difficulty = problem.Difficulty,
+           Categories = EnumParser.ParseCategories(problem.Category),
+           Difficulty = problem.Difficulty.ToString(),
            TimelimitMs = problem.RuntimeLimit,
            MemoryLimitMb = problem.MemoryLimit,
-           ExampleInput = exampleTestCase.Input,
-           ExampleOutput = exampleTestCase.ExpectedOutput
+           TestCases = exampleTestCases
        };
         
         return problemResponse;
@@ -86,13 +95,9 @@ public class ProblemsService
             Id = submissions.Id,
             AuthUsername = submissions.AuthUsername,
             ProblemName = submissions.ProblemName,
-            Status = submissions.Status
+            Status = submissions.Status.ToString(),
         }).ToList();
         
         return getSubmissions;
     }
-    
-   
-
-    
 }

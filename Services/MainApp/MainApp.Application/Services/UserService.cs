@@ -1,6 +1,6 @@
 ﻿using MainApp.Application.Dto.Response;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +42,7 @@ public class UserService
             Id = sub.Id,
             AuthUsername = sub.AuthUsername,
             ProblemName = sub.ProblemName,
-            Status = sub.Status
+            Status = sub.Status.ToString()
         }).ToList();
 
         return getSubmissions;

@@ -1,11 +1,12 @@
 ﻿using System.Security.Claims;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
 using FakeItEasy;
 using FluentAssertions;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
@@ -73,7 +74,7 @@ public class SubmissionServiceTests
         savedSubmission.Code.Should().Be("test code");
         savedSubmission.ProblemId.Should().Be(1);
         savedSubmission.Language.Should().Be("C++");
-        savedSubmission.Status.Should().Be("Testing");
+        savedSubmission.Status.Should().Be(Status.TestRunning);
         savedSubmission.UserId.Should().Be("user123");
 
         A.CallTo(() => _fakePublishEndpoint.Publish(A<CppSubmissionRequestedEvent>._, A<CancellationToken>._))
@@ -365,7 +366,7 @@ public class SubmissionServiceTests
         savedSubmission.ProblemId.Should().Be(5);
         savedSubmission.Language.Should().Be("Python");
         savedSubmission.ProblemName.Should().Be("Algorithm Problem");
-        savedSubmission.Status.Should().Be("Testing");
+        savedSubmission.Status.Should().Be(Status.TestRunning);
         savedSubmission.UserId.Should().Be("user789");
     }
 

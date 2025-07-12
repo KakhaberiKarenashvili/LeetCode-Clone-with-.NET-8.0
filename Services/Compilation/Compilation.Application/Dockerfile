@@ -10,7 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Compilation/Compilation.Application/Compilation.Application.csproj", "Services/Compilation/Compilation.Application/"]
-COPY ["Services/Compilation/Compilation.Infrastructure/Compilation.Infrastructure.csproj", "Services/Compilation/Compilation.Infrastructure/"]
 COPY ["BuildingBlocks/BuildingBlocks.Common/BuildingBlocks.Common.csproj", "BuildingBlocks/BuildingBlocks.Common/"]
 COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
 RUN dotnet restore "Services/Compilation/Compilation.Application/Compilation.Application.csproj"

@@ -1,8 +1,8 @@
-﻿using MainApp.Domain.Models;
+﻿using MainApp.Domain.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MainApp.Infrastructure.Entity;
+namespace MainApp.Infrastructure.Data;
 
 public class AppDbContext : IdentityDbContext<User>
 {
@@ -28,6 +28,10 @@ public class AppDbContext : IdentityDbContext<User>
            .HasOne(t => t.Problem)
            .WithMany(p => p.TestCases)
            .HasForeignKey(t => t.ProblemId);
+       
+       modelBuilder.Entity<Problem>()
+           .Property(p => p.Difficulty)
+           .HasConversion<int>();
        
    }
     

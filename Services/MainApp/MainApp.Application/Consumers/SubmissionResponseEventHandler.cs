@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Messaging.Events;
 using MainApp.Application.Dto.Response;
-using MainApp.Infrastructure.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 
 namespace MainApp.Application.Consumers;
@@ -25,24 +25,20 @@ public class SubmissionResponseEventHandler : IConsumer<SubmissionResponseEvent>
             throw new InvalidOperationException("Submission not found");
         }
         
-        var checkForUnSuccessful = context.Message.Results?.FirstOrDefault(r => r.Success == false) 
+        var checkResults = context.Message.Results?.FirstOrDefault(r => r.Success == false) 
                                    ?? context.Message.Results?.FirstOrDefault();
 
-        submission.Status = checkForUnSuccessful?.Status;
-        submission.Output = checkForUnSuccessful?.Output; 
-        submission.Input = checkForUnSuccessful?.Input;
-        submission.ExpectedOutput = checkForUnSuccessful?.ExpectedOutput;
-
-        try
+        if (checkResults != null)
         {
+            submission.Status = checkResults.Status;
+            submission.Output = checkResults?.Output;
+            submission.Input = checkResults?.Input;
+            submission.ExpectedOutput = checkResults?.ExpectedOutput; 
+            
             _appDbContext.Update(submission);
 
             await _appDbContext.SaveChangesAsync();
-
         }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        
     }
 }

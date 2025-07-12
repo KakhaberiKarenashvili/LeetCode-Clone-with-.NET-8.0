@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using SubmissionDto = MainApp.Application.Dto.Request.SubmissionDto;
@@ -50,7 +51,7 @@ public class SubmissionService
                 ProblemId = submissionDto.ProblemId,
                 Language = submissionDto.Language,
                 ProblemName = problem.Name,
-                Status = "Testing",
+                Status = Status.TestRunning,
                 UserId = user.Claims.First(u => u.Type == "Id").Value,
             };
             try

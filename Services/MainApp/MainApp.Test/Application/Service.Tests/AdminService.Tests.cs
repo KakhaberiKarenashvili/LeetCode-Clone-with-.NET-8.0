@@ -1,10 +1,11 @@
-﻿using BuildingBlocks.Common.Classes;
+﻿using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using FakeItEasy;
 using FluentAssertions;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -34,8 +35,8 @@ public class AdminServiceTests
             Id = 1,
             Name = "Test Problem",
             ProblemText = "Test problem text",
-            Difficulty = "easy",
-            Tag = "test",
+            Difficulty = Difficulty.Easy,
+            Category = Category.Arrays,
             RuntimeLimit = 1000,
             MemoryLimit = 256,
             TestCases = new List<TestCase>()
@@ -70,8 +71,8 @@ public class AdminServiceTests
         {
             Name = "New Problem",
             ProblemText = "Test Problem",
-            Difficulty = "easy",
-            Tag = "Math",
+            Difficulty = "Easy",
+            Categories = ["Arrays","Strings"],
             RuntimeLimit = 2000,
             MemoryLimit = 256,
             TestCases = new List<TestCaseDto>
@@ -99,8 +100,8 @@ public class AdminServiceTests
             Id = 1,
             Name = "Old Problem",
             ProblemText = "Old text",
-            Difficulty = "easy",
-            Tag = "old",
+            Difficulty = Difficulty.Easy,
+            Category = Category.Arrays,
             RuntimeLimit = 500,
             MemoryLimit = 128,
             TestCases = new List<TestCase>()
@@ -113,8 +114,8 @@ public class AdminServiceTests
         {
             Name = "Updated Problem",
             ProblemText = "Problem Text",
-            Difficulty = "Hard",
-            Tag = "Algorithms",
+            Difficulty = "Easy",
+            Categories = ["Arrays","Strings"],
             RuntimeLimit = 1000,
             MemoryLimit = 256,
             TestCases = new List<TestCaseDto>
@@ -130,7 +131,7 @@ public class AdminServiceTests
         var updatedProblem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == 1);
         updatedProblem.Should().NotBeNull();
         updatedProblem.Name.Should().Be("Updated Problem");
-        updatedProblem.Difficulty.Should().Be("Hard");
+        updatedProblem.Difficulty.Should().Be(Difficulty.Easy);
         updatedProblem.TestCases.Should().HaveCount(1);
     }
 
@@ -142,8 +143,8 @@ public class AdminServiceTests
         {
             Name = "Updated Problem",
             ProblemText = "Problem Text",
-            Difficulty = "Hard",
-            Tag = "Algorithms",
+            Difficulty = "Easy",
+            Categories = ["Arrays","Strings"],
             RuntimeLimit = 1000,
             MemoryLimit = 256,
             TestCases = new List<TestCaseDto>()
@@ -164,8 +165,8 @@ public class AdminServiceTests
             Id = 1,
             Name = "Test Problem",
             ProblemText = "Test problem text",
-            Difficulty = "easy",
-            Tag = "test",
+            Difficulty = Difficulty.Medium,
+            Category = Category.Arrays,
             RuntimeLimit = 1000,
             MemoryLimit = 256,
             TestCases = new List<TestCase>()
