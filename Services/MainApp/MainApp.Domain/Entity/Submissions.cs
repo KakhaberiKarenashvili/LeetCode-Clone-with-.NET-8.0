@@ -9,7 +9,7 @@ namespace MainApp.Domain.Entity
         [Key]
         public int Id { get; set; }
         
-        public DateTime SubmissionTime { get; set; } = DateTime.Now;
+        public DateTime SubmissionTime { get; set; } = DateTime.UtcNow;
         public string AuthUsername { get; set; }
         public string Language { set; get; }
         public string Code { get; set; }
