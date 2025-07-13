@@ -2,6 +2,7 @@
 using BuildingBlocks.Common.Dtos;
 using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
+using MainApp.Application.Dto.Response;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using MassTransit;
@@ -24,6 +25,32 @@ public class SubmissionService
     }
 
 
+    public async Task<GetSubmissionResponseDto> GetSubmissionById(int id)
+    {
+        var submission = await _appDbContext.Submissions.FirstOrDefaultAsync(s => s.Id == id);
+        
+        if (submission == null)
+        {
+            throw new InvalidOperationException("Submission not found");
+        }
+
+        var response = new GetSubmissionResponseDto
+        {
+            Id = submission.Id,
+            AuthUsername = submission.AuthUsername,
+            ProblemId = submission.ProblemId,
+            ProblemName = submission.ProblemName,
+            Status = submission.Status.ToString(),
+            Language = submission.Language,
+            Code = submission.Code,
+            Output = submission.Output,
+            Input = submission.Input,
+            ExpectedOutput = submission.ExpectedOutput,
+        };
+        
+        return response;
+    }
+    
 
     public async Task HandleSubmission(SubmissionDto submission,ClaimsPrincipal user)
     {
@@ -101,4 +128,5 @@ public class SubmissionService
                 Testcases = testCaseDtoList
             };
     }
+    
 }

@@ -16,6 +16,17 @@ public class SubmissionController : ControllerBase
         _submissionService = submissionService;
     }
     
+    [HttpGet("/submissions/{id}")]
+    public async Task<IActionResult> GetSubmissionById(int id)
+    {
+        var submission = await _submissionService.GetSubmissionById(id);
+    
+        if (submission == null)
+            return NotFound($"Submission with ID {id} not found.");
+
+        return Ok(submission);
+    }
+    
 
     [HttpPost("/submit")]
     [Authorize(AuthenticationSchemes = "Bearer")]
