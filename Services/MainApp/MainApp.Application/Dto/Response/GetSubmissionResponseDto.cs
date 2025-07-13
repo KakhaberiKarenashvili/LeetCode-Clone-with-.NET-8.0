@@ -11,6 +11,10 @@ public class GetSubmissionResponseDto
     public int ProblemId { get; set; }
     public string ProblemName { get; set; }
     public string Status { get; set; }
+    
+    public string SuccessRate { get; set; }
+    
+    public DateTime SubmissionTime { get; set; }
     public string? Input { set; get; }
     public string? ExpectedOutput { set; get; }
     public string? Output { set; get; }

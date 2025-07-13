@@ -28,12 +28,16 @@ public class SubmissionResponseEventHandler : IConsumer<SubmissionResponseEvent>
         var checkResults = context.Message.Results?.FirstOrDefault(r => r.Success == false) 
                                    ?? context.Message.Results?.FirstOrDefault();
 
-        if (checkResults != null)
+        if (checkResults != null && context.Message.Results != null)
         {
+            var total =  context.Message.Results.Count;
+            var passed =  context.Message.Results.Count(tr => tr.Success == true);
+            
             submission.Status = checkResults.Status;
             submission.Output = checkResults?.Output;
             submission.Input = checkResults?.Input;
             submission.ExpectedOutput = checkResults?.ExpectedOutput; 
+            submission.SuccessRate = total == 0 ? 0 : Math.Round((double)(passed / total) * 100, 2);
             
             _appDbContext.Update(submission);
 

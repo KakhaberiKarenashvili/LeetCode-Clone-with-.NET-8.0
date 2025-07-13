@@ -42,6 +42,8 @@ public class SubmissionService
             ProblemName = submission.ProblemName,
             Status = submission.Status.ToString(),
             Language = submission.Language,
+            SubmissionTime = submission.SubmissionTime,
+            SuccessRate = $"{submission.SuccessRate}%",
             Code = submission.Code,
             Output = submission.Output,
             Input = submission.Input,
