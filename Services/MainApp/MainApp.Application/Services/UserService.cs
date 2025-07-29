@@ -1,4 +1,5 @@
-﻿using MainApp.Application.Dto.Response;
+﻿using MainApp.Application.Dto.Request;
+using MainApp.Application.Dto.Response;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -37,15 +38,56 @@ public class UserService
     {
         var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
         
-        var getSubmissions = submissions.Select(sub => new GetSubmissionsResponseDto
+        var getSubmissions = submissions.Select(submissions => new GetSubmissionsResponseDto
         {
-            Id = sub.Id,
-            AuthUsername = sub.AuthUsername,
-            ProblemName = sub.ProblemName,
-            Status = sub.Status.ToString()
+            Id = submissions.Id,
+            AuthUsername = submissions.AuthUsername,
+            ProblemName = submissions.ProblemName,
+            Language = submissions.Language,
+            SubmissionTime = submissions.SubmissionTime,
+            SuccessRate = $"{submissions.SuccessRate}%",
+            Status = submissions.Status.ToString(),
         }).ToList();
 
         return getSubmissions;
+    }
+    
+    public async Task ChangeEmail(string userId, string newEmail)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+
+        var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+
+        var result = await _userManager.ChangeEmailAsync(user, newEmail, token);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to change email: {errors}");
+        }
+    }
+
+    public async Task ChangePassword(string userId, ChangePasswordDto changePasswordDto)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+        
+        var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to change password: {errors}");
+        }
     }
 
 

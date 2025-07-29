@@ -95,6 +95,9 @@ public class ProblemsService
             Id = submissions.Id,
             AuthUsername = submissions.AuthUsername,
             ProblemName = submissions.ProblemName,
+            Language = submissions.Language,
+            SubmissionTime = submissions.SubmissionTime,
+            SuccessRate = $"{submissions.SuccessRate}%",
             Status = submissions.Status.ToString(),
         }).ToList();
         

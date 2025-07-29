@@ -1,4 +1,5 @@
-﻿using MainApp.Application.Services;
+﻿using MainApp.Application.Dto.Request;
+using MainApp.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +38,25 @@ public class UserController : ControllerBase
             var submissions = await _userService.MySubmissions(userid);
 
             return Ok(submissions);
+    }
 
+    [HttpPut("/change-email/{email}")]
+    public async Task<IActionResult> ChangeEmail(string email)
+    {
+        var userid = User.Claims.First(user => user.Type == "Id").Value;
+        
+        await _userService.ChangeEmail(userid, email);
+        
+        return Ok("email changed");
+    }
+
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        var userid = User.Claims.First(user => user.Type == "Id").Value;
+
+        await _userService.ChangePassword(userid, changePasswordDto);
+
+        return Ok("password changed");
     }
 }

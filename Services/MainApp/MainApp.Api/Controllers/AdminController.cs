@@ -8,7 +8,7 @@ namespace MainApp.Api.Controllers;
 [ApiController]
 
 [Authorize(AuthenticationSchemes = "Bearer")]
-//[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
     private readonly AdminService _adminService;

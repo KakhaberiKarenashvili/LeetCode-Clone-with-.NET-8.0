@@ -8,12 +8,15 @@ namespace MainApp.Domain.Entity
     {
         [Key]
         public int Id { get; set; }
+        
+        public DateTime SubmissionTime { get; set; } = DateTime.UtcNow;
         public string AuthUsername { get; set; }
         public string Language { set; get; }
         public string Code { get; set; }
         public int ProblemId { get; set; }
         public string ProblemName { get; set; }
         public Status Status { get; set; }
+        public double SuccessRate { get; set; }
         public string? Input { set; get; }
         public string? ExpectedOutput { set; get; }
         public string? Output { set; get; }
