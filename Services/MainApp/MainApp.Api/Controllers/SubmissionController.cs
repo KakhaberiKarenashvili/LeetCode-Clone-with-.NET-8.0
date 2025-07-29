@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MainApp.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/submissions")]
 [ApiController]
 public class SubmissionController : ControllerBase
 {
@@ -16,19 +16,19 @@ public class SubmissionController : ControllerBase
         _submissionService = submissionService;
     }
     
-    [HttpGet("/submissions/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetSubmissionById(int id)
     {
         var submission = await _submissionService.GetSubmissionById(id);
     
         if (submission == null)
-            return NotFound($"Submission with ID {id} not found.");
+            return NotFound($"Submission not found.");
 
         return Ok(submission);
     }
     
 
-    [HttpPost("/submit")]
+    [HttpPost()]
     [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Submit(SubmissionDto submissionDto) //for now i need my code plain text not json
     {
