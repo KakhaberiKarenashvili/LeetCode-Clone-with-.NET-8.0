@@ -19,7 +19,7 @@ public class UserController : ControllerBase
     }
     
     
-    [HttpPost("regiser")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody]RegistrationDto newuser)
     { 
         await _userService.Register(newuser);
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [HttpGet("mysubmissions")]
+    [HttpGet("submissions")]
     public async Task<IActionResult> MySubmissions()
     {
             var userid = User.Claims.First(user => user.Type == "Id").Value;

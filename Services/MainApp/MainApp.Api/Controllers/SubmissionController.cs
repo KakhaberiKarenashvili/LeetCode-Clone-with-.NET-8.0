@@ -30,7 +30,7 @@ public class SubmissionController : ControllerBase
 
     [HttpPost()]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> Submit(SubmissionDto submissionDto) //for now i need my code plain text not json
+    public async Task<IActionResult> Submit(SubmissionDto submissionDto)
     {
         var username = User.Claims.First(u => u.Type == "UserName").Value;
         
