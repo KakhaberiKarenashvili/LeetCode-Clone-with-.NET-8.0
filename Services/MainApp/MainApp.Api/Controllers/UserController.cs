@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MainApp.Api.Controllers;
 
 
-[Route("api/[controller]")]
+[Route("api/users")]
 [ApiController]
-
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
@@ -20,7 +18,25 @@ public class UserController : ControllerBase
         _userService = userService;
     }
     
-    [HttpGet("/account")]
+    
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody]RegistrationDto newuser)
+    { 
+        await _userService.Register(newuser);
+
+        return Created();
+    }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody]UserLoginDto userLogin)
+    { 
+        var login = await _userService.Login(userLogin);
+            
+        return Ok(login);
+    }
+    
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpGet("profile")]
     public async Task<IActionResult> Account()
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
@@ -30,7 +46,8 @@ public class UserController : ControllerBase
         return  Ok(user);
     }
 
-    [HttpGet("/submissions")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpGet("submissions")]
     public async Task<IActionResult> MySubmissions()
     {
             var userid = User.Claims.First(user => user.Type == "Id").Value;
@@ -40,7 +57,8 @@ public class UserController : ControllerBase
             return Ok(submissions);
     }
 
-    [HttpPut("/change-email/{email}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPut("change-email/{email}")]
     public async Task<IActionResult> ChangeEmail(string email)
     {
         var userid = User.Claims.First(user => user.Type == "Id").Value;
@@ -50,6 +68,7 @@ public class UserController : ControllerBase
         return Ok("email changed");
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
     {

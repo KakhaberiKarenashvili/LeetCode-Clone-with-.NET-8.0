@@ -20,7 +20,6 @@ public static class DependencyInjection
             .AddUserManager<UserManager<User>>()
             .AddDefaultTokenProviders();
         
-        services.AddScoped<AccountService>();
         services.AddScoped<AdminService>();
         services.AddScoped<UserService>();
         services.AddScoped<ProblemsService>();

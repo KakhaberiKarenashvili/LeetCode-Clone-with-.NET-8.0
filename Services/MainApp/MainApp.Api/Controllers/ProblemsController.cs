@@ -1,9 +1,11 @@
-﻿using MainApp.Application.Services;
+﻿using MainApp.Application.Dto.Request;
+using MainApp.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MainApp.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/problems")]
 [ApiController]
 public class ProblemsController : ControllerBase
 {
@@ -14,7 +16,7 @@ public class ProblemsController : ControllerBase
         _problemsService = problemsService;
     }
     
-    [HttpGet("/problems")]
+    [HttpGet()]
     public async Task<IActionResult> GetProblems(int pageNumber)
     {
         var problems =  await _problemsService.GetAllProblems(pageNumber);
@@ -22,7 +24,7 @@ public class ProblemsController : ControllerBase
         return Ok(problems);
     }
 
-    [HttpGet("/problems/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetProblem(int id)
     {
         var problem = await _problemsService.GetProblem(id);
@@ -30,7 +32,59 @@ public class ProblemsController : ControllerBase
         return Ok(problem);
     }
     
-    [HttpGet("/problems/{id}/submissions")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(Roles = "Admin")]
+    [HttpPost()]
+    public async Task<IActionResult> AddProblem(AddProblemDto problem)
+    { 
+        try
+        {
+            await _problemsService.AddProblem(problem);
+            
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
+    }
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditProblem(int id, AddProblemDto editProblem)
+    {
+        try
+        {
+            await _problemsService.EditProblem(id, editProblem);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
+        return Accepted();
+    }
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProblem(int id)
+    {
+        try
+        {
+            await _problemsService.DeleteProblem(id);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+
+        return Ok();
+    }
+    
+    [HttpGet("{id}/submissions")]
     public async Task<IActionResult> GetSubmissions(int id)
     { 
         var submissions = await _problemsService.GetSubmissions(id);

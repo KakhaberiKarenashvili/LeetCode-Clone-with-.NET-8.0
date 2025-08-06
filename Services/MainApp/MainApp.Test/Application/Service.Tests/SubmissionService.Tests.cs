@@ -370,6 +370,65 @@ public class SubmissionServiceTests
         savedSubmission.UserId.Should().Be("user789");
     }
 
+    [Fact]
+    public async Task GetSubmissionById_ShouldReturnSubmission_WhenCorrectId()
+    {
+        // Arrange
+        var problem = new Problem
+        {
+            Id = 5,
+            Name = "Algorithm Problem",
+            ProblemText = "test problem text",
+            MemoryLimit = 128,
+            RuntimeLimit = 500,
+            TestCases = new List<TestCase>()
+        };
+
+        await _fakeDbContext.Problems.AddAsync(problem);
+        await _fakeDbContext.SaveChangesAsync();
+
+        var submissionDto = new SubmissionDto
+        {
+            ProblemId = 5,
+            Code = "complex algorithm code",
+            Language = "Python"
+        };
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim("UserName", "algorithmuser"),
+            new Claim("Id", "user789")
+        }));
+        
+        await _sut.HandleSubmission(submissionDto, user);
+
+        var submissionId = 1;
+        
+        // Act
+
+        var result = await _sut.GetSubmissionById(submissionId);
+        
+        //Assert
+
+        result.Id.Should().Be(1);
+        result.ProblemId.Should().Be(5);
+        result.ProblemName.Should().Be("Algorithm Problem");
+        result.AuthUsername.Should().Be("algorithmuser");
+
+    }
+    
+    
+    [Fact]
+    public async Task GetSubmissionById_ShouldThrowInvalidOperationException_WhenSubmissionNotFound()
+    {
+        // Arrange
+        var submissionId = 1;
+        
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _sut.GetSubmissionById(submissionId));
+    }
+
     public void Dispose()
     {
         _fakeDbContext.Dispose();
