@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Messaging.Events;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Application.Dto.Response;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using SubmissionDto = MainApp.Application.Dto.Request.SubmissionDto;
@@ -23,6 +25,34 @@ public class SubmissionService
     }
 
 
+    public async Task<GetSubmissionResponseDto> GetSubmissionById(int id)
+    {
+        var submission = await _appDbContext.Submissions.FirstOrDefaultAsync(s => s.Id == id);
+        
+        if (submission == null)
+        {
+            throw new InvalidOperationException("Submission not found");
+        }
+
+        var response = new GetSubmissionResponseDto
+        {
+            Id = submission.Id,
+            AuthUsername = submission.AuthUsername,
+            ProblemId = submission.ProblemId,
+            ProblemName = submission.ProblemName,
+            Status = submission.Status.ToString(),
+            Language = submission.Language,
+            SubmissionTime = submission.SubmissionTime,
+            SuccessRate = $"{submission.SuccessRate}%",
+            Code = submission.Code,
+            Output = submission.Output,
+            Input = submission.Input,
+            ExpectedOutput = submission.ExpectedOutput,
+        };
+        
+        return response;
+    }
+    
 
     public async Task HandleSubmission(SubmissionDto submission,ClaimsPrincipal user)
     {
@@ -50,7 +80,7 @@ public class SubmissionService
                 ProblemId = submissionDto.ProblemId,
                 Language = submissionDto.Language,
                 ProblemName = problem.Name,
-                Status = "Testing",
+                Status = Status.TestRunning,
                 UserId = user.Claims.First(u => u.Type == "Id").Value,
             };
             try
@@ -100,4 +130,5 @@ public class SubmissionService
                 Testcases = testCaseDtoList
             };
     }
+    
 }

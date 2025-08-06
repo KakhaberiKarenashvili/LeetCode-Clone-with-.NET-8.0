@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BuildingBlocks.Common.Classes;
+using BuildingBlocks.Common.Dtos;
 
 namespace MainApp.Application.Dto.Request;
 
@@ -13,7 +13,7 @@ public class AddProblemDto
         public string ProblemText { get; set; }
         
         [Required]
-        public string Tag { get; set; }
+        public List<string> Categories { get; set; }
         
         public string Difficulty { get; set; }
         

@@ -18,4 +18,8 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.17" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Common\BuildingBlocks.Common.csproj" />
+    </ItemGroup>
+
 </Project>

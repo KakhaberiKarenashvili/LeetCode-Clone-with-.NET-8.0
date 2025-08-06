@@ -8,6 +8,11 @@ public class GetSubmissionsResponseDto
     
     public string? ProblemName { get; set; }
     
+    public string? Language { get; set; }
     public string? Status { get; set; }
+    
+    public string? SuccessRate { get; set; }
+    
+    public DateTime? SubmissionTime { get; set; }
     
 }

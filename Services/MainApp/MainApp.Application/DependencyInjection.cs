@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Messaging.Masstransit;
 using MainApp.Application.Services;
-using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,6 @@ public static class DependencyInjection
             .AddUserManager<UserManager<User>>()
             .AddDefaultTokenProviders();
         
-        services.AddScoped<AccountService>();
         services.AddScoped<AdminService>();
         services.AddScoped<UserService>();
         services.AddScoped<ProblemsService>();

@@ -1,5 +1,9 @@
-﻿using MainApp.Domain.Models;
-using MainApp.Infrastructure.Entity;
+﻿using BuildingBlocks.Common.Dtos;
+using BuildingBlocks.Common.Enums;
+using BuildingBlocks.Common.Helpers;
+using MainApp.Application.Dto.Request;
+using MainApp.Domain.Entity;
+using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using GetProblemResponseDto = MainApp.Application.Dto.Response.GetProblemResponseDto;
@@ -28,12 +32,12 @@ public class ProblemsService
             .Take(50)
             .ToListAsync();
 
-        var problemList = data.Select(d => new GetProblemsResponseDto
+        var problemList = data.Select(p => new GetProblemsResponseDto
         {
-            Id = d.Id,
-            Name = d.Name,
-            Tag = d.Tag,
-            Difficulty = d.Difficulty
+            Id = p.Id,
+            Name = p.Name,
+            Categories = EnumParser.ParseCategories(p.Category),
+            Difficulty = p.Difficulty.ToString(),
         }).ToList();
         
         return problemList;
@@ -51,22 +55,124 @@ public class ProblemsService
            throw new InvalidOperationException("problem not found");
        }
        
-       var exampleTestCase = problem.TestCases?.First() ?? new TestCase();
+       var exampleTestCases = problem.TestCases?
+           .Select(@case => new TestCaseDto
+           {
+               Input = @case.Input,
+               ExpectedOutput = @case.ExpectedOutput
+           })
+           .Take(3)
+           .ToList() ?? new List<TestCaseDto>();
        
        var problemResponse = new GetProblemResponseDto
        {
            Id = problem.Id,
            Name = problem.Name,
            ProblemText = problem.ProblemText,
-           Tag = problem.Tag,
-           Difficulty = problem.Difficulty,
+           Categories = EnumParser.ParseCategories(problem.Category),
+           Difficulty = problem.Difficulty.ToString(),
            TimelimitMs = problem.RuntimeLimit,
            MemoryLimitMb = problem.MemoryLimit,
-           ExampleInput = exampleTestCase.Input,
-           ExampleOutput = exampleTestCase.ExpectedOutput
+           TestCases = exampleTestCases
        };
         
         return problemResponse;
+    }
+    
+         public async Task AddProblem(AddProblemDto problemDto)
+     {
+
+         var parsedCategory = ParseCategories(problemDto.Categories);
+         
+         var parsedDifficulty = ParseDifficulty(problemDto.Difficulty);
+         
+        
+        var problem = new Problem
+        {
+        
+            Name = problemDto.Name,
+            ProblemText = problemDto.ProblemText,
+            Category =  parsedCategory,
+            Difficulty = parsedDifficulty,
+            RuntimeLimit = problemDto.RuntimeLimit,
+            MemoryLimit = problemDto.MemoryLimit,
+            TestCases = problemDto.TestCases.Select(tc => new TestCase
+            {
+                Input = tc.Input,
+                ExpectedOutput = tc.ExpectedOutput
+            }).ToList() 
+        };
+
+        try
+        {
+            await _appDbContext.Problems.AddAsync(problem);
+            await _appDbContext.SaveChangesAsync();
+            
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+        
+    }
+
+    public async Task EditProblem(int id, AddProblemDto editProblemDto)
+    {
+        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == id);
+        
+        if (problem == null)
+        {
+            throw new InvalidOperationException("Problem not found");
+        }
+        
+        var parsedCategory = ParseCategories(editProblemDto.Categories);
+         
+        var parsedDifficulty = ParseDifficulty(editProblemDto.Difficulty);
+        
+        problem.Name = editProblemDto.Name;
+        problem.ProblemText = editProblemDto.ProblemText;
+        problem.Category = parsedCategory;
+        problem.Difficulty = parsedDifficulty;
+        problem.RuntimeLimit = editProblemDto.RuntimeLimit;
+        problem.MemoryLimit = editProblemDto.MemoryLimit;
+        problem.TestCases = editProblemDto.TestCases.Select(tc => new TestCase
+        {
+            Input = tc.Input,
+            ExpectedOutput = tc.ExpectedOutput
+        }).ToList();
+
+
+        try
+        {
+            await _appDbContext.SaveChangesAsync();
+            
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        
+    }
+    
+    public async Task DeleteProblem(int id)
+    { 
+        var problem = await _appDbContext.Problems.FirstOrDefaultAsync(p => p.Id == id);
+        
+        if (problem == null)
+        {
+            throw new InvalidOperationException("Problem not found");
+        }
+
+        try
+        {
+            _appDbContext.Problems.Remove(problem);
+            await _appDbContext.SaveChangesAsync();
+            
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int problemId)
@@ -86,13 +192,42 @@ public class ProblemsService
             Id = submissions.Id,
             AuthUsername = submissions.AuthUsername,
             ProblemName = submissions.ProblemName,
-            Status = submissions.Status
+            Language = submissions.Language,
+            SubmissionTime = submissions.SubmissionTime,
+            SuccessRate = $"{submissions.SuccessRate}%",
+            Status = submissions.Status.ToString(),
         }).ToList();
         
         return getSubmissions;
     }
     
-   
-
     
+    private static  Category ParseCategories(List<string> categoryStrings)
+    {
+        Category categories = Category.None;
+
+        foreach (var categoryStr in categoryStrings)
+        {
+            if (Enum.TryParse<Category>(categoryStr, out var category))
+            {
+                categories |= category; // Add to the bitmask
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid category: {categoryStr}");
+            }
+        }
+
+        return categories;
+    }
+    
+    private static Difficulty ParseDifficulty(string difficulty)
+    {
+        if (Enum.TryParse<Difficulty>(difficulty, out var parsedDifficulty))
+        {
+            return parsedDifficulty;
+        }
+
+        return Difficulty.Easy;
+    }
 }

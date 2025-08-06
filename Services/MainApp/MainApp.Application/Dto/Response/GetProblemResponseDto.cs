@@ -1,4 +1,7 @@
-﻿namespace MainApp.Application.Dto.Response;
+﻿using BuildingBlocks.Common.Dtos;
+using MainApp.Domain.Entity;
+
+namespace MainApp.Application.Dto.Response;
 
 public class GetProblemResponseDto
 {
@@ -8,7 +11,7 @@ public class GetProblemResponseDto
     
     public string? ProblemText { set; get; }
     
-    public string? Tag { set; get; }
+    public List<string>? Categories { set; get; }
     
     public string? Difficulty { set; get; }
     
@@ -16,8 +19,5 @@ public class GetProblemResponseDto
     
     public int? MemoryLimitMb { set; get; }
     
-    public string? ExampleInput { set; get; }
-    
-    public string? ExampleOutput { set; get; }
-    
+    public List<TestCaseDto>? TestCases { set; get; }
 }
