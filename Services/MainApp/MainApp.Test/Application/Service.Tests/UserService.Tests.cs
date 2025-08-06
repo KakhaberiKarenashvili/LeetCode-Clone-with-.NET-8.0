@@ -413,4 +413,221 @@ public class UserServiceTests
         result.Should().NotBeNull();
         result.Should().BeEmpty();
     }
+    
+    
+    [Fact]
+    public async Task MySubmissions_ShouldReturnSubmissions_WhenUserHasSubmissions()
+    {
+        // Arrange
+        var userId = "123";
+        var submissions = new List<Submissions>
+        {
+            new Submissions { Id = 3, UserId = userId, AuthUsername = "author1", Language = "C++", Code = "Testcode", ProblemId = 1,  ProblemName = "Problem1", Status = Status.TestPassed, },
+            new Submissions { Id = 4, UserId = userId, AuthUsername = "author2",  Language = "Python", Code = "Testcode", ProblemId = 2, ProblemName = "Problem2", Status = Status.TestRunning }
+        };
+        
+        _fakeDbContext.Submissions.AddRangeAsync(submissions);
+        
+        await _fakeDbContext.SaveChangesAsync();
+        
+        // Act
+        var result = await _userService.MySubmissions(userId);
+        
+        //Assert
+        result.Should().NotBeNullOrEmpty();
+        result.Should().HaveCount(2);
+        
+        result[0].Id.Should().Be(3);
+        result[0].AuthUsername.Should().Be("author1");
+        result[0].ProblemName.Should().Be("Problem1");
+        result[0].Status.Should().Be("TestPassed");
+        
+        result[1].Id.Should().Be(4);
+        
+    }
+    
+    [Fact]
+    public async Task ChangeEmail_ShouldSucceed_WhenValidUserIdAndEmail()
+    {
+        // Arrange
+        var userId = "test-user-id";
+        var newEmail = "newemail@example.com";
+        var user = new User { Id = userId, Email = "oldemail@example.com" };
+        var token = "change-email-token";
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult(user));
+        A.CallTo(() => _fakeUserManager.GenerateChangeEmailTokenAsync(user, newEmail))
+            .Returns(Task.FromResult(token));
+        A.CallTo(() => _fakeUserManager.ChangeEmailAsync(user, newEmail, token))
+            .Returns(Task.FromResult(IdentityResult.Success));
+
+        // Act
+        var act = async () => await _userService.ChangeEmail(userId, newEmail);
+
+        // Assert
+        await act.Should().NotThrowAsync();
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.GenerateChangeEmailTokenAsync(user, newEmail)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.ChangeEmailAsync(user, newEmail, token)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task ChangeEmail_ShouldThrowInvalidOperationException_WhenUserNotFound()
+    {
+        // Arrange
+        var userId = "non-existent-user-id";
+        var newEmail = "newemail@example.com";
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult<User>(null));
+
+        // Act
+        var act = async () => await _userService.ChangeEmail(userId, newEmail);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("User not found.");
+        
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.GenerateChangeEmailTokenAsync(A<User>._, A<string>._)).MustNotHaveHappened();
+        A.CallTo(() => _fakeUserManager.ChangeEmailAsync(A<User>._, A<string>._, A<string>._)).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async Task ChangeEmail_ShouldThrowInvalidOperationException_WhenChangeEmailFails()
+    {
+        // Arrange
+        var userId = "test-user-id";
+        var newEmail = "newemail@example.com";
+        var user = new User { Id = userId, Email = "oldemail@example.com" };
+        var token = "change-email-token";
+        var errors = new[]
+        {
+            new IdentityError { Description = "Email is already taken." },
+            new IdentityError { Description = "Invalid email format." }
+        };
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult(user));
+        A.CallTo(() => _fakeUserManager.GenerateChangeEmailTokenAsync(user, newEmail))
+            .Returns(Task.FromResult(token));
+        A.CallTo(() => _fakeUserManager.ChangeEmailAsync(user, newEmail, token))
+            .Returns(Task.FromResult(IdentityResult.Failed(errors)));
+
+        // Act
+        var act = async () => await _userService.ChangeEmail(userId, newEmail);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("Failed to change email: Email is already taken.; Invalid email format.");
+        
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.GenerateChangeEmailTokenAsync(user, newEmail)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.ChangeEmailAsync(user, newEmail, token)).MustHaveHappenedOnceExactly();
+    }
+    
+    [Fact]
+    public async Task ChangePassword_ShouldSucceed_WhenValidUserIdAndPasswords()
+    {
+        // Arrange
+        var userId = "test-user-id";
+        var user = new User { Id = userId };
+        var changePasswordDto = new ChangePasswordDto
+        {
+            CurrentPassword = "CurrentPassword123!",
+            NewPassword = "NewPassword123!"
+        };
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult(user));
+        A.CallTo(() => _fakeUserManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword))
+            .Returns(Task.FromResult(IdentityResult.Success));
+
+        // Act
+        var act = async () => await _userService.ChangePassword(userId, changePasswordDto);
+
+        // Assert
+        await act.Should().NotThrowAsync();
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task ChangePassword_ShouldThrowInvalidOperationException_WhenUserNotFound()
+    {
+        // Arrange
+        var userId = "non-existent-user-id";
+        var changePasswordDto = new ChangePasswordDto
+        {
+            CurrentPassword = "CurrentPassword123!",
+            NewPassword = "NewPassword123!"
+        };
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult<User>(null));
+
+        // Act
+        var act = async () => await _userService.ChangePassword(userId, changePasswordDto);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("User not found.");
+        
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.ChangePasswordAsync(A<User>._, A<string>._, A<string>._)).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async Task ChangePassword_ShouldThrowInvalidOperationException_WhenChangePasswordFails()
+    {
+        // Arrange
+        var userId = "test-user-id";
+        var user = new User { Id = userId };
+        var changePasswordDto = new ChangePasswordDto
+        {
+            CurrentPassword = "WrongCurrentPassword",
+            NewPassword = "NewPassword123!"
+        };
+        var errors = new[]
+        {
+            new IdentityError { Description = "Incorrect password." },
+            new IdentityError { Description = "Password must be at least 8 characters." }
+        };
+
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId))
+            .Returns(Task.FromResult(user));
+        A.CallTo(() => _fakeUserManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword))
+            .Returns(Task.FromResult(IdentityResult.Failed(errors)));
+
+        // Act
+        var act = async () => await _userService.ChangePassword(userId, changePasswordDto);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("Failed to change password: Incorrect password.; Password must be at least 8 characters.");
+        
+        A.CallTo(() => _fakeUserManager.FindByIdAsync(userId)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _fakeUserManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task ChangePassword_ShouldThrowNullReferenceException_WhenChangePasswordDtoIsNull()
+    {
+        // Arrange
+        var userId = "test-user-id";
+        ChangePasswordDto changePasswordDto = null;
+
+        // Act
+        var act = async () => await _userService.ChangePassword(userId, changePasswordDto);
+
+        // Assert
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+
+    
+   
+
+    
+    
 }
