@@ -2,13 +2,11 @@
 using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
+using MainApp.Application.Dto.Response;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using GetProblemResponseDto = MainApp.Application.Dto.Response.GetProblemResponseDto;
-using GetProblemsResponseDto = MainApp.Application.Dto.Response.GetProblemsResponseDto;
-using GetSubmissionsResponseDto = MainApp.Application.Dto.Response.GetSubmissionsResponseDto;
+
 
 namespace MainApp.Application.Services;
 
@@ -187,16 +185,9 @@ public class ProblemsService
         var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == problemId).ToListAsync();
         
 
-        var getSubmissions = submissionsList.Select(submissions => new GetSubmissionsResponseDto
-        {
-            Id = submissions.Id,
-            AuthUsername = submissions.AuthUsername,
-            ProblemName = submissions.ProblemName,
-            Language = submissions.Language,
-            SubmissionTime = submissions.SubmissionTime,
-            SuccessRate = $"{submissions.SuccessRate}%",
-            Status = submissions.Status.ToString(),
-        }).ToList();
+        var getSubmissions = submissionsList.
+            Select(GetSubmissionsResponseDto.FromSubmission)
+            .ToList();
         
         return getSubmissions;
     }
