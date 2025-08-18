@@ -1,30 +1,84 @@
 # LeetCode Clone with .NET 8.0
 
-Under development....
+Project Status: This project is in active development and is not production-ready.  
+Breaking changes are expected until the first stable release.
 
-This project aims to create a scalable and secure coding challenge platform similar to LeetCode. Utilizing modern technologies to provide a seamless user experience and ensure the safety and integrity of user code submissions.
+This is a LeetCode inspired coding challenge platform built with .NET 8.0.  
+It allows users to solve coding problems and have their code executed securely inside Docker containers.
+
+## Why Docker
+
+This platform must run inside Docker because the code execution service runs in a Linux-based container with:
+- Python (for Python challenges)
+- GCC (for C/C++ challenges)
+- Secure, isolated execution to prevent malicious code from affecting the host machine.
 
 ## Features
 
-- **IdentityUser**: Manages user authentication and profiles securely.
-- **JWT Authentication**: Provides secure token-based authentication.
-- **PostgreSQL**: Reliable and efficient database management.
-- **Docker**: Safe and isolated environments for code compilation and execution.
+### User Management
+- ASP.NET Core Identity for user authentication and profile management.
+- JWT Authentication for secure token-based login.
+
+### Data Layer
+- PostgreSQL as the relational database.
+- Flexible database configuration.
+
+### Code Execution
+- Docker-based sandboxing for safe compilation and execution.
+
 
 ## Technologies Used
+- .NET 8.0
+- ASP.NET Core Identity
+- JWT (JSON Web Tokens)
+- PostgreSQL
+- Docker & Docker Compose
 
-- **.NET 8.0**: Core framework for developing the application.
-- **IdentityUser**: ASP.NET Core Identity for user management.
-- **JWT**: Secure JSON Web Tokens for authentication.
-- **PostgreSQL**: Robust relational database system.
-- **Docker**: Containerization for secure and isolated code execution environments.
+## Architecture
+![Architecture Diagram](docs/architecture.jpeg)
 
-## How to Run
+## Getting Started
 
-1. **Use Command below to run**
+### Prerequisites
+- Install Docker and Docker Compose
+- Install .NET 8 SDK (only required if you plan to develop outside Docker)
 
-    ```bash
-    docker-compose up
-    ```
+### Setup Instructions
 
+Step 1 – Clone the repository
+```bash
+  git clone https://github.com/username/leetcode-clone.git
+  cd leetcode-clone
+```
+
+Step 2 – (Optional) Configure database and message broker
+By default, PostgreSQL (database) and RabbitMQ (message broker) are configured to run as services inside Docker using docker-compose.yml.
+No changes are needed to run the project as is.
+
+If you want to use your own database or message broker instance, update the connection strings in `appsettings.json`:
+```json
+"ConnectionStrings": {
+  "DBConnection": "Host=host.docker.internal;Port=5432;Database=postgres;Username=postgres;Password=postgres;"
+}
+```
+
+```json
+"MessageBroker": {
+  "Host": "amqp://rabbitmq:5672",
+  "UserName": "user",
+  "Password": "password"
+}
+```
+
+Step 3 – Start the application
+```bash
+  docker-compose up --build
+```
+Notes
+
+- The project must run in Docker to ensure safe code execution.
+
+-  The execution container runs Linux with Python and GCC installed.
+
+- This project is under heavy development and may change frequently.
 

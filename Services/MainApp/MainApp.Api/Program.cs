@@ -4,6 +4,7 @@ using MainApp.Application;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure;
 using MainApp.Infrastructure.Data.Seeder;
+using MainApp.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,11 +25,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.MigrateDatabase();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

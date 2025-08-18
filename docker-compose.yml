@@ -29,6 +29,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      Postgres.Db:
+        condition: service_healthy
     networks:
       - backend
       - compilation
@@ -56,6 +58,11 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
     networks:
       - backend
@@ -63,8 +70,7 @@ services:
       - 5432:5432
     volumes:
       - database:/var/lib/postgresql/data
-
-
+  
 volumes:
   database:
 
