@@ -1,6 +1,5 @@
 ﻿using BuildingBlocks.Common.Dtos;
 using BuildingBlocks.Common.Enums;
-using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
 using MainApp.Domain.Entity;
@@ -30,13 +29,9 @@ public class ProblemsService
             .Take(50)
             .ToListAsync();
 
-        var problemList = data.Select(p => new GetProblemsResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Categories = EnumParser.ParseCategories(p.Category),
-            Difficulty = p.Difficulty.ToString(),
-        }).ToList();
+        var problemList = data.
+            Select(GetProblemsResponseDto.FromProblem)
+            .ToList();
         
         return problemList;
     }
@@ -62,35 +57,23 @@ public class ProblemsService
            .Take(3)
            .ToList() ?? new List<TestCaseDto>();
        
-       var problemResponse = new GetProblemResponseDto
-       {
-           Id = problem.Id,
-           Name = problem.Name,
-           ProblemText = problem.ProblemText,
-           Categories = EnumParser.ParseCategories(problem.Category),
-           Difficulty = problem.Difficulty.ToString(),
-           TimelimitMs = problem.RuntimeLimit,
-           MemoryLimitMb = problem.MemoryLimit,
-           TestCases = exampleTestCases
-       };
+       var problemResponse = GetProblemResponseDto.FromProblem(problem, exampleTestCases);;
         
         return problemResponse;
     }
-    
-         public async Task AddProblem(AddProblemDto problemDto)
-     {
 
-         var parsedCategory = ParseCategories(problemDto.Categories);
-         
-         var parsedDifficulty = ParseDifficulty(problemDto.Difficulty);
-         
-        
+    public async Task AddProblem(AddProblemDto problemDto)
+    {
+        var parsedCategory = ParseCategories(problemDto.Categories);
+
+        var parsedDifficulty = ParseDifficulty(problemDto.Difficulty);
+
+
         var problem = new Problem
         {
-        
             Name = problemDto.Name,
             ProblemText = problemDto.ProblemText,
-            Category =  parsedCategory,
+            Category = parsedCategory,
             Difficulty = parsedDifficulty,
             RuntimeLimit = problemDto.RuntimeLimit,
             MemoryLimit = problemDto.MemoryLimit,
@@ -98,20 +81,18 @@ public class ProblemsService
             {
                 Input = tc.Input,
                 ExpectedOutput = tc.ExpectedOutput
-            }).ToList() 
+            }).ToList()
         };
 
         try
         {
             await _appDbContext.Problems.AddAsync(problem);
             await _appDbContext.SaveChangesAsync();
-            
         }
         catch (Exception e)
         {
             throw;
         }
-        
     }
 
     public async Task EditProblem(int id, AddProblemDto editProblemDto)
@@ -185,8 +166,8 @@ public class ProblemsService
         var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == problemId).ToListAsync();
         
 
-        var getSubmissions = submissionsList.
-            Select(GetSubmissionsResponseDto.FromSubmission)
+        var getSubmissions = submissionsList
+            .Select(GetSubmissionsResponseDto.FromSubmission)
             .ToList();
         
         return getSubmissions;
