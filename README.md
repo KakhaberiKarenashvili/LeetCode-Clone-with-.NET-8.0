@@ -1,38 +1,36 @@
 # LeetCode Clone with .NET 8.0
 
-Project Status: This project is in active development and is not production-ready.  
-Breaking changes are expected until the first stable release.
+> **Development Status**: This project is in active development and is not production-ready. Breaking changes are expected until the first stable release.
+
 
 This is a LeetCode inspired coding challenge platform built with .NET 8.0.  
 It allows users to solve coding problems and have their code executed securely inside Docker containers.
 
-## Why Docker
-
-This platform must run inside Docker because the code execution service runs in a Linux-based container with:
-- Python (for Python challenges)
-- GCC (for C/C++ challenges)
-- Secure, isolated execution to prevent malicious code from affecting the host machine.
-
 ## Features
 
 ### User Management
-- ASP.NET Core Identity for user authentication and profile management.
-- JWT Authentication for secure token-based login.
+- **Authentication**: ASP.NET Core Identity with JWT token-based authentication
+- **Profile Management**: User registration, login, and profile customization
 
 ### Data Layer
-- PostgreSQL as the relational database.
-- Flexible database configuration.
+- **Database**: PostgreSQL for reliable data persistence
+- **Configuration**: Flexible database connection setup
 
 ### Code Execution
-- Docker-based sandboxing for safe compilation and execution.
+- **Secure Sandbox**: Docker-based isolation for safe code compilation and execution
+- **Multi-Language Support**: Python and C/C++ challenges
+- **Security**: Prevents malicious code from affecting the host system
 
 
-## Technologies Used
-- .NET 8.0
-- ASP.NET Core Identity
-- JWT (JSON Web Tokens)
-- PostgreSQL
-- Docker & Docker Compose
+## Technology Stack
+
+- **Backend**: .NET 8.0, ASP.NET Core
+- **Authentication**: ASP.NET Core Identity, JWT
+- **Database**: PostgreSQL
+- **Message Broker**: RabbitMQ
+- **Containerization**: Docker & Docker Compose
+- **Supported Languages**: Python, C/C++
+
 
 ## Architecture
 ![Architecture Diagram](docs/architecture.jpeg)
@@ -40,45 +38,62 @@ This platform must run inside Docker because the code execution service runs in 
 ## Getting Started
 
 ### Prerequisites
-- Install Docker and Docker Compose
-- Install .NET 8 SDK (only required if you plan to develop outside Docker)
+
+Before you begin, ensure you have the following installed
+
+- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) *(optional - only needed for local development outside Docker)*
 
 ### Setup Instructions
 
-Step 1 – Clone the repository
+**Clone the repository**
 ```bash
-  git clone https://github.com/username/leetcode-clone.git
-  cd leetcode-clone
+  git clone https://github.com/KakhaberiKarenashvili/LeetCode-Clone-with-.NET-8.0.git
+  cd LeetCode-Clone-with-.NET-8.0
 ```
 
-Step 2 – (Optional) Configure database and message broker
-By default, PostgreSQL (database) and RabbitMQ (message broker) are configured to run as services inside Docker using docker-compose.yml.
-No changes are needed to run the project as is.
-
-If you want to use your own database or message broker instance, update the connection strings in `appsettings.json`:
-```json
-"ConnectionStrings": {
-  "DBConnection": "Host=host.docker.internal;Port=5432;Database=postgres;Username=postgres;Password=postgres;"
-}
-```
-
-```json
-"MessageBroker": {
-  "Host": "amqp://rabbitmq:5672",
-  "UserName": "user",
-  "Password": "password"
-}
-```
-
-Step 3 – Start the application
+**Start the application**
 ```bash
   docker-compose up --build
 ```
-Notes
 
-- The project must run in Docker to ensure safe code execution.
+**Access the application**
+- Open your browser and navigate to `http://localhost:5001`
 
--  The execution container runs Linux with Python and GCC installed.
+### Configuration (Optional)
 
-- This project is under heavy development and may change frequently.
+The application uses PostgreSQL and RabbitMQ services that are automatically configured via Docker Compose. If you prefer to use external services, update the configuration in `appsettings.json`:
+
+**Database Configuration:**
+```json
+{
+  "ConnectionStrings": {
+    "DBConnection": "Host=your-host;Port=5432;Database=your-database;Username=your-username;Password=your-password;"
+  }
+}
+```
+**Message Broker Configuration:**
+```json
+{
+  "MessageBroker": {
+    "Host": "amqp://your-rabbitmq-host:5672",
+    "UserName": "your-username",
+    "Password": "your-password"
+  }
+}
+```
+
+## Why Docker?
+
+This platform must run inside Docker because the code execution service runs in a Linux-based container with:
+- **Security**: Isolated execution environment prevents malicious code from affecting the host system
+- **Consistency**: Ensures consistent runtime environment across different development machines
+- **Language Support**: Pre-configured Linux container with Python and GCC compilers
+
+## Development Notes
+- The project must run inside Docker containers for security reasons
+- Code execution happens in isolated Linux containers with pre-installed compilers
+- Frequent changes are expected during the development phase
+- Database migrations are handled automatically on startup
+
 
