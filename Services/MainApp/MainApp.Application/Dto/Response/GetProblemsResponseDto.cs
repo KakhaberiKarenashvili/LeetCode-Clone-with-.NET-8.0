@@ -19,7 +19,7 @@ public class GetProblemsResponseDto
         {
             Id = problem.Id,
             Name = problem.Name,
-            Categories = EnumParser.ParseCategories(problem.Category),
+            Categories = EnumParser.ExtractCategoryFlags(problem.Category),
             Difficulty = problem.Difficulty.ToString(),
         };
     }

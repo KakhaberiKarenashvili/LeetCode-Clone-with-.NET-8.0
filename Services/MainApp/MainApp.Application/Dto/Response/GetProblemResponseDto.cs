@@ -29,7 +29,7 @@ public class GetProblemResponseDto
             Id = problem.Id,
             Name = problem.Name,
             ProblemText = problem.ProblemText,
-            Categories = EnumParser.ParseCategories(problem.Category),
+            Categories = EnumParser.ExtractCategoryFlags(problem.Category),
             Difficulty = problem.Difficulty.ToString(),
             TimelimitMs = problem.RuntimeLimit,
             MemoryLimitMb = problem.MemoryLimit,
