@@ -112,16 +112,9 @@ public class UserService
     {
         var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
         
-        var getSubmissions = submissions.Select(submissions => new GetSubmissionsResponseDto
-        {
-            Id = submissions.Id,
-            AuthUsername = submissions.AuthUsername,
-            ProblemName = submissions.ProblemName,
-            Language = submissions.Language,
-            SubmissionTime = submissions.SubmissionTime,
-            SuccessRate = $"{submissions.SuccessRate}%",
-            Status = submissions.Status.ToString(),
-        }).ToList();
+        var getSubmissions = submissions.
+            Select(GetSubmissionsResponseDto.FromSubmission)
+            .ToList();
 
         return getSubmissions;
     }
