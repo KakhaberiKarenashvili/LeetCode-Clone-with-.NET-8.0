@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Roles Seeded Successfully");
         
         var userManager = services.GetRequiredService<UserManager<User>>();
-        await AdminSeeder.SeedAdmin(userManager);
+        await AdminSeeder.SeedAdmin(userManager,builder.Configuration);
         logger.LogInformation("Admin User Seeded Successfully");
     }
     catch (Exception ex)
