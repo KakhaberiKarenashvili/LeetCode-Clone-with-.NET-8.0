@@ -1,11 +1,12 @@
 ﻿using MainApp.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace MainApp.Infrastructure.Data.Seeder;
 
 public static class AdminSeeder
 {
-    public static async Task SeedAdmin(UserManager<User> userManager)
+    public static async Task SeedAdmin(UserManager<User> userManager, IConfiguration config)
     {
             var admin = await userManager.FindByNameAsync("Admin");
         
@@ -13,11 +14,11 @@ public static class AdminSeeder
             {
                 admin = new User
                 {
-                    UserName = "Admin",
-                    Email = "Admin@example.com",
+                    UserName = config.GetSection("AdminUser:UserName").Get<string>(),
+                    Email = config.GetSection("AdminUser:Email").Get<string>(),
                 };
                 
-                var result = await userManager.CreateAsync(admin, "Admin-1231");
+                var result = await userManager.CreateAsync(admin, config.GetSection("AdminUser:Password").Get<string>());
                 
                 if (result.Succeeded)
                 {
