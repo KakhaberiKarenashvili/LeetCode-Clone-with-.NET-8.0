@@ -2,13 +2,11 @@
 using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
+using MainApp.Application.Dto.Response;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using GetProblemResponseDto = MainApp.Application.Dto.Response.GetProblemResponseDto;
-using GetProblemsResponseDto = MainApp.Application.Dto.Response.GetProblemsResponseDto;
-using GetSubmissionsResponseDto = MainApp.Application.Dto.Response.GetSubmissionsResponseDto;
+
 
 namespace MainApp.Application.Services;
 
@@ -32,13 +30,9 @@ public class ProblemsService
             .Take(50)
             .ToListAsync();
 
-        var problemList = data.Select(p => new GetProblemsResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Categories = EnumParser.ParseCategories(p.Category),
-            Difficulty = p.Difficulty.ToString(),
-        }).ToList();
+        var problemList = data.
+            Select(GetProblemsResponseDto.FromProblem)
+            .ToList();
         
         return problemList;
     }
@@ -64,56 +58,24 @@ public class ProblemsService
            .Take(3)
            .ToList() ?? new List<TestCaseDto>();
        
-       var problemResponse = new GetProblemResponseDto
-       {
-           Id = problem.Id,
-           Name = problem.Name,
-           ProblemText = problem.ProblemText,
-           Categories = EnumParser.ParseCategories(problem.Category),
-           Difficulty = problem.Difficulty.ToString(),
-           TimelimitMs = problem.RuntimeLimit,
-           MemoryLimitMb = problem.MemoryLimit,
-           TestCases = exampleTestCases
-       };
+       var problemResponse = GetProblemResponseDto.FromProblem(problem, exampleTestCases);;
         
         return problemResponse;
     }
-    
-         public async Task AddProblem(AddProblemDto problemDto)
-     {
 
-         var parsedCategory = ParseCategories(problemDto.Categories);
-         
-         var parsedDifficulty = ParseDifficulty(problemDto.Difficulty);
-         
-        
-        var problem = new Problem
-        {
-        
-            Name = problemDto.Name,
-            ProblemText = problemDto.ProblemText,
-            Category =  parsedCategory,
-            Difficulty = parsedDifficulty,
-            RuntimeLimit = problemDto.RuntimeLimit,
-            MemoryLimit = problemDto.MemoryLimit,
-            TestCases = problemDto.TestCases.Select(tc => new TestCase
-            {
-                Input = tc.Input,
-                ExpectedOutput = tc.ExpectedOutput
-            }).ToList() 
-        };
+    public async Task AddProblem(AddProblemDto problemDto)
+    {
+        var problem = AddProblemDto.ToProblem(problemDto);
 
         try
         {
             await _appDbContext.Problems.AddAsync(problem);
             await _appDbContext.SaveChangesAsync();
-            
         }
         catch (Exception e)
         {
             throw;
         }
-        
     }
 
     public async Task EditProblem(int id, AddProblemDto editProblemDto)
@@ -125,9 +87,9 @@ public class ProblemsService
             throw new InvalidOperationException("Problem not found");
         }
         
-        var parsedCategory = ParseCategories(editProblemDto.Categories);
+        var parsedCategory = EnumParser.ParseCategoriesFromStrings(editProblemDto.Categories);
          
-        var parsedDifficulty = ParseDifficulty(editProblemDto.Difficulty);
+        var parsedDifficulty = EnumParser.ParseDifficultyFromString(editProblemDto.Difficulty);
         
         problem.Name = editProblemDto.Name;
         problem.ProblemText = editProblemDto.ProblemText;
@@ -187,47 +149,11 @@ public class ProblemsService
         var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == problemId).ToListAsync();
         
 
-        var getSubmissions = submissionsList.Select(submissions => new GetSubmissionsResponseDto
-        {
-            Id = submissions.Id,
-            AuthUsername = submissions.AuthUsername,
-            ProblemName = submissions.ProblemName,
-            Language = submissions.Language,
-            SubmissionTime = submissions.SubmissionTime,
-            SuccessRate = $"{submissions.SuccessRate}%",
-            Status = submissions.Status.ToString(),
-        }).ToList();
+        var getSubmissions = submissionsList
+            .Select(GetSubmissionsResponseDto.FromSubmission)
+            .ToList();
         
         return getSubmissions;
     }
     
-    
-    private static  Category ParseCategories(List<string> categoryStrings)
-    {
-        Category categories = Category.None;
-
-        foreach (var categoryStr in categoryStrings)
-        {
-            if (Enum.TryParse<Category>(categoryStr, out var category))
-            {
-                categories |= category; // Add to the bitmask
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid category: {categoryStr}");
-            }
-        }
-
-        return categories;
-    }
-    
-    private static Difficulty ParseDifficulty(string difficulty)
-    {
-        if (Enum.TryParse<Difficulty>(difficulty, out var parsedDifficulty))
-        {
-            return parsedDifficulty;
-        }
-
-        return Difficulty.Easy;
-    }
 }

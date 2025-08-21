@@ -1,7 +1,7 @@
 ﻿
 namespace MainApp.Application.Dto.Response;
 
-public class GetUsersRespoonse
+public class GetUsersResponseDto
 {
     public string Id { set; get; }
     

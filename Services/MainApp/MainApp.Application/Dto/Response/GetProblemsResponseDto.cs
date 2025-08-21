@@ -1,4 +1,7 @@
-﻿namespace MainApp.Application.Dto.Response;
+﻿using BuildingBlocks.Common.Helpers;
+using MainApp.Domain.Entity;
+
+namespace MainApp.Application.Dto.Response;
 
 public class GetProblemsResponseDto
 {
@@ -9,5 +12,16 @@ public class GetProblemsResponseDto
     public List<string>? Categories { set; get; }
     
     public string? Difficulty { set; get; }
+
+    public static GetProblemsResponseDto FromProblem(Problem problem)
+    {
+        return new GetProblemsResponseDto
+        {
+            Id = problem.Id,
+            Name = problem.Name,
+            Categories = EnumParser.ExtractCategoryFlags(problem.Category),
+            Difficulty = problem.Difficulty.ToString(),
+        };
+    }
     
 }
