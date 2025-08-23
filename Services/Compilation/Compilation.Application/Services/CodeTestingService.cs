@@ -19,7 +19,7 @@ public class CodeTestingService
         _memoryMonitorService = memoryMonitorService;
     }
     
-    public async Task TestCode(SubmissionRequestedEvent submissionEvent)
+    public async Task<List<TestResultDto>> TestCode(SubmissionRequestedEvent submissionEvent)
     {
         var languageConfig = LanguageConfigurationFactory
             .GetLanguageConfiguration(submissionEvent.Language);
@@ -28,9 +28,44 @@ public class CodeTestingService
         var fileId = Guid.NewGuid().ToString("N")[..6];
         var sourceFile = languageConfig.GetFileName(fileId);
         var executableFileName = languageConfig.GetExecutableFileName(fileId);
-        
-        
 
+        try
+        {
+            await File.WriteAllTextAsync(sourceFile, submissionEvent.Code);
+
+            if (languageConfig.RequiresCompilation)
+            {
+                var compileResult = await CompileCode(languageConfig, sourceFile, executableFileName);
+
+                if (!compileResult.Success)
+                {
+                    results.Add(new TestResultDto
+                    {
+                        Success = false,
+                        Input = submissionEvent.Testcases.First().Input ?? string.Empty,
+                        ExpectedOutput = submissionEvent.Testcases.First().ExpectedOutput ?? string.Empty,
+                        Output = compileResult.Error,
+                        Status = Status.CompilationFailed
+                    });
+
+                    return results;
+                }
+            }
+
+            var executeResult = await ExecuteCode(languageConfig, executableFileName, submissionEvent);
+
+            return executeResult;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while testing code");
+            return results;
+        }
+
+        finally
+        {
+            CleanupTemporaryFiles(sourceFile, executableFileName);
+        }
     }
 
 
