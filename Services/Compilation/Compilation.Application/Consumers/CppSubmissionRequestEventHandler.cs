@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Messaging.Events;
+using Compilation.Application.Extentions;
 using Compilation.Application.Services;
 using MassTransit;
 
@@ -7,10 +8,10 @@ namespace Compilation.Application.Consumers;
 public class CppSubmissionRequestEventHandler : IConsumer<CppSubmissionRequestedEvent>
 {
     
-    private readonly CppTestingService _service;
+    private readonly CodeTestingService _service;
     private readonly IPublishEndpoint _publishEndpoint;
     
-    public CppSubmissionRequestEventHandler(CppTestingService service, IPublishEndpoint publishEndpoint)
+    public CppSubmissionRequestEventHandler(CodeTestingService service, IPublishEndpoint publishEndpoint)
     {
         _service = service;
         _publishEndpoint = publishEndpoint;
@@ -18,7 +19,10 @@ public class CppSubmissionRequestEventHandler : IConsumer<CppSubmissionRequested
     
     public async Task Consume(ConsumeContext<CppSubmissionRequestedEvent> context)
     {
-        var result = await _service.TestCppCode(context.Message);
+
+        var genericEvent = context.Message.ToGenericEvent();
+        
+        var result = await _service.TestCode(genericEvent);
         
         var response = new SubmissionResponseEvent()
         {
