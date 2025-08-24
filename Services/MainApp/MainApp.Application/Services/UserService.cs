@@ -1,5 +1,6 @@
 ﻿using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
+using MainApp.Application.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using MainApp.Infrastructure.JWT;
@@ -108,15 +109,16 @@ public class UserService
     }
 
 
-    public async Task<List<GetSubmissionsResponseDto>> MySubmissions(string userId)
+    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,int pageSize)
     {
-        var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
-        
-        var getSubmissions = submissions.
-            Select(GetSubmissionsResponseDto.FromSubmission)
-            .ToList();
+        var data =  _appDbContext.Submissions
+            .Where(sol => sol.UserId == userId)
+            .AsQueryable();
 
-        return getSubmissions;
+        var submissions = await PagedList<GetSubmissionsResponseDto>
+            .CreateAsync(pageNumber,pageSize,data,GetSubmissionsResponseDto.FromSubmission);
+        
+        return submissions;
     }
     
     public async Task ChangeEmail(string userId, string newEmail)
