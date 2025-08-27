@@ -3,6 +3,7 @@ using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
+using MainApp.Application.Extensions.Filtering;
 using MainApp.Application.Extensions.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
@@ -20,10 +21,12 @@ public class ProblemsService
         _appDbContext = appDbContext;
     }
 
-    public async Task<PagedList<GetProblemsResponseDto>> GetAllProblems(int pageNumber,int pageSize)
+    public async Task<PagedList<GetProblemsResponseDto>> GetAllProblems(int pageNumber,int pageSize,
+        string? name, string? difficulty, List<string>? categories)
     {
         var data = _appDbContext.Problems
-            .AsQueryable();
+            .AsQueryable()
+            .ApplyFilter(name, difficulty, categories);
         
         var problemList = await PagedList<GetProblemsResponseDto>
             .CreateAsync(pageNumber,pageSize,data,GetProblemsResponseDto.FromProblem);

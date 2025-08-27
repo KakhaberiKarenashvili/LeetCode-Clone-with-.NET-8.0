@@ -17,9 +17,14 @@ public class ProblemsController : ControllerBase
     }
     
     [HttpGet()]
-    public async Task<IActionResult> GetProblems([FromQuery]int pageNumber = 1,[FromQuery]int pageSize = 20)
+    public async Task<IActionResult> GetProblems([FromQuery]string? name,
+        [FromQuery]string? difficulty,
+        [FromQuery]List<string>? categories, 
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 20)
     {
-        var problems =  await _problemsService.GetAllProblems(pageNumber,pageSize);
+        var problems =  await _problemsService
+            .GetAllProblems(pageNumber,pageSize,name,difficulty,categories);
 
         return Ok(problems);
     }

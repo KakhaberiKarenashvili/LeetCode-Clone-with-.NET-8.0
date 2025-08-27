@@ -60,19 +60,51 @@ public static class ProblemFilterExtensions
     {
         //Flags
         var exactFlag = categoryFlags.Aggregate((current, next) => current | next);
-        
-        //First priority exact matches
-        var exactMatches = query.Where(p => p.Category == exactFlag);
-        
-        //Second priority contains all requested categories (but might have more)
-        var containsAllMatches = query.Where(p => 
-            categoryFlags.All(flag => (p.Category & flag) == flag) && 
-            p.Category != exactFlag);
 
-        return exactMatches
-            .Union(containsAllMatches)
-            .Distinct();
+        return query.Where(p => categoryFlags.Any(flag => (p.Category & flag) == flag)
+            )
+            .OrderBy(p => 
+                p.Category == exactFlag ? 1 :
+                categoryFlags.All(flag => (p.Category & flag) == flag) ? 2 :
+                3)
+            .ThenBy(p => p.Name);
     }
+    
+    /// <summary>
+    /// Applies all problem filters from the provided filter DTO to the query.
+    /// This is a convenience method that chains multiple filter operations together.
+    /// </summary>
+    /// <param name="query">The IQueryable of Problem entities to filter</param>
+    /// <param name="filter">The filter DTO containing all filter criteria</param>
+    /// <returns>
+    /// An IQueryable of Problem entities with all applicable filters applied.
+    /// If filter properties are null or empty, those specific filters are skipped.
+    /// </returns>
+    /// <remarks>
+    /// <para>This method applies filters in the following order:</para>
+    /// <list type="number">
+    /// <item><description>Name filter - filters problems containing the specified name substring</description></item>
+    /// <item><description>Difficulty filter - filters problems by exact difficulty match</description></item>
+    /// <item><description>Category filter - filters problems by categories with priority-based matching:
+    /// <list type="bullet">
+    /// <item><description>Priority 1: Exact category match</description></item>
+    /// <item><description>Priority 2: Contains all requested categories (may have more)</description></item>
+    /// </list>
+    /// </description></item>
+    /// </list>
+    /// <para>All filters are applied at the database level for optimal performance.</para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    ///     Name = "Two Sum", 
+    ///     Categories = new List&lt;string&gt; { "Arrays", "Strings" },
+    ///     Difficulty = "Easy"
+    /// 
+    /// var filteredProblems = _context.Problems
+    ///     .ApplyProblemsFilter(Name, Categories, Difficulty)
+    ///     .ToListAsync();
+    /// </code>
+    /// </example>
 
     public static IQueryable<Problem> ApplyFilter(this IQueryable<Problem> query,
         string? name, string? difficulty, List<string>? categories)
