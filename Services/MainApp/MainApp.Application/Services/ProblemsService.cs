@@ -3,7 +3,7 @@ using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
-using MainApp.Application.Pagination;
+using MainApp.Application.Extensions.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

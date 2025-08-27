@@ -1,5 +1,5 @@
 ﻿using MainApp.Application.Dto.Response;
-using MainApp.Application.Pagination;
+using MainApp.Application.Extensions.Pagination;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
