@@ -134,7 +134,7 @@ public class ProblemsService
         }
     }
 
-    public async Task<PagedList<GetSubmissionsResponseDto>> GetSubmissions(int problemId,int pageNumber,int pageSize)
+    public async Task<PagedList<GetSubmissionsResponseDto>> GetSubmissions(int problemId,int pageNumber,int pageSize,string? status, string? language)
     {
         var checkProblemExists = await _appDbContext.Problems.AnyAsync(p => p.Id == problemId);
         
@@ -145,6 +145,7 @@ public class ProblemsService
 
         var data = _appDbContext.Submissions
             .Where(submissions => submissions.ProblemId == problemId)
+            .ApplyFilter(status, language)
             .AsQueryable();
         
         var submissions = await PagedList<GetSubmissionsResponseDto>

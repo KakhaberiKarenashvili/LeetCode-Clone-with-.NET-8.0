@@ -90,9 +90,9 @@ public class ProblemsController : ControllerBase
     }
     
     [HttpGet("{id}/submissions")]
-    public async Task<IActionResult> GetSubmissions(int id, [FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 20)
+    public async Task<IActionResult> GetSubmissions(int id, string? language, string? status ,[FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 20)
     { 
-        var submissions = await _problemsService.GetSubmissions(id, pageNumber, pageSize);
+        var submissions = await _problemsService.GetSubmissions(id, pageNumber, pageSize, status, language);
 
         return Ok(submissions);
     }
