@@ -69,13 +69,14 @@ public static class ProblemFilterExtensions
                 3)
             .ThenBy(p => p.Name);
     }
-    
+
     /// <summary>
     /// Applies all problem filters from the provided filter DTO to the query.
     /// This is a convenience method that chains multiple filter operations together.
     /// </summary>
-    /// <param name="query">The IQueryable of Problem entities to filter</param>
-    /// <param name="filter">The filter DTO containing all filter criteria</param>
+    /// <param name="name"> Name of the problem</param>
+    /// <param name="difficulty">Difficulty of the problem</param>
+    /// <param name="categories">List of category strings</param>
     /// <returns>
     /// An IQueryable of Problem entities with all applicable filters applied.
     /// If filter properties are null or empty, those specific filters are skipped.
@@ -105,7 +106,6 @@ public static class ProblemFilterExtensions
     ///     .ToListAsync();
     /// </code>
     /// </example>
-
     public static IQueryable<Problem> ApplyFilter(this IQueryable<Problem> query,
         string? name, string? difficulty, List<string>? categories)
     {
