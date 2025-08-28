@@ -103,6 +103,11 @@ public class UserServiceTests
     {
         // Arrange
         var userId = "123";
+        var pageNumber = 1;
+        var pageSize = 10;
+        var totalCount = 2;
+        var TotalPages = 1;
+        
         var submissions = new List<Submissions>
         {
             new Submissions { Id = 1, UserId = userId, AuthUsername = "author1", Language = "C++", Code = "Testcode", ProblemId = 1,  ProblemName = "Problem1", Status = Status.TestPassed, },
@@ -113,21 +118,24 @@ public class UserServiceTests
         await _fakeDbContext.SaveChangesAsync();
 
         // Act
-        var result = await _userService.MySubmissions(userId);
+        var result = await _userService.MySubmissions(userId, pageNumber, pageSize);
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().HaveCount(2);
+        result.TotalCount.Should().Be(totalCount);
+        result.TotalPages.Should().Be(TotalPages);
 
-        result[0].Id.Should().Be(1);
-        result[0].AuthUsername.Should().Be("author1");
-        result[0].ProblemName.Should().Be("Problem1");
-        result[0].Status.Should().Be("TestPassed");
+        result.Items[0].Id.Should().Be(1);
+        result.Items[0].AuthUsername.Should().Be("author1");
+        result.Items[0].ProblemName.Should().Be("Problem1");
+        result.Items[0].Status.Should().Be("TestPassed");
 
-        result[1].Id.Should().Be(2);
-        result[1].AuthUsername.Should().Be("author2");
-        result[1].ProblemName.Should().Be("Problem2");
-        result[1].Status.Should().Be("TestRunning");;
+        result.Items[1].Id.Should().Be(2);
+        result.Items[1].AuthUsername.Should().Be("author2");
+        result.Items[1].ProblemName.Should().Be("Problem2");
+        result.Items[1].Status.Should().Be("TestRunning");;
+        
+        _fakeDbContext.Submissions.RemoveRange(submissions);
+        await _fakeDbContext.SaveChangesAsync();
     }
     
     [Fact]
@@ -405,13 +413,16 @@ public class UserServiceTests
     {
         // Arrange
         var userId = "unknown";
+        var pageSize = 10;
+        var pageNumber = 1;
+        var totalCount = 0;
 
         // Act
-        var result = await _userService.MySubmissions(userId);
+        var result = await _userService.MySubmissions(userId, pageSize, pageNumber);;
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().BeEmpty();
+        result.TotalCount.Should().Be(totalCount);
     }
     
     
@@ -420,30 +431,32 @@ public class UserServiceTests
     {
         // Arrange
         var userId = "123";
+        var pageSize = 10;
+        var pageNumber = 1;
+        var totalCount = 2; // +2 from other tests
+        
+        
         var submissions = new List<Submissions>
         {
             new Submissions { Id = 3, UserId = userId, AuthUsername = "author1", Language = "C++", Code = "Testcode", ProblemId = 1,  ProblemName = "Problem1", Status = Status.TestPassed, },
             new Submissions { Id = 4, UserId = userId, AuthUsername = "author2",  Language = "Python", Code = "Testcode", ProblemId = 2, ProblemName = "Problem2", Status = Status.TestRunning }
         };
         
-        _fakeDbContext.Submissions.AddRangeAsync(submissions);
+        await _fakeDbContext.Submissions.AddRangeAsync(submissions);
         
         await _fakeDbContext.SaveChangesAsync();
         
         // Act
-        var result = await _userService.MySubmissions(userId);
+        var result = await _userService.MySubmissions(userId, pageNumber, pageSize);
         
         //Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().HaveCount(2);
+        result.TotalCount.Should().Be(totalCount);
+        result.Should().NotBeNull();
+        result.Items.Count.Should().Be(totalCount);
         
-        result[0].Id.Should().Be(3);
-        result[0].AuthUsername.Should().Be("author1");
-        result[0].ProblemName.Should().Be("Problem1");
-        result[0].Status.Should().Be("TestPassed");
-        
-        result[1].Id.Should().Be(4);
-        
+        result.Items[0].AuthUsername.Should().Be("author1");
+        result.Items[0].ProblemName.Should().Be("Problem1");
+        result.Items[0].Status.Should().Be("TestPassed");
     }
     
     [Fact]
