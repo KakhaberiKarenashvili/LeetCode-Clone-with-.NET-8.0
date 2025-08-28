@@ -18,7 +18,8 @@ public class UserService
     private readonly SignInManager<User> _signInManager;
     private readonly IJwtService _jwtService;
 
-    public UserService(AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, IJwtService jwtService)
+    public UserService(AppDbContext appDbContext, UserManager<User> userManager,
+        SignInManager<User> signInManager, IJwtService jwtService)
     {
         _appDbContext = appDbContext;
         _userManager = userManager;
@@ -110,7 +111,10 @@ public class UserService
     }
 
 
-    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,int pageSize, string? status, string? language)
+    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,
+        int pageSize,
+        string? status,
+        string? language)
     {
         var data =  _appDbContext.Submissions
             .Where(sol => sol.UserId == userId)
@@ -152,7 +156,8 @@ public class UserService
             throw new InvalidOperationException("User not found.");
         }
         
-        var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+        var result = await _userManager.
+            ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
 
         if (!result.Succeeded)
         {
