@@ -17,9 +17,14 @@ public class ProblemsController : ControllerBase
     }
     
     [HttpGet()]
-    public async Task<IActionResult> GetProblems(int pageNumber)
+    public async Task<IActionResult> GetProblems([FromQuery]string? name,
+        [FromQuery]string? difficulty,
+        [FromQuery]List<string>? categories, 
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 20)
     {
-        var problems =  await _problemsService.GetAllProblems(pageNumber);
+        var problems =  await _problemsService
+            .GetAllProblems(pageNumber,pageSize,name,difficulty,categories);
 
         return Ok(problems);
     }
@@ -85,9 +90,12 @@ public class ProblemsController : ControllerBase
     }
     
     [HttpGet("{id}/submissions")]
-    public async Task<IActionResult> GetSubmissions(int id)
+    public async Task<IActionResult> GetSubmissions(int id, string? language, 
+        string? status ,
+        [FromQuery]int pageNumber = 1,
+        [FromQuery]int pageSize = 20)
     { 
-        var submissions = await _problemsService.GetSubmissions(id);
+        var submissions = await _problemsService.GetSubmissions(id, pageNumber, pageSize, status, language);
 
         return Ok(submissions);
     }

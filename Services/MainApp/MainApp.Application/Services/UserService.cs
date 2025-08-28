@@ -1,5 +1,7 @@
 ﻿using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
+using MainApp.Application.Extensions.Filtering;
+using MainApp.Application.Extensions.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using MainApp.Infrastructure.JWT;
@@ -16,7 +18,8 @@ public class UserService
     private readonly SignInManager<User> _signInManager;
     private readonly IJwtService _jwtService;
 
-    public UserService(AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager, IJwtService jwtService)
+    public UserService(AppDbContext appDbContext, UserManager<User> userManager,
+        SignInManager<User> signInManager, IJwtService jwtService)
     {
         _appDbContext = appDbContext;
         _userManager = userManager;
@@ -108,15 +111,20 @@ public class UserService
     }
 
 
-    public async Task<List<GetSubmissionsResponseDto>> MySubmissions(string userId)
+    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,
+        int pageSize,
+        string? status,
+        string? language)
     {
-        var submissions = await _appDbContext.Submissions.Where(sol => sol.UserId == userId).ToListAsync();
-        
-        var getSubmissions = submissions.
-            Select(GetSubmissionsResponseDto.FromSubmission)
-            .ToList();
+        var data =  _appDbContext.Submissions
+            .Where(sol => sol.UserId == userId)
+            .ApplyFilter(status, language)
+            .AsQueryable();
 
-        return getSubmissions;
+        var submissions = await PagedList<GetSubmissionsResponseDto>
+            .CreateAsync(pageNumber,pageSize,data,GetSubmissionsResponseDto.FromSubmission);
+        
+        return submissions;
     }
     
     public async Task ChangeEmail(string userId, string newEmail)
@@ -148,7 +156,8 @@ public class UserService
             throw new InvalidOperationException("User not found.");
         }
         
-        var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+        var result = await _userManager.
+            ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
 
         if (!result.Succeeded)
         {

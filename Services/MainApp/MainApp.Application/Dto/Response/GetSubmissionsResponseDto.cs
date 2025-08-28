@@ -18,7 +18,7 @@ public class GetSubmissionsResponseDto
     public DateTime? SubmissionTime { get; set; }
 
 
-    public static GetSubmissionsResponseDto? FromSubmission(Submissions submission)
+    public static GetSubmissionsResponseDto FromSubmission(Submissions submission)
     {
         return new GetSubmissionsResponseDto
         {
