@@ -74,6 +74,7 @@ public static class ProblemFilterExtensions
     /// Applies all problem filters from the provided filter DTO to the query.
     /// This is a convenience method that chains multiple filter operations together.
     /// </summary>
+    /// <param name="query">The IQueryable source of Problem entities to filter</param>
     /// <param name="name"> Name of the problem</param>
     /// <param name="difficulty">Difficulty of the problem</param>
     /// <param name="categories">List of category strings</param>
@@ -101,8 +102,9 @@ public static class ProblemFilterExtensions
     ///     Categories = new List&lt;string&gt; { "Arrays", "Strings" },
     ///     Difficulty = "Easy"
     /// 
+    /// 
     /// var filteredProblems = _context.Problems
-    ///     .ApplyProblemsFilter(Name, Categories, Difficulty)
+    ///     .ApplyFilter(Name, Difficulty, Categories)
     ///     .ToListAsync();
     /// </code>
     /// </example>
