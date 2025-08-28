@@ -107,6 +107,8 @@ public class UserServiceTests
         var pageSize = 10;
         var totalCount = 2;
         var TotalPages = 1;
+        var language = "";
+        var status = "";
         
         var submissions = new List<Submissions>
         {
@@ -118,7 +120,7 @@ public class UserServiceTests
         await _fakeDbContext.SaveChangesAsync();
 
         // Act
-        var result = await _userService.MySubmissions(userId, pageNumber, pageSize);
+        var result = await _userService.MySubmissions(userId, pageNumber, pageSize, language, status);;
 
         // Assert
         result.TotalCount.Should().Be(totalCount);
@@ -416,9 +418,12 @@ public class UserServiceTests
         var pageSize = 10;
         var pageNumber = 1;
         var totalCount = 0;
+        var language = "";
+        var status = "";
 
         // Act
-        var result = await _userService.MySubmissions(userId, pageSize, pageNumber);;
+        var result = await _userService.
+            MySubmissions(userId, pageSize, pageNumber, language, status);
 
         // Assert
         result.Should().NotBeNull();
@@ -434,7 +439,8 @@ public class UserServiceTests
         var pageSize = 10;
         var pageNumber = 1;
         var totalCount = 2; // +2 from other tests
-        
+        var language = "";
+        var status = "";
         
         var submissions = new List<Submissions>
         {
@@ -447,7 +453,8 @@ public class UserServiceTests
         await _fakeDbContext.SaveChangesAsync();
         
         // Act
-        var result = await _userService.MySubmissions(userId, pageNumber, pageSize);
+        var result = await _userService.
+            MySubmissions(userId, pageNumber, pageSize, language, status);
         
         //Assert
         result.TotalCount.Should().Be(totalCount);

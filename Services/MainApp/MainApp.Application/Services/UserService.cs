@@ -1,5 +1,6 @@
 ﻿using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
+using MainApp.Application.Extensions.Filtering;
 using MainApp.Application.Extensions.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
@@ -109,10 +110,11 @@ public class UserService
     }
 
 
-    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,int pageSize)
+    public async Task<PagedList<GetSubmissionsResponseDto>> MySubmissions(string userId,int pageNumber,int pageSize, string? status, string? language)
     {
         var data =  _appDbContext.Submissions
             .Where(sol => sol.UserId == userId)
+            .ApplyFilter(status, language)
             .AsQueryable();
 
         var submissions = await PagedList<GetSubmissionsResponseDto>

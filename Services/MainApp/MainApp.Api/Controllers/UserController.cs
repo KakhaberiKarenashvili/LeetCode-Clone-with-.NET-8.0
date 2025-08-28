@@ -48,11 +48,15 @@ public class UserController : ControllerBase
 
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("submissions")]
-    public async Task<IActionResult> MySubmissions([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 20)
+    public async Task<IActionResult> MySubmissions( string? status, 
+        string? language,
+        [FromQuery]int pageNumber = 1,
+        [FromQuery]int pageSize = 20)
     {
             var userid = User.Claims.First(user => user.Type == "Id").Value;
             
-            var submissions = await _userService.MySubmissions(userid,pageNumber,pageSize);
+            var submissions = await _userService
+                .MySubmissions(userid,pageNumber,pageSize,status,language);
 
             return Ok(submissions);
     }
