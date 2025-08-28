@@ -49,7 +49,7 @@ Before you begin, ensure you have the following installed
 **Clone the repository**
 ```bash
   git clone https://github.com/KakhaberiKarenashvili/LeetCode-Clone-with-.NET-8.0.git
-  cd LeetCode-Clone-with-.NET-8.0
+  cd LeetCode-Clone-with-.NET-8.0/src
 ```
 
 **Start the application**
