@@ -31,6 +31,12 @@ public class ProblemsServiceTests
     {
         // Arrange
         var pageNumber = 1;
+        var pageSize = 10;
+        var totalCount = 3;
+        var totalPages = 1;
+        var name = "";
+        var difficulty = "";
+        List<string> category = [];
         
         var problems = new List<Problem>
         {
@@ -90,11 +96,12 @@ public class ProblemsServiceTests
         _fakeDbContext.SaveChanges();
         
         // Act
-        var result = await _problemsService.GetAllProblems(pageNumber);
+        var result = await _problemsService.GetAllProblems(pageNumber, pageSize, name, difficulty, category);
         
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().HaveCount(3);
+        result.Should().NotBeNull();;
+        result.TotalPages.Should().Be(totalPages);
+        result.TotalCount.Should().Be(totalCount);
     }
     
     
@@ -103,12 +110,19 @@ public class ProblemsServiceTests
     {
         // Arrange
         var pageNumber = 1;
+        var pageSize = 10;
+        var totalCount = 0;
+        var totalPages = 0;
+        var name = "";
+        var difficulty = "";
+        List<string> category = [];
         // Act
-        var result = await _problemsService.GetAllProblems(pageNumber);
+        var result = await _problemsService.GetAllProblems(pageNumber, pageSize, name, difficulty, category);;
         // Assert
 
-        result.Should().BeEmpty();
-        result.Should().NotBeNull();
+        result.Should().NotBeNull();;
+        result.TotalPages.Should().Be(totalPages);
+        result.TotalCount.Should().Be(totalCount);
     }
 
     [Fact]
@@ -141,6 +155,12 @@ public class ProblemsServiceTests
     {
         // Arrange
         int problemId = 101;
+        var pageNumber = 1;
+        var pageSize = 10;
+        var totalCount = 1;
+        var totalPages = 1;
+        var status = "TestPassed";
+        var language = "";
 
         var mockProblemsData = new List<Problem>
         {
@@ -158,13 +178,15 @@ public class ProblemsServiceTests
         _fakeDbContext.SaveChanges();
         
         // Act
-        var result = await _problemsService.GetSubmissions(problemId);
+        var result = await _problemsService.GetSubmissions(problemId, pageNumber, pageSize, status, language);
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().HaveCount(2); 
-        result[0].AuthUsername.Should().Be("User1"); 
-        result[1].AuthUsername.Should().Be("User2");
+        result.TotalCount.Should().Be(totalCount);
+        result.TotalPages.Should().Be(totalPages);
+        result.Items.Should().HaveCount(1);
+        result.Items[0].AuthUsername.Should().Be("User1"); 
+        
     }
     
       [Fact]
@@ -300,8 +322,10 @@ public class ProblemsServiceTests
     {
         // Arrange
         int problemId = 1000;
+        var pageNumber = 1;
+        var pageSize = 10;
         // Act
-        Func<Task> act = async () => await _problemsService.GetSubmissions(problemId);
+        Func<Task> act = async () => await _problemsService.GetSubmissions(problemId, pageNumber, pageSize, "", "");
         // Assert
         await act.Should().ThrowAsync<Exception>();
     }

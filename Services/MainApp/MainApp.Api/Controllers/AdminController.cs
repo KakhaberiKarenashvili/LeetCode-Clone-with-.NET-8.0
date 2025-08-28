@@ -20,9 +20,9 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("users")]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetUsers([FromQuery]int pageNumber = 1, [FromQuery]int pageSize = 20)
     {
-       return Ok(await _adminService.GetUsers());
+       return Ok(await _adminService.GetUsers(pageNumber, pageSize));
     }
     
 }

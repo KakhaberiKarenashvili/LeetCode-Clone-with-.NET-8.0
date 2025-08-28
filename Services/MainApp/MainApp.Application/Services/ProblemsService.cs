@@ -3,6 +3,8 @@ using BuildingBlocks.Common.Enums;
 using BuildingBlocks.Common.Helpers;
 using MainApp.Application.Dto.Request;
 using MainApp.Application.Dto.Response;
+using MainApp.Application.Extensions.Filtering;
+using MainApp.Application.Extensions.Pagination;
 using MainApp.Domain.Entity;
 using MainApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,20 +21,17 @@ public class ProblemsService
         _appDbContext = appDbContext;
     }
 
-    public async Task<List<GetProblemsResponseDto>> GetAllProblems(int page)
+    public async Task<PagedList<GetProblemsResponseDto>> GetAllProblems(int pageNumber,int pageSize,
+        string? name,
+        string? difficulty, 
+        List<string>? categories)
     {
-        if (page is < 1 or > int.MaxValue - 1) page = 1;
+        var data = _appDbContext.Problems
+            .AsQueryable()
+            .ApplyFilter(name, difficulty, categories);
         
-        var skip = (page - 1) * 50; 
-       
-        var data = await _appDbContext.Problems
-            .Skip(skip)
-            .Take(50)
-            .ToListAsync();
-
-        var problemList = data.
-            Select(GetProblemsResponseDto.FromProblem)
-            .ToList();
+        var problemList = await PagedList<GetProblemsResponseDto>
+            .CreateAsync(pageNumber,pageSize,data,GetProblemsResponseDto.FromProblem);
         
         return problemList;
     }
@@ -137,7 +136,10 @@ public class ProblemsService
         }
     }
 
-    public async Task<List<GetSubmissionsResponseDto>> GetSubmissions(int problemId)
+    public async Task<PagedList<GetSubmissionsResponseDto>> GetSubmissions(int problemId,int pageNumber,
+        int pageSize,
+        string? status,
+        string? language)
     {
         var checkProblemExists = await _appDbContext.Problems.AnyAsync(p => p.Id == problemId);
         
@@ -145,15 +147,16 @@ public class ProblemsService
         {
             throw new InvalidOperationException("problem not found");
         }
-        
-        var submissionsList = await _appDbContext.Submissions.Where(submissions => submissions.ProblemId == problemId).ToListAsync();
-        
 
-        var getSubmissions = submissionsList
-            .Select(GetSubmissionsResponseDto.FromSubmission)
-            .ToList();
+        var data = _appDbContext.Submissions
+            .Where(submissions => submissions.ProblemId == problemId)
+            .ApplyFilter(status, language)
+            .AsQueryable();
         
-        return getSubmissions;
+        var submissions = await PagedList<GetSubmissionsResponseDto>
+            .CreateAsync(pageNumber,pageSize,data,GetSubmissionsResponseDto.FromSubmission);;
+        
+        return submissions;
     }
     
 }
