@@ -25,8 +25,8 @@ jobs:
       # Step 3: Build and push images
       - name: Build and Push Docker Compose Services
         run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
+          docker compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml push
 
   deploy:
     name: Deploy on Server
@@ -44,7 +44,7 @@ jobs:
           script: |
             echo "Deploying project..."
             cd ~/leetcode-clone                # server project folder
-            docker-compose pull              # pull updated images from Docker Hub
-            docker-compose down              # stop old containers
-            docker-compose up -d             # start containers with new images
+            docker compose pull              # pull updated images from Docker Hub
+            docker compose down              # stop old containers
+            docker compose up -d             # start containers with new images
             echo "Deployment finished!"
