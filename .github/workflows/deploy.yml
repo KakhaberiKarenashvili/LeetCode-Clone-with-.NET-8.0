@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/myproject:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/myproject:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/leetcodeclone:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/leetcodeclone:latest
 
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.6
@@ -35,6 +35,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/myproject
-            docker pull ${{ secrets.DOCKER_USERNAME }}/myproject:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/leetcodeclone:latest
             docker-compose down
             docker-compose up -d
