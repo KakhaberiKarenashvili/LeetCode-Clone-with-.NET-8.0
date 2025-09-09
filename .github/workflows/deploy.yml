@@ -32,7 +32,7 @@ jobs:
   deploy:
     name: Deploy on Server
     runs-on: ubuntu-latest
-    needs: build-and-push   # ensures this job runs after images are built & pushed
+    needs: build-and-push   # ensures this job runs after images are built and pushed
 
     steps:
       # Step 1: SSH & Deploy

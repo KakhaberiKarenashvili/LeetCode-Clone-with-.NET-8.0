@@ -23,8 +23,8 @@ services:
   main-app:
     container_name: main-app
     build:
-      context: ./Services/MainApp/MainApp.Api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: /Services/MainApp/MainApp.Api/Dockerfile
     restart: on-failure
     depends_on:
       rabbitmq:
@@ -41,8 +41,8 @@ services:
   compilation-service:
     container_name: compilation-service
     build:
-      context: ./Services/Compilation/Compilation.Application
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: /Services/Compilation/Compilation.Application/Dockerfile
     restart: always
     depends_on:
       rabbitmq:
