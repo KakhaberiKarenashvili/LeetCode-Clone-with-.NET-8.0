@@ -45,7 +45,7 @@ jobs:
           script: |
             echo "Deploying project..."
             cd ~/leetcode-clone                # server project folder
-            docker compose pull              # pull updated images from Docker Hub
-            docker compose down              # stop old containers
-            docker compose up -d             # start containers with new images
+            docker-compose pull              # pull updated images from Docker Hub
+            docker-compose down              # stop old containers
+            docker-compose up -d             # start containers with new images
             echo "Deployment finished!"
