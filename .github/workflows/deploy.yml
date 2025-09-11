@@ -21,14 +21,12 @@ jobs:
           script: |
             echo "Starting deployment..."
             
-            # Navigate to home directory
             cd ~
             
-            # Stop existing containers if running
             if [ -d "leetcode-clone" ]; then
               echo "Stopping existing application..."
               cd leetcode-clone
-              docker compose down || echo "No containers to stop"
+              docker-compose down || echo "No containers to stop"
               cd ~
             fi
             
@@ -48,12 +46,12 @@ jobs:
             
             # Build and start the application
             echo "Building and starting application..."
-            docker compose build
-            docker compose up -d
+            docker-compose build
+            docker-compose up -d
             
             # Show running containers
             echo "Checking running containers..."
-            docker compose ps
+            docker-compose ps
             
             # Clean up unused Docker resources to save space
             echo "Cleaning up unused Docker resources..."
