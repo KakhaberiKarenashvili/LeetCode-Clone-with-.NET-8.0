@@ -26,36 +26,28 @@ jobs:
             if [ -d "leetcode-clone" ]; then
               echo "Stopping existing application..."
               cd leetcode-clone
-              docker-compose down || echo "No containers to stop"
+              docker compose down || echo "No containers to stop"
               cd ~
             fi
             
-            # Remove old code
             echo "Removing old code..."
             rm -rf leetcode-clone
             
-            # Clone fresh code from repository
             echo "Cloning latest code..."
             git clone https://github.com/${{ github.repository }}.git leetcode-clone
             
-            # Navigate to project directory
             cd leetcode-clone
-            
-            # Navigate to src directory if that's where docker-compose.yml is located
+          
             cd src
             
-            # Build and start the application
             echo "Building and starting application..."
             docker compose build
             docker compose up -d
             
-            # Show running containers
             echo "Checking running containers..."
             docker compose ps
             
-            # Clean up unused Docker resources to save space
-            echo "Cleaning up unused Docker resources..."
+
             docker system prune -f
             
             echo "Deployment completed successfully!"
-            echo "Application should be accessible at http://${{ secrets.SERVER_IP }}:PORT"
