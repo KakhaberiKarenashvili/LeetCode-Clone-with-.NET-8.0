@@ -6,33 +6,9 @@ on:
       - adding-CICD
 
 jobs:
-  build-and-push:
-    name: Build & Push Docker Images
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 2: Log in to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # Step 3: Build and push images
-      - name: Build and Push Docker Compose Services
-        working-directory: ./src/
-        run: |
-          docker compose -f docker-compose.yml build
-          docker compose -f docker-compose.yml push
-
   deploy:
     name: Deploy on Server
     runs-on: ubuntu-latest
-    needs: build-and-push   # ensures this job runs after images are built and pushed
 
     steps:
       # Step 1: SSH & Deploy
@@ -43,9 +19,45 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "Deploying project..."
-            cd ~/leetcode-clone                # server project folder
-            docker-compose pull              # pull updated images from Docker Hub
-            docker-compose down              # stop old containers
-            docker-compose up -d             # start containers with new images
-            echo "Deployment finished!"
+            echo "Starting deployment..."
+            
+            # Navigate to home directory
+            cd ~
+            
+            # Stop existing containers if running
+            if [ -d "leetcode-clone" ]; then
+              echo "Stopping existing application..."
+              cd leetcode-clone
+              docker compose down || echo "No containers to stop"
+              cd ~
+            fi
+            
+            # Remove old code
+            echo "Removing old code..."
+            rm -rf leetcode-clone
+            
+            # Clone fresh code from repository
+            echo "Cloning latest code..."
+            git clone https://github.com/${{ github.repository }}.git leetcode-clone
+            
+            # Navigate to project directory
+            cd leetcode-clone
+            
+            # Navigate to src directory if that's where docker-compose.yml is located
+            cd src
+            
+            # Build and start the application
+            echo "Building and starting application..."
+            docker compose build
+            docker compose up -d
+            
+            # Show running containers
+            echo "Checking running containers..."
+            docker compose ps
+            
+            # Clean up unused Docker resources to save space
+            echo "Cleaning up unused Docker resources..."
+            docker system prune -f
+            
+            echo "Deployment completed successfully!"
+            echo "Application should be accessible at http://${{ secrets.SERVER_IP }}:PORT"
