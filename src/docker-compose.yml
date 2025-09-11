@@ -1,4 +1,5 @@
-﻿
+﻿name: Leetcode-clone
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
