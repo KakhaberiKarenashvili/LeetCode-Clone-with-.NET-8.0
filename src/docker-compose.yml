@@ -64,6 +64,8 @@ services:
       timeout: 5s
       retries: 5
     restart: always
+    ports:
+      - "5433:5432"
     networks:
       - backend
     volumes:
