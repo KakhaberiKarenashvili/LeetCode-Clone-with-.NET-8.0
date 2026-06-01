@@ -1,4 +1,4 @@
-﻿name: LeetCode-Clone
+name: LeetCode-Clone
 
 services:
   rabbitmq:
@@ -19,7 +19,7 @@ services:
     networks:
       - compilation
 
-  
+
   main-app:
     container_name: main-app
     build:
@@ -37,7 +37,7 @@ services:
     ports:
       - 5001:5001
 
-  
+
   compilation-service:
     container_name: compilation-service
     build:
@@ -50,9 +50,9 @@ services:
     networks:
       - compilation
 
-  
+
   Postgres.Db:
-    image: postgres:latest
+    image: postgres:17
     container_name: PostgresDb
     environment:
       - POSTGRES_DB=postgres
@@ -66,11 +66,9 @@ services:
     restart: always
     networks:
       - backend
-    ports:
-      - 5432:5432
     volumes:
       - database:/var/lib/postgresql/data
-  
+
 volumes:
   database:
 
