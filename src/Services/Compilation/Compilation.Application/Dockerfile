@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
 USER root
 WORKDIR /app
 
@@ -6,7 +6,7 @@ RUN apt-get update
 
 RUN apt-get install -y g++ && apt-get install -y python3 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Compilation/Compilation.Application/Compilation.Application.csproj", "Services/Compilation/Compilation.Application/"]

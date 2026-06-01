@@ -12,23 +12,18 @@ public static class MigrationExtensions
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
-        
+
+        logger.LogInformation("Starting database migration...");
+
+        AppDbContext? dbContext = null;
         try
         {
-            using AppDbContext dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            
-            logger.LogInformation("Starting database migration...");
-            
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            
-            // Ensure database is created
-             context.Database.EnsureCreatedAsync();
-            
-            // Check if there are pending migrations
-            var pendingMigrations = dbContext.Database.GetPendingMigrations();
-            if (pendingMigrations.Any())
+            dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
+            if (pendingMigrations.Count != 0)
             {
-                logger.LogInformation("Found {Count} pending migrations. Applying...", pendingMigrations.Count());
+                logger.LogInformation("Found {Count} pending migrations. Applying...", pendingMigrations.Count);
                 dbContext.Database.Migrate();
                 logger.LogInformation("Database migration completed successfully.");
             }
@@ -42,8 +37,11 @@ public static class MigrationExtensions
             logger.LogError(ex, "An error occurred while migrating the database.");
             throw;
         }
-
-
+        finally
+        {
+            try { dbContext?.Dispose(); }
+            catch { /* suppress dispose errors when connection never opened */ }
+        }
     }
     
 }
