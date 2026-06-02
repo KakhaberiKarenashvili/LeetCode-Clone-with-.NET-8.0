@@ -17,7 +17,7 @@ namespace MainApp.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -30,8 +30,9 @@ namespace MainApp.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer");
+                    b.PrimitiveCollection<int[]>("Categories")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("integer");

@@ -11,7 +11,7 @@ namespace MainApp.Domain.Entity
         
         public DateTime SubmissionTime { get; set; } = DateTime.UtcNow;
         public string AuthUsername { get; set; }
-        public string Language { set; get; }
+        public Language Language { set; get; }
         public string Code { get; set; }
         public int ProblemId { get; set; }
         public string ProblemName { get; set; }

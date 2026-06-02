@@ -1,4 +1,5 @@
-﻿using System.Net;
+using System.Net;
+using FluentValidation;
 using Newtonsoft.Json;
 
 namespace MainApp.Api.Middlewares;
@@ -20,25 +21,41 @@ public class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
+        catch (ValidationException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            var errors = ex.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray());
+
+            var response = new
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "Validation failed.",
+                Errors = errors
+            };
+
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unhandled exception occurred.");
-            await HandleExceptionAsync(context, ex);
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            var response = new
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "Internal Server Error.",
+                Detailed = ex.Message
+            };
+
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
-    }
-
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-        var response = new
-        {
-            StatusCode = context.Response.StatusCode,
-            Message = "Internal Server Error from the middleware.",
-            Detailed = exception.Message
-        };
-
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
     }
 }

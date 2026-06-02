@@ -6,8 +6,11 @@ public static class DependencyInjection
         (this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers()
-            .AddJsonOptions(options => 
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
         
         return services;
     }

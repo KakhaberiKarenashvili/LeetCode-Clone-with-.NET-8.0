@@ -32,6 +32,14 @@ public class AppDbContext : IdentityDbContext<User>
        modelBuilder.Entity<Problem>()
            .Property(p => p.Difficulty)
            .HasConversion<int>();
+
+       modelBuilder.Entity<Problem>()
+           .Property(p => p.Categories)
+           .HasColumnType("integer[]");
+
+       modelBuilder.Entity<Submissions>()
+           .Property(s => s.Language)
+           .HasConversion<string>();
        
    }
     

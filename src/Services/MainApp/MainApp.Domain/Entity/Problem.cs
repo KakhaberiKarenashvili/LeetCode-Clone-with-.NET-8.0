@@ -14,7 +14,7 @@ public class Problem
     
     public Difficulty Difficulty { set; get; }
     
-    public Category Category { set; get; }
+    public List<Category> Categories { set; get; } = new();
     
     public int RuntimeLimit { set; get; }
     

@@ -1,5 +1,4 @@
 ﻿using BuildingBlocks.Messaging.Events;
-using MainApp.Application.Dto.Response;
 using MainApp.Infrastructure.Data;
 using MassTransit;
 
