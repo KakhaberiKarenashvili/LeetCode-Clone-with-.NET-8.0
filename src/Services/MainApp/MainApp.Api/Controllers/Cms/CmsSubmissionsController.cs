@@ -1,8 +1,6 @@
-using MainApp.Application.Features.Submissions.Commands;
-using MainApp.Application.Features.Submissions.Commands.DeleteSubmission;
-using MainApp.Application.Features.Submissions.Queries;
-using MainApp.Application.Features.Submissions.Queries.GetAllSubmissions;
-using MainApp.Application.Features.Submissions.Queries.GetSubmissionById;
+using MainApp.Application.Features.Cms.Submissions.DeleteSubmission;
+using MainApp.Application.Features.Cms.Submissions.GetAllSubmissions;
+using MainApp.Application.Features.Cms.Submissions.GetSubmissionById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

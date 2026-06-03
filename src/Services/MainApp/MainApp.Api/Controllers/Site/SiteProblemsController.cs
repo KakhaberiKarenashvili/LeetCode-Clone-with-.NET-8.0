@@ -1,7 +1,6 @@
-using MainApp.Application.Features.Problems.Queries;
-using MainApp.Application.Features.Problems.Queries.GetProblemById;
-using MainApp.Application.Features.Problems.Queries.GetProblems;
-using MainApp.Application.Features.Problems.Queries.GetProblemSubmissions;
+using MainApp.Application.Features.Site.Problems.GetProblemById;
+using MainApp.Application.Features.Site.Problems.GetProblems;
+using MainApp.Application.Features.Site.Problems.GetProblemSubmissions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

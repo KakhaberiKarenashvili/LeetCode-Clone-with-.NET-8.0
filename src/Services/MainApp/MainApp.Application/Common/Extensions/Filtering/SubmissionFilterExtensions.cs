@@ -1,7 +1,7 @@
 using BuildingBlocks.Common.Enums;
 using MainApp.Domain.Entity;
 
-namespace MainApp.Application.Extensions.Filtering;
+namespace MainApp.Application.Common.Extensions.Filtering;
 
 public static class SubmissionFilterExtensions
 {

@@ -1,9 +1,9 @@
-using MainApp.Application.Features.Users.Commands.ConfirmEmail;
-using MainApp.Application.Features.Users.Commands.ForgotPassword;
-using MainApp.Application.Features.Users.Commands.LoginUser;
-using MainApp.Application.Features.Users.Commands.RegisterUser;
-using MainApp.Application.Features.Users.Commands.ResetPassword;
-using MainApp.Application.Features.Users.Commands.SetPassword;
+using MainApp.Application.Features.Site.Auth.ConfirmEmail;
+using MainApp.Application.Features.Site.Auth.ForgotPassword;
+using MainApp.Application.Features.Site.Auth.LoginUser;
+using MainApp.Application.Features.Site.Auth.RegisterUser;
+using MainApp.Application.Features.Site.Auth.ResetPassword;
+using MainApp.Application.Features.Site.Auth.SetPassword;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,10 +1,8 @@
-using MainApp.Application.Features.Problems.Commands;
-using MainApp.Application.Features.Problems.Commands.CreateProblem;
-using MainApp.Application.Features.Problems.Commands.DeleteProblem;
-using MainApp.Application.Features.Problems.Commands.UpdateProblem;
-using MainApp.Application.Features.Problems.Queries;
-using MainApp.Application.Features.Problems.Queries.GetProblemById;
-using MainApp.Application.Features.Problems.Queries.GetProblems;
+using MainApp.Application.Features.Cms.Problems.CreateProblem;
+using MainApp.Application.Features.Cms.Problems.DeleteProblem;
+using MainApp.Application.Features.Cms.Problems.GetProblemById;
+using MainApp.Application.Features.Cms.Problems.GetProblems;
+using MainApp.Application.Features.Cms.Problems.UpdateProblem;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

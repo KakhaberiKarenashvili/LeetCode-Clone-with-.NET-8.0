@@ -1,0 +1,9 @@
+using BuildingBlocks.Common.Enums;
+
+namespace MainApp.Application.Features.Site.Problems.GetProblems;
+
+public record GetProblemsResponse(
+    int Id,
+    string? Name,
+    List<Category>? Categories,
+    Difficulty Difficulty);

@@ -1,9 +1,9 @@
-using MainApp.Application.Features.Users.Commands.AdminResetPassword;
-using MainApp.Application.Features.Users.Commands.ChangeEmail;
-using MainApp.Application.Features.Users.Commands.CreateUser;
-using MainApp.Application.Features.Users.Commands.DeleteUser;
-using MainApp.Application.Features.Users.Queries.GetUserById;
-using MainApp.Application.Features.Users.Queries.GetUsers;
+using MainApp.Application.Features.Cms.Users.AdminResetPassword;
+using MainApp.Application.Features.Cms.Users.ChangeEmail;
+using MainApp.Application.Features.Cms.Users.CreateUser;
+using MainApp.Application.Features.Cms.Users.DeleteUser;
+using MainApp.Application.Features.Cms.Users.GetUserById;
+using MainApp.Application.Features.Cms.Users.GetUsers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

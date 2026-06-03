@@ -1,7 +1,5 @@
-using MainApp.Application.Features.Submissions.Commands;
-using MainApp.Application.Features.Submissions.Commands.CreateSubmission;
-using MainApp.Application.Features.Submissions.Queries;
-using MainApp.Application.Features.Submissions.Queries.GetSubmissionById;
+using MainApp.Application.Features.Cms.Submissions.GetSubmissionById;
+using MainApp.Application.Features.Site.Submissions.CreateSubmission;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

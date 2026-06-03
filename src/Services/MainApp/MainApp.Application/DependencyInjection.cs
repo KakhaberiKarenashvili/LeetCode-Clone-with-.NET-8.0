@@ -1,7 +1,7 @@
 using System.Reflection;
 using BuildingBlocks.Messaging.Masstransit;
 using FluentValidation;
-using MainApp.Application.Behaviors;
+using MainApp.Application.Common.Behaviors;
 using MainApp.Application.Common.Options;
 using MainApp.Application.Common.Services.Email;
 using MainApp.Domain.Entity;
